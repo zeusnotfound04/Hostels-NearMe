@@ -1,14 +1,138 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  gender    Gender?  // Using enum Gender for type safety
+   role      Role     @default(USER)  // Using enum Role for type safety
+  createdAt DateTime @default(now())
+  bookings  Booking[]
+
+  @@index([email]) // Index on email for faster querying
 }
+
+enum HostelType {
+  SINGLE
+  SHARED
+  DORMITORY
+}
+
+enum Gender {
+  BOYS
+  GIRLS
+  //sigma boi we only consider two genders
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model Facility {
+  id       String   @id @default(uuid())
+  name     String   @unique
+  hostels  FacilityHostel[] // Explicit many-to-many relation
+
+  @@index([name]) // Index on name for faster querying
+}
+
+model Hostel {
+  id            String          @id @default(uuid())
+  name          String
+  price         Float
+  facilities    FacilityHostel[] // Explicit many-to-many relation
+  hostelType    HostelType
+  location      String
+  latitude      Float?
+  longitude     Float?
+  address       String
+  about         String
+  houseRules    String[]        // Array of house rules
+  images        String[]        // Array of image URLs
+  gender        Gender
+  isAvailable   Boolean         @default(true)
+  totalSlots    Int?
+  bookedSlots   Int?
+  contactNumber String?         // Contact number is nullable
+  email         String?         // Email is nullable
+  tags          String[]        // Array of tags
+  bookingCount  Int             @default(0)
+  rating        Float           @default(0.0) // Average rating
+  createdBy     String?
+  updatedBy     String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  bookings      Booking[]       // Relation to Booking model
+
+  // Add this line for the inverse relation
+  adminHostels  AdminHostel[]   // Many-to-many relation with Admin model
+
+  @@index([location]) // Index on location for optimized searching by location
+}
+
+model FacilityHostel {
+  id         String   @id @default(uuid())
+  facilityId String
+  hostelId   String
+  facility   Facility @relation(fields: [facilityId], references: [id])
+  hostel     Hostel   @relation(fields: [hostelId], references: [id])
+}
+
+model Admin {
+  id        String       @id @default(uuid())
+  email     String       @unique
+  password  String
+  name      String
+  role      Role         @default(ADMIN) // Using enum Role for type safety
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  hostels   AdminHostel[] // Explicit many-to-many relation
+
+  @@index([email]) // Index on email for faster querying
+}
+
+model AdminHostel {
+  id       String   @id @default(uuid())
+  adminId  String
+  hostelId String
+  admin    Admin    @relation(fields: [adminId], references: [id])
+  hostel   Hostel   @relation(fields: [hostelId], references: [id])
+}
+
+model Booking {
+  id               String        @id @default(uuid())
+  userId           String
+  hostelId         String
+  status           BookingStatus @default(PENDING)
+  referenceId      String        @unique // Unique booking reference for tracking
+  phoneNumber      String
+  gender           Gender        // User's gender
+  address          String        // User's address
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  user             User          @relation(fields: [userId], references: [id])
+  hostel           Hostel        @relation(fields: [hostelId], references: [id])
+
+  @@index([status]) // Index on status for faster querying by booking status
+  @@index([startDate, endDate]) // Index for optimized date range queries
+}
+
