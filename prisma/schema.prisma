@@ -4,6 +4,7 @@
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -61,7 +62,7 @@ model Hostel {
   facilities    FacilityHostel[] // Explicit many-to-many relation
   hostelType    HostelType
   location      String
-  latitude      Float?
+  latitude      Float?  
   longitude     Float?
   address       String
   about         String
@@ -104,9 +105,9 @@ model Admin {
   role      Role         @default(ADMIN) // Using enum Role for type safety
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
-  hostels   AdminHostel[] // Explicit many-to-many relation
+  hostels   AdminHostel[] 
 
-  @@index([email]) // Index on email for faster querying
+  @@index([email]) 
 }
 
 model AdminHostel {
@@ -133,6 +134,6 @@ model Booking {
   hostel           Hostel        @relation(fields: [hostelId], references: [id])
 
   @@index([status]) // Index on status for faster querying by booking status
-  @@index([startDate, endDate]) // Index for optimized date range queries
+ 
 }
 
