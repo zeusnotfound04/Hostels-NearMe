@@ -1,45 +1,15 @@
-version: '3.8'
+version: '3.1'
 
 services:
-  nextjs:
-    build:
-      context: .
-    container_name: hostels-nearme
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    volumes:
-      - .:/app
-      - node_modules:/app/node_modules
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      NEXT_PUBLIC_SUPABASE_URL: http://localhost:8000
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-
   postgres:
-    image: postgres:15
-    container_name: postgres_db
-    restart: unless-stopped
+    image: postgres:latest
+    container_name: postgresDB
+    ports: 
+       - "5432:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: hostels_nearme
-    ports:
-      - "5432:5432"
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: PASSWORD
+        POSTGRES_DB: hostels-nearmeDB
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  postgrest:
-    image: postgrest/postgrest
-    container_name: postgrest_backend
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    environment:
-      PGRST_DB_URI: postgres://postgres:password@postgres_db:5432/hostels_nearme
-      PGRST_DB_ANON_ROLE: web_anon
-      PGRST_DB_SCHEMA: public
-
-volumes:
-  postgres_data:
-  node_modules:
+        - F:\VISHESH\VS code\JavaScript\MERN\Project\hostels-nearme\db-docker:/var/lib/postgresql/data
+    restart: always
