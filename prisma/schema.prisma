@@ -33,7 +33,7 @@ enum HostelType {
 enum Gender {
   BOYS
   GIRLS
-  //sigma boi we only consider two genders
+ 
 }
 
 enum Role {
@@ -71,14 +71,10 @@ model Hostel {
   gender        Gender
   isAvailable   Boolean         @default(true)
   totalSlots    Int?
-  bookedSlots   Int?
-  contactNumber String?         // Contact number is nullable
-  email         String?         // Email is nullable
+  bookedSlots   Int?         // Email is nullable
   tags          String[]        // Array of tags
   bookingCount  Int             @default(0)
   rating        Float           @default(0.0) // Average rating
-  createdBy     String?
-  updatedBy     String?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   bookings      Booking[]       // Relation to Booking model
