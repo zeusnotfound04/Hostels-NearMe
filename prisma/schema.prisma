@@ -4,7 +4,8 @@
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  
+  
 }
 
 generator client {
@@ -15,9 +16,9 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  name      String
-  gender    Gender?  // Using enum Gender for type safety
-   role      Role     @default(USER)  // Using enum Role for type safety
+  username      String
+  gender    Gender?  
+  role      Role     @default(USER)  // Using enum Role for type safety
   createdAt DateTime @default(now())
   bookings  Booking[]
 
@@ -97,7 +98,7 @@ model Admin {
   id        String       @id @default(uuid())
   email     String       @unique
   password  String
-  name      String
+  username  String
   role      Role         @default(ADMIN) // Using enum Role for type safety
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt

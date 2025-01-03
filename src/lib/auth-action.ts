@@ -10,22 +10,28 @@ const prisma = new PrismaClient();
 
 export async function login(formData: FormData): Promise<void> {
   const supabase = createClient();
-
-  const data: { email: string; password: string } = {
+  
+  const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { data: { session }, error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
     console.error("Error during login:", error);
     redirect("/error");
   }
 
+  if (!session) {
+    console.error("No session created");
+    redirect("/error");
+  }
+
   revalidatePath("/", "layout");
   redirect("/");
 }
+
 
 export async function signup(formData: FormData): Promise<void> {
   const supabase = createClient();
