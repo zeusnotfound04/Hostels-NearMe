@@ -19,15 +19,15 @@ export default async function  Home() {
           
         </div>
       </div>
-      <SignupFormDemo/>
+
 
       
         
-         
+         <h1>Welcome sir</h1>
             <pre> {JSON.stringify(session)}</pre>
 
-        
-          <LoginButton/>
+         
+    
           
         
 

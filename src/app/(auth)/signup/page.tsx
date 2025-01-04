@@ -1,12 +1,13 @@
-import React from 'react'
-import { SignUpForm } from '@/components/ui/SignUpForm'
+import React from 'react';
+import SignupFormDemo from '@/components/signup-form-demo';
 
-const SignUpPage = () => {
+// Use default export instead of named export
+const Page = () => {
   return (
-    <div className='flex h-svh items-center'>
-        <SignUpForm />
+    <div>
+      <SignupFormDemo />
     </div>
-  )
-}
+  );
+};
 
-export default SignUpPage
+export default Page; 
