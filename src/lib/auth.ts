@@ -2,8 +2,11 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./prisma";
 import { compare } from "bcrypt";
+import GoogleProvider from "next-auth/providers/google";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/login',
@@ -15,6 +18,10 @@ export const authOptions: NextAuthOptions = {
   },
 
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID ||"",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    }),
     CredentialsProvider({
       name: 'Sign in',
       credentials: {
@@ -50,6 +57,29 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
+    // async signIn({ account, profile }) {
+    //   if (account?.provider === 'google' && profile?.email) {
+    //     try {
+
+    //       await prisma.user.upsert({
+    //         where: { email: profile.email },
+    //         create: {
+    //           email: profile.email,
+    //           username: profile.name ,
+    //           role: 'USER', // Default role for new users
+    //           gender: null, // Default to null, or modify based on your logic
+    //         },
+    //         update: {
+    //           username: profile.name || 'Anonymous',
+    //         },
+    //       });
+    //     } catch (error) {
+    //       console.error('Error during signIn callback:', error);
+    //       return false; // Deny the sign-in
+    //     }
+    //   }
+    //   return true; 
+    // },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
