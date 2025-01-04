@@ -12,7 +12,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signup } from "@/lib/auth-action";
 
+
+
+
 export function SignUpForm() {
+
+  
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>

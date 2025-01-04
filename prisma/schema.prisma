@@ -16,7 +16,7 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  username      String
+  username  String
   gender    Gender?  
   role      Role     @default(USER)  // Using enum Role for type safety
   createdAt DateTime @default(now())

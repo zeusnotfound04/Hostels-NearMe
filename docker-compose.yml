@@ -4,12 +4,12 @@ services:
   postgres:
     image: postgres:latest
     container_name: postgresDB
-    ports: 
-       - "5432:5432"
+    ports:
+      - "5432:5432"
     environment:
-        POSTGRES_USER: root
-        POSTGRES_PASSWORD: PASSWORD
-        POSTGRES_DB: hostels-nearmeDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: PASSWORD
+      POSTGRES_DB: hostels-nearmeDB
     volumes:
-        - F:\VISHESH\VS code\JavaScript\MERN\Project\hostels-nearme\db-docker:/var/lib/postgresql/data
+      - ./db-docker:/var/lib/postgresql/data  # Use relative path for better compatibility
     restart: always
