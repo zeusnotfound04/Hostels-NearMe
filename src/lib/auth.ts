@@ -19,7 +19,8 @@ export const authOptions: NextAuthOptions = {
           type: 'email',
           placeholder: 'hello@example.com',
         },
-        password: { label: 'Password', type: 'password' },
+        password:
+         { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
@@ -39,11 +40,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Incorrect password');
         }
 
-        return {
-          id: user.id,
-          email: user.email,
-
-        };
+        return user;
       },
     }),
   ],
@@ -54,8 +51,8 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
-        token.image = user.image;
       }
+      console.log(token);
       return token;
     },
     async session({ session, token }) {
@@ -63,8 +60,8 @@ export const authOptions: NextAuthOptions = {
         id: token.id,
         email: token.email,
         name: token.name,
-        image: token.image,
       };
+      console.log(session);
       return session;
     },
   },

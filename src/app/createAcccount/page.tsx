@@ -1,10 +1,10 @@
-import SignupFormDemo from "@/components/signup-form-demo";
+import SigninFormDemo from "@/components/signin-form-demo";
 
 
 export default function page() {
 
 
     return <div>
-        <SignupFormDemo/>        
+        <SigninFormDemo/>        
     </div>
 }
