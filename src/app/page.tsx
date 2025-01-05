@@ -4,8 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { getServerSession } from "next-auth";
-import { LoginButton } from "@/components/ui/auth";
-import SignupFormDemo from "@/components/signup-form-demo";
 
 export default async function  Home() {
   const session = await getServerSession();
