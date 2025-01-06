@@ -1,11 +1,10 @@
 import React from 'react';
-import SignupFormDemo from '@/components/signup-form-demo';
+import SignupForm from '@/components/SignupForm';
 
-// Use default export instead of named export
 const Page = () => {
   return (
     <div>
-      <SignupFormDemo />
+      <SignupForm />
     </div>
   );
 };

@@ -18,6 +18,7 @@ const Navbar = () => {
             width={120}
             height={40}
             priority
+            quality={100}
             className="hover:scale-110 transition-transform duration-300"
           />
         </div>
