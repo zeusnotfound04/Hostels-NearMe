@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import logo from "../../public/logo/logo.png";
+import logo from "../../public/logo/logo.jpg";
 import { RiAccountCircleFill } from "react-icons/ri";
 
 const Navbar = () => {
@@ -15,8 +15,8 @@ const Navbar = () => {
           <Image
             src={logo}
             alt="Hostels Near Me Logo"
-            width={120}
-            height={40}
+            width={200}
+            height={100}
             priority
             quality={100}
             className="hover:scale-110 transition-transform duration-300"
@@ -105,4 +105,7 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
+
 
