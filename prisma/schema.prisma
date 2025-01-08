@@ -71,16 +71,11 @@ model Hostel {
   images        String[]        // Array of image URLs
   gender        Gender
   isAvailable   Boolean         @default(true)
-  totalSlots    Int?
-  bookedSlots   Int?         // Email is nullable
-  tags          String[]        // Array of tags
   bookingCount  Int             @default(0)
   rating        Float           @default(0.0) // Average rating
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   bookings      Booking[]       // Relation to Booking model
-
-  // Add this line for the inverse relation
   adminHostels  AdminHostel[]   // Many-to-many relation with Admin model
 
   @@index([location]) // Index on location for optimized searching by location

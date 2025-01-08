@@ -16,13 +16,16 @@ type UserRequestBody = z.infer<typeof userSchema>;
 export async function POST(req: NextRequest) {
   try {
     const body: UserRequestBody = await req.json();
+    console.log(body)
 
     // Validate the request body using Zod
     const parsedBody = userSchema.parse(body);
 
     const { username, email, password } = parsedBody;
+    console.log(parsedBody)
 
     // Check if user already exists
+    console.log(email)
     const existingUser = await getUserbyEmail(email);
     if (existingUser) {
       return NextResponse.json(
@@ -37,6 +40,7 @@ export async function POST(req: NextRequest) {
 
     // Hash the password
     const hashedPassword = await hash(password, 10);
+    console.log("Hashed Password", hashedPassword)
 
     // Create new user
     const newUser = await createUserWithAccount({
