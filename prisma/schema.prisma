@@ -25,17 +25,7 @@ model User {
   @@index([email]) // Index on email for faster querying
 }
 
-enum HostelType {
-  SINGLE
-  SHARED
-  DORMITORY
-}
 
-enum Gender {
-  BOYS
-  GIRLS
- 
-}
 
 enum Role {
   USER
@@ -48,8 +38,19 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum Gender {
+  BOYS
+  GIRLS
+ 
+}
 
-model Hostel {
+enum HostelType {
+  SINGLE
+  SHARED
+  DORMITORY
+}
+
+model Hostel { 
   id                String          @id @default(uuid())
   name              String
   price             Float
@@ -87,10 +88,10 @@ model Hostel {
   gym               Boolean         @default(false)
   allDayWarden      Boolean         @default(false)
   airconditioner    Boolean         @default(false) 
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  bookings      Booking[]       // Relation to Booking model
-  adminHostels  AdminHostel[]   // Many-to-many relation with Admin model
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  bookings          Booking[]       // Relation to Booking model
+  adminHostels      AdminHostel[]   // Many-to-many relation with Admin model
 
   @@index([location]) // Index on location for optimized searching by location
 }
