@@ -35,16 +35,19 @@ export async function createUserWithAccount({ username, email, password }: User)
 
 export async function getUserbyEmail(email: User['email']) {
   try {
-   
+    console.log("Fetching user by email...");
     const user = await prisma.user.findUnique({
         where: {
-            email,
+            email
         },
     });
+    console.log(user)
+ 
 
     return user; 
   } catch (error) {
     console.log("Error getting user by email: ", error);
+    throw error
    
   }
 }

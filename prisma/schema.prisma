@@ -25,17 +25,7 @@ model User {
   @@index([email]) // Index on email for faster querying
 }
 
-enum HostelType {
-  SINGLE
-  SHARED
-  DORMITORY
-}
 
-enum Gender {
-  BOYS
-  GIRLS
- 
-}
 
 enum Role {
   USER
@@ -48,51 +38,65 @@ enum BookingStatus {
   CANCELLED
 }
 
-model Facility {
-  id       String   @id @default(uuid())
-  name     String   @unique
-  hostels  FacilityHostel[] // Explicit many-to-many relation
-
-  @@index([name]) // Index on name for faster querying
+enum Gender {
+  BOYS
+  GIRLS
+ 
 }
 
-model Hostel {
-  id            String          @id @default(uuid())
-  name          String
-  price         Float
-  facilities    FacilityHostel[] // Explicit many-to-many relation
-  hostelType    HostelType
-  location      String
-  latitude      Float?  
-  longitude     Float?
-  address       String
-  about         String
-  houseRules    String[]        // Array of house rules
-  images        String[]        // Array of image URLs
-  gender        Gender
-  isAvailable   Boolean         @default(true)
-  totalSlots    Int?
-  bookedSlots   Int?         // Email is nullable
-  tags          String[]        // Array of tags
-  bookingCount  Int             @default(0)
-  rating        Float           @default(0.0) // Average rating
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  bookings      Booking[]       // Relation to Booking model
+enum HostelType {
+  SINGLE
+  SHARED
+  DORMITORY
+}
 
-  // Add this line for the inverse relation
-  adminHostels  AdminHostel[]   // Many-to-many relation with Admin model
+model Hostel { 
+  id                String          @id @default(uuid())
+  name              String
+  price             Float
+  hostelType        HostelType
+  location          String
+  latitude          Float?  
+  longitude         Float?
+  address           String
+  about             String
+  houseRules        String[]        
+  images            String[]        
+  gender            Gender
+  isAvailable       Boolean         @default(true)
+  Almirah           Boolean         @default(false)
+  attachedWashroom  Boolean         @default(false)
+  cctv              Boolean         @default(false)
+  chair             Boolean         @default(false)
+  cooler            Boolean         @default(false)
+  inverterBackup    Boolean         @default(false)
+  parking           Boolean         @default(false)
+  biweeklycleaning  Boolean         @default(false) //Rooms cleaned twice a week 
+  allDayElectricity Boolean         @default(false) //24*7 electricity
+  generator         Boolean         @default(false)
+  geyser            Boolean         @default(false)
+  indoorGames       Boolean         @default(false)
+  pillow            Boolean         @default(false)
+  waterByRO         Boolean         @default(false)  //RO  Water 
+  securityGuard     Boolean         @default(false)
+  table             Boolean         @default(false)
+  wiFi              Boolean         @default(false)
+  foodIncluded      Boolean         @default(false)
+  bed               Boolean         @default(false)
+  vegetarienMess    Boolean         @default(false)
+  allDayWaterSupply Boolean         @default(false) //24*7 water supply 
+  gym               Boolean         @default(false)
+  allDayWarden      Boolean         @default(false)
+  airconditioner    Boolean         @default(false) 
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  bookings          Booking[]       // Relation to Booking model
+  adminHostels      AdminHostel[]   // Many-to-many relation with Admin model
 
   @@index([location]) // Index on location for optimized searching by location
 }
 
-model FacilityHostel {
-  id         String   @id @default(uuid())
-  facilityId String
-  hostelId   String
-  facility   Facility @relation(fields: [facilityId], references: [id])
-  hostel     Hostel   @relation(fields: [hostelId], references: [id])
-}
+
 
 model Admin {
   id        String       @id @default(uuid())
