@@ -4,10 +4,7 @@
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  
-  
 }
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -25,12 +22,12 @@ model User {
   @@index([email]) // Index on email for faster querying
 }
 
-
-
 enum Role {
   USER
   ADMIN
 }
+
+
 
 enum BookingStatus {
   PENDING
