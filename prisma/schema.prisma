@@ -92,7 +92,6 @@ model Hostel {
   updatedAt         DateTime        @updatedAt
   bookings          Booking[]       // Relation to Booking model
   adminHostels      AdminHostel[]   // Many-to-many relation with Admin model
-
   @@index([location]) // Index on location for optimized searching by location
 }
 
