@@ -16,9 +16,16 @@ const SignupSchema = z.object({
 });
 
 export default function SignupForm() {
-  const [username, setUsername] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [formData , setFormData]= useState({
+    username: "",
+    email: "",  
+    password: "",
+
+  });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
@@ -27,7 +34,6 @@ export default function SignupForm() {
     setError("");
     setLoading(true);
 
-    const formData = { username, email, password };
     const validation = SignupSchema.safeParse(formData);
 
     if (!validation.success) {
@@ -65,10 +71,10 @@ export default function SignupForm() {
             <Label htmlFor="username">Username</Label>
             <Input
               id="username"
-              name="text"
+              name="username"
               placeholder="aryaman"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={formData.username}
+              onChange={handleChange}
               type="text"
               required
             />
@@ -81,8 +87,8 @@ export default function SignupForm() {
               name="email"
               placeholder="aryaman@hostelsnearme.in"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
               required
             />
           </LabelInputContainer>
@@ -93,8 +99,8 @@ export default function SignupForm() {
               name="password"
               placeholder="••••••••"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               required
             />
           </LabelInputContainer>

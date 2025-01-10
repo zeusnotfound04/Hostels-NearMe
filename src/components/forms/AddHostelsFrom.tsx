@@ -3,11 +3,11 @@ import * as z from "zod"
 import { Hostel } from "@prisma/client"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { Checkbox } from "./ui/checkbox";
-import { FileUpload } from "./ui/acefileupload";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Checkbox } from "../ui/checkbox";
+import { FileUpload } from "../ui/acefileupload";
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select"
 
 import useLocation from "@/hooks/useLocation";
@@ -316,9 +316,7 @@ export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
                             <FormField
                                 control={form.control}
                                 name ="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Hostel Name</FormLabel>
+                             <FormLabel>Hostel Name</FormLabel>
                                         <FormDescription>Enter your Hostel Name.</FormDescription>
                                             <FormControl>
                                                 <Input placeholder="Govindam Residency" {...field} />
@@ -326,7 +324,9 @@ export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            />
+                                      render={({ field }) => (
+                                    <FormItem>
+                                 />
                              <FormField
                                 control={form.control}
                                 name ="about"
