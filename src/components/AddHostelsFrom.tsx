@@ -7,6 +7,12 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
+import { FileUpload } from "./ui/acefileupload";
+import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select"
+
+import useLocation from "@/hooks/useLocation";
+import { useState , useEffect} from "react";
+import { ICity, IState } from "country-state-city";
 
 
 
@@ -22,7 +28,7 @@ const facilityLabels: Record<string, string> = {
     cooler: "Cooler",
     inverterBackup: "Inverter Backup",
     parking: "Parking Facility",
-    biweeklycleaning: "Biweekly Cleaning",
+    biweeklycleaning: "Rooms cleaned twice a week",
     allDayElectricity: "24x7 Electricity",
     generator: "Generator Backup",
     geyser: "Geyser",
@@ -142,10 +148,36 @@ const formSchema = z.object({
 
 
 export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
+      const [states, setStates] = useState<IState[]>([]); 
+      const [cities, setCities] = useState<ICity[]>([]); // Default as empty array
+      const [isLoading, setIsLoading] = useState<boolean>(false);
+      const { getCountryStates, getStateCities } = useLocation();
+
+      useEffect(() => {
+        const fetchStates = async () => {
+          setIsLoading(true);
+          try {
+            const allStates = await getCountryStates(); // Assuming this is async
+            setStates(allStates);
+          } catch (error) {
+            console.error('Error fetching states:', error);
+          } finally {
+            setIsLoading(false);
+          }
+        };
+        fetchStates();
+      }, []);
+      
+
+      const handleStateChange = (stateCode: string) => {
+        setIsLoading(true);
+        const allCities = getStateCities(stateCode); // Get cities based on selected state
+        setCities(allCities);
+        setIsLoading(false);
+      };
     const form = useForm<z.infer<typeof formSchema>>({
         resolver : zodResolver(formSchema),
         defaultValues : {
-            defaultValues:  {
                 name: "",
                 about:  "",
                 price:  0,
@@ -182,13 +214,13 @@ export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
                 gym:  false,
                 allDayWarden: false,
                 airconditioner: false,
-              },
+              
             }
     })
 
+
     function onSubmit(values : z.infer<typeof formSchema>){
-
-
+        // We will define later
     }
     return <div>
         <Form {...form}>
@@ -249,8 +281,66 @@ export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
                                 ))}
                             </div>
                             </div>
+                            <div className="border-dashed border-2 border-black-600">
+                              <FileUpload/>
+                            </div>
+                          
                     </div>
-                    <div className="flex-1 flex flex-col gap-6"></div>
+                      <div className="flex-1 flex flex-col gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <FormField
+                            control={form.control}
+                            name="state"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Select State</FormLabel>
+                                <FormDescription>Select the state as per the hostel actual location</FormDescription>
+                                <Select
+                                  disabled={isLoading}
+                                  onValueChange={field.onChange}
+                                  value={field.value}
+                                  defaultValue={field.value}
+                                >
+                                  <SelectTrigger className="w-[180px]">
+                                    <SelectValue defaultValue={field.value} placeholder="Select State" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {states.map((state) => (
+                                      <SelectItem key={state.isoCode} value={state.isoCode}>
+                                        {state.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        <FormField control={form.control} name="city" render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Select City</FormLabel>
+                                  <FormDescription>Select the city as per the hostel actual location</FormDescription>
+                                  <Select
+                                    disabled={isLoading || cities.length === 0} // Disable if no cities loaded
+                                    onValueChange={field.onChange}
+                                    value={field.value}
+                                  >
+                                    <SelectTrigger className="w-[180px]">
+                                      <SelectValue defaultValue={field.value} placeholder="Select City" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {cities.map((city) => (
+                                        <SelectItem key={city.isoCode} value={city.isoCode}>
+                                          {city.name}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )} />
+                          </div>
+                    </div>
                 </div>
                 
             </form>
