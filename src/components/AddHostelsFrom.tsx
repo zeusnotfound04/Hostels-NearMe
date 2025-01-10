@@ -106,11 +106,13 @@ const formSchema = z.object({
         message: "At least one house rule must be provided",
       }),
   
-    images: z
-      .array(z.string())
-      .min(1, {
-        message: "At least one image URL is required",
-      }),
+    images:  z
+    .array(
+      z.instanceof(File).refine((file) => file.size > 0, {
+        message: "File cannot be empty",
+      })
+    )
+    .nonempty("At least one file is required"),
   
     gender: z.enum(["BOYS", "GIRLS"], {
       errorMap: () => ({
@@ -148,6 +150,7 @@ const formSchema = z.object({
 
 
 export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
+      const [files, setFiles] = useState<FileList | null>(null);
       const [states, setStates] = useState<IState[]>([]); 
       const [cities, setCities] = useState<ICity[]>([]); // Default as empty array
       const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -218,10 +221,89 @@ export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
             }
     })
 
+    type FormValues = z.infer<typeof formSchema>; 
 
-    function onSubmit(values : z.infer<typeof formSchema>){
-        // We will define later
-    }
+
+  async function onSubmit(values: FormValues) {
+    try {
+      // Step 1: Upload images to the separate image upload API
+      const imageFormData = new FormData();
+      values.images.forEach((image) => {
+        imageFormData.append("images", image);
+      });
+
+      const imageUploadResponse = await fetch("/api/upload-images", {
+        method: "POST",
+        body: imageFormData,
+      });
+
+      if (!imageUploadResponse.ok) {
+        throw new Error(`Image upload failed with status: ${imageUploadResponse.status}`);
+      }
+
+      const imageUploadResult = await imageUploadResponse.json();
+      const uploadedImagePaths = imageUploadResult.paths; // Adjust based on API response structure
+
+      // Step 2: Submit other form data to the main API
+          const mainFormData = {
+            name: values.name,
+            about: values.about,
+            price: values.price,
+            hostelType: values.hostelType,
+            location: values.location,
+            latitude: values.latitude,
+            longitude: values.longitude,
+            address: values.address,
+            houseRules: values.houseRules,
+            gender: values.gender,
+            isAvailable: values.isAvailable,
+            facilities: {
+              Almirah: values.Almirah,
+              attachedWashroom: values.attachedWashroom,
+              cctv: values.cctv,
+              chair: values.chair,
+              cooler: values.cooler,
+              inverterBackup: values.inverterBackup,
+              parking: values.parking,
+              biweeklycleaning: values.biweeklycleaning,
+              allDayElectricity: values.allDayElectricity,
+              generator: values.generator,
+              geyser: values.geyser,
+              indoorGames: values.indoorGames,
+              pillow: values.pillow,
+              waterByRO: values.waterByRO,
+              securityGuard: values.securityGuard,
+              table: values.table,
+              wiFi: values.wiFi,
+              foodIncluded: values.foodIncluded,
+              bed: values.bed,
+              vegetarienMess: values.vegetarienMess,
+              allDayWaterSupply: values.allDayWaterSupply,
+              gym: values.gym,
+              allDayWarden: values.allDayWarden,
+              airconditioner: values.airconditioner,
+            },
+            images: uploadedImagePaths, // Pass the uploaded image paths
+          };
+
+          const mainApiResponse = await fetch("/api/add-hostel", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(mainFormData),
+          });
+
+          if (!mainApiResponse.ok) {
+            throw new Error(`Main form submission failed with status: ${mainApiResponse.status}`);
+          }
+
+          const mainApiResult = await mainApiResponse.json();
+          console.log("Form submitted successfully:", mainApiResult);
+        } catch (error) {
+          console.error("Error submitting form:", error);
+        }
+      }
     return <div>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} 
@@ -233,7 +315,7 @@ export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
                     <div className="flex-1 flex flex-col gap-6">
                             <FormField
                                 control={form.control}
-                                name ="hostelName"
+                                name ="name"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Hostel Name</FormLabel>
@@ -247,7 +329,7 @@ export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
                             />
                              <FormField
                                 control={form.control}
-                                name ="aboutHostel"
+                                name ="about"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>About Hostel</FormLabel>
@@ -316,21 +398,24 @@ export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
                               </FormItem>
                             )}
                           />
-                        <FormField control={form.control} name="city" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Select City</FormLabel>
-                                  <FormDescription>Select the city as per the hostel actual location</FormDescription>
-                                  <Select
-                                    disabled={isLoading || cities.length === 0} // Disable if no cities loaded
-                                    onValueChange={field.onChange}
-                                    value={field.value}
-                                  >
-                                    <SelectTrigger className="w-[180px]">
-                                      <SelectValue defaultValue={field.value} placeholder="Select City" />
-                                    </SelectTrigger>
+                        <FormField 
+                                  control={form.control} 
+                                  name="city" 
+                                  render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Select City</FormLabel>
+                                    <FormDescription>Select the city as per the hostel actual location</FormDescription>
+                                    <Select
+                                      disabled={isLoading || cities.length === 0} // Disable if no cities loaded
+                                      onValueChange={field.onChange}
+                                      value={field.value}
+                                      >
+                                      <SelectTrigger className="w-[180px]">
+                                        <SelectValue defaultValue={field.value} placeholder="Select City" />
+                                      </SelectTrigger>
                                     <SelectContent>
                                       {cities.map((city) => (
-                                        <SelectItem key={city.isoCode} value={city.isoCode}>
+                                        <SelectItem key={city.name} value={city.name}>
                                           {city.name}
                                         </SelectItem>
                                       ))}
