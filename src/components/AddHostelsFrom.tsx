@@ -242,9 +242,9 @@ export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
       }
 
       const imageUploadResult = await imageUploadResponse.json();
-      const uploadedImagePaths = imageUploadResult.paths; // Adjust based on API response structure
+      const uploadedImagePaths = imageUploadResult.paths; 
 
-      // Step 2: Submit other form data to the main API
+      
           const mainFormData = {
             name: values.name,
             about: values.about,

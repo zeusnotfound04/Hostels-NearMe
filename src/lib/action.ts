@@ -27,7 +27,8 @@ export const getHostelById = async(hostelId : string) =>{
 
 }
 
-export const uploadtoS3 =  async ({ file  , filename }) => {
+export const uploadtoS3 =  async (file  , filename    ) => {
+    console.log(filename, "filename")
     const fileBuffer = file
     console.log(fileBuffer)
 
@@ -35,7 +36,7 @@ export const uploadtoS3 =  async ({ file  , filename }) => {
         Bucket : process.env.AWS_S3_BUCKET_NAME,
         Key : `hostelsImage/${filename}-${Date.now()}`,
         Body : fileBuffer,
-        ContentType : "image/*"
+        ContentType : "image/png"
     }
     const command = new PutObjectCommand(paramas)
     await s3Client.send(command)
