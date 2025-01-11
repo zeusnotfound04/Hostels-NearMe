@@ -56,11 +56,11 @@ model Hostel {
   latitude          Float?  
   longitude         Float?
   address           String
-  about             String
-  houseRules        String[]        
+  about             String     
   images            String[]        
   gender            Gender
   isAvailable       Boolean         @default(true)
+  isNonVeg          Boolean         @default(false)
   Almirah           Boolean         @default(false)
   attachedWashroom  Boolean         @default(false)
   cctv              Boolean         @default(false)

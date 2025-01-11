@@ -8,225 +8,248 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Checkbox } from "../ui/checkbox";
 import { FileUpload } from "../ui/acefileupload";
-import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 import useLocation from "@/hooks/useLocation";
-import { useState , useEffect} from "react";
+import { useState, useEffect } from "react";
 import { ICity, IState } from "country-state-city";
 
-
-
-interface AddHostelFormProps{
-    hostel : Hostel
+interface AddHostelFormProps {
+  hostel: Hostel
 }
 
 const facilityLabels: Record<string, string> = {
-    Almirah: "Almirah",
-    attachedWashroom: "Attached Washroom",
-    cctv: "CCTV Surveillance",
-    chair: "Chair",
-    cooler: "Cooler",
-    inverterBackup: "Inverter Backup",
-    parking: "Parking Facility",
-    biweeklycleaning: "Rooms cleaned twice a week",
-    allDayElectricity: "24x7 Electricity",
-    generator: "Generator Backup",
-    geyser: "Geyser",
-    indoorGames: "Indoor Games",
-    pillow: "Pillow",
-    waterByRO: "RO Water",
-    securityGuard: "Security Guard",
-    table: "Table",
-    wiFi: "Wi-Fi",
-    foodIncluded: "Food Included",
-    bed: "Bed",
-    vegetarienMess: "Vegetarian Mess",
-    allDayWaterSupply: "24x7 Water Supply",
-    allDayWarden: "24x7 Warden",
-    airconditioner: "Air Conditioner",
-  };
+  Almirah: "Almirah",
+  attachedWashroom: "Attached Washroom",
+  cctv: "CCTV Surveillance",
+  chair: "Chair",
+  cooler: "Cooler",
+  inverterBackup: "Inverter Backup",
+  parking: "Parking Facility",
+  biweeklycleaning: "Rooms cleaned twice a week",
+  allDayElectricity: "24x7 Electricity",
+  generator: "Generator Backup",
+  geyser: "Geyser",
+  indoorGames: "Indoor Games",
+  pillow: "Pillow",
+  waterByRO: "RO Water",
+  securityGuard: "Security Guard",
+  table: "Table",
+  wiFi: "Wi-Fi",
+  foodIncluded: "Food Included",
+  bed: "Bed",
+  vegetarienMess: "Vegetarian Mess",
+  allDayWaterSupply: "24x7 Water Supply",
+  allDayWarden: "24x7 Warden",
+  airconditioner: "Air Conditioner",
+};
 
 const formSchema = z.object({
-    name: z
-      .string()
-      .min(3, {
-        message: "Hostel Name must be at least 3 characters long",
-      }),
-  
-    about: z
-      .string()
-      .min(10, {
-        message: "About section must be at least 10 characters long",
-      }),
-  
-    price: z
-      .number()
-      .min(0, {
-        message: "Price must be a positive number",
-      })
-      .max(10000, {
-        message: "Price cannot be more than 10000",
-      }),
-  
-    hostelType: z.enum(["SINGLE", "SHARED", "DORMITORY"], {
-      errorMap: () => ({
-        message: "Hostel Type is required",
-      }),
+  name: z
+    .string()
+    .min(3, {
+      message: "Hostel Name must be at least 3 characters long",
     }),
-  
-    location: z
-      .string()
-      .min(3, {
-        message: "Location must be at least 3 characters long",
-      }),
-  
-    latitude: z
-      .number()
-      .optional()
-      .refine((val) => val === undefined || (val >= -90 && val <= 90), {
-        message: "Latitude must be between -90 and 90",
-      }),
-  
-    longitude: z
-      .number()
-      .optional()
-      .refine((val) => val === undefined || (val >= -180 && val <= 180), {
-        message: "Longitude must be between -180 and 180",
-      }),
-  
-    address: z
-      .string()
-      .min(5, {
-        message: "Address must be at least 5 characters long",
-      }),
-  
-    houseRules: z
-      .array(z.string())
-      .min(1, {
-        message: "At least one house rule must be provided",
-      }),
-  
-    images:  z
+
+  about: z
+    .string()
+    .min(10, {
+      message: "About section must be at least 10 characters long",
+    }),
+
+  price: z
+    .number()
+    .min(0, {
+      message: "Price must be a positive number",
+    })
+    .max(10000, {
+      message: "Price cannot be more than 10000",
+    }),
+
+  hostelType: z.enum(["SINGLE", "SHARED", "DORMITORY"], {
+    errorMap: () => ({
+      message: "Hostel Type is required",
+    }),
+  }),
+
+  state: z
+    .string()
+    .min(1, {
+      message: "Please select a state",
+    }),
+
+  city: z
+    .string()
+    .min(1, {
+      message: "Please select a city",
+    }),
+
+  location: z
+    .string()
+    .min(3, {
+      message: "Location must be at least 3 characters long",
+    }),
+
+  latitude: z
+    .number()
+    .optional()
+    .refine((val) => val === undefined || (val >= -90 && val <= 90), {
+      message: "Latitude must be between -90 and 90",
+    }),
+
+  longitude: z
+    .number()
+    .optional()
+    .refine((val) => val === undefined || (val >= -180 && val <= 180), {
+      message: "Longitude must be between -180 and 180",
+    }),
+
+  address: z
+    .string()
+    .min(5, {
+      message: "Address must be at least 5 characters long",
+    }),
+
+  images: z
     .array(
       z.instanceof(File).refine((file) => file.size > 0, {
         message: "File cannot be empty",
       })
     )
     .nonempty("At least one file is required"),
-  
-    gender: z.enum(["BOYS", "GIRLS"], {
-      errorMap: () => ({
-        message: "Gender selection is required",
-      }),
+
+  gender: z.enum(["BOYS", "GIRLS"], {
+    errorMap: () => ({
+      message: "Gender selection is required",
     }),
-  
-    isAvailable: z.boolean(),
-  
-    Almirah: z.boolean(),
-    attachedWashroom: z.boolean(),
-    cctv: z.boolean(),
-    chair: z.boolean(),
-    cooler: z.boolean(),
-    inverterBackup: z.boolean(),
-    parking: z.boolean(),
-    biweeklycleaning: z.boolean(),
-    allDayElectricity: z.boolean(),
-    generator: z.boolean(),
-    geyser: z.boolean(),
-    indoorGames: z.boolean(),
-    pillow: z.boolean(),
-    waterByRO: z.boolean(),
-    securityGuard: z.boolean(),
-    table: z.boolean(),
-    wiFi: z.boolean(),
-    foodIncluded: z.boolean(),
-    bed: z.boolean(),
-    vegetarienMess: z.boolean(),
-    allDayWaterSupply: z.boolean(),
-    gym: z.boolean(),
-    allDayWarden: z.boolean(),
-    airconditioner: z.boolean(),
+  }),
+
+  isAvailable: z.boolean(),
+  isNonVeg : z.boolean(),
+  Almirah: z.boolean(),
+  attachedWashroom: z.boolean(),
+  cctv: z.boolean(),
+  chair: z.boolean(),
+  cooler: z.boolean(),
+  inverterBackup: z.boolean(),
+  parking: z.boolean(),
+  biweeklycleaning: z.boolean(),
+  allDayElectricity: z.boolean(),
+  generator: z.boolean(),
+  geyser: z.boolean(),
+  indoorGames: z.boolean(),
+  pillow: z.boolean(),
+  waterByRO: z.boolean(),
+  securityGuard: z.boolean(),
+  table: z.boolean(),
+  wiFi: z.boolean(),
+  foodIncluded: z.boolean(),
+  bed: z.boolean(),
+  vegetarienMess: z.boolean(),
+  allDayWaterSupply: z.boolean(),
+  gym: z.boolean(),
+  allDayWarden: z.boolean(),
+  airconditioner: z.boolean(),
+});
+
+export const AddHostelForm = ({ hostel }: AddHostelFormProps) => {
+  const [files, setFiles] = useState<FileList | null>(null);
+  const [states, setStates] = useState<IState[]>([]);
+  const [cities, setCities] = useState<ICity[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { getCountryStates, getStateCities } = useLocation();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues : {
+      name: "",
+      about:  "",
+      price:  0,
+      hostelType:  "SINGLE", // Default to "SINGLE" if not provided
+      location:  "",
+      latitude: undefined,
+      longitude: undefined,
+      address:  "",
+      images: [],
+      gender: "BOYS", 
+      isNonVeg: false,
+      isAvailable: true, // Default to true if not provided
+      Almirah: false,
+      attachedWashroom: false,
+      cctv: false,
+      chair:  false,
+      cooler:  false,
+      inverterBackup:  false,
+      parking:  false,
+      biweeklycleaning:  false,
+      allDayElectricity:  false,
+      generator:  false,
+      geyser:  false,
+      indoorGames: false,
+      pillow: false,
+      waterByRO:  false,
+      securityGuard: false,
+      table: false,
+      wiFi: false,
+      foodIncluded: false,
+      bed:  false,
+      vegetarienMess: false,
+      allDayWaterSupply:  false,
+      gym:  false,
+      allDayWarden: false,
+      airconditioner: false,
+    
+  }
   });
-
-
-export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
-      const [files, setFiles] = useState<FileList | null>(null);
-      const [states, setStates] = useState<IState[]>([]); 
-      const [cities, setCities] = useState<ICity[]>([]); // Default as empty array
-      const [isLoading, setIsLoading] = useState<boolean>(false);
-      const { getCountryStates, getStateCities } = useLocation();
-
-      useEffect(() => {
-        const fetchStates = async () => {
-          setIsLoading(true);
-          try {
-            const allStates = await getCountryStates(); // Assuming this is async
-            setStates(allStates);
-          } catch (error) {
-            console.error('Error fetching states:', error);
-          } finally {
-            setIsLoading(false);
-          }
-        };
-        fetchStates();
-      }, []);
-      
-
-      const handleStateChange = (stateCode: string) => {
-        setIsLoading(true);
-        const allCities = getStateCities(stateCode); // Get cities based on selected state
-        setCities(allCities);
+  useEffect(() => {
+    const fetchStates = async () => {
+      setIsLoading(true);
+      try {
+        const allStates = await getCountryStates();
+        setStates(allStates);
+      } catch (error) {
+        console.error('Error fetching states:', error);
+      } finally {
         setIsLoading(false);
-      };
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver : zodResolver(formSchema),
-        defaultValues : {
-                name: "",
-                about:  "",
-                price:  0,
-                hostelType:  "SINGLE", // Default to "SINGLE" if not provided
-                location:  "",
-                latitude: undefined,
-                longitude: undefined,
-                address:  "",
-                houseRules: [],
-                images: [],
-                gender: "BOYS", 
-                isAvailable: true, // Default to true if not provided
-                Almirah: false,
-                attachedWashroom: false,
-                cctv: false,
-                chair:  false,
-                cooler:  false,
-                inverterBackup:  false,
-                parking:  false,
-                biweeklycleaning:  false,
-                allDayElectricity:  false,
-                generator:  false,
-                geyser:  false,
-                indoorGames: false,
-                pillow: false,
-                waterByRO:  false,
-                securityGuard: false,
-                table: false,
-                wiFi: false,
-                foodIncluded: false,
-                bed:  false,
-                vegetarienMess: false,
-                allDayWaterSupply:  false,
-                gym:  false,
-                allDayWarden: false,
-                airconditioner: false,
-              
-            }
-    })
+      }
+    };
+    fetchStates();
+  }, []);
 
-    type FormValues = z.infer<typeof formSchema>; 
+  // Watch for state changes and fetch cities
+  useEffect(() => {
+    const fetchCities = async () => {
+      const selectedState = form.getValues("state");
+      if (!selectedState) {
+        setCities([]);
+        return;
+      }
 
+      setIsLoading(true);
+      try {
+        const allCities = await getStateCities(selectedState);
+        setCities(allCities);
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+        setCities([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  async function onSubmit(values: FormValues) {
+    fetchCities();
+  }, [form.watch("state")]);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // Step 1: Upload images to the separate image upload API
+      setIsLoading(true);
+
       const imageFormData = new FormData();
       values.images.forEach((image) => {
         imageFormData.append("images", image);
@@ -242,194 +265,272 @@ export const AddHostelForm = ({hostel}:AddHostelFormProps) =>{
       }
 
       const imageUploadResult = await imageUploadResponse.json();
-      const uploadedImagePaths = imageUploadResult.paths; 
+      const uploadedImagePaths = imageUploadResult.paths;
 
-      
-          const mainFormData = {
-            name: values.name,
-            about: values.about,
-            price: values.price,
-            hostelType: values.hostelType,
-            location: values.location,
-            latitude: values.latitude,
-            longitude: values.longitude,
-            address: values.address,
-            houseRules: values.houseRules,
-            gender: values.gender,
-            isAvailable: values.isAvailable,
-            facilities: {
-              Almirah: values.Almirah,
-              attachedWashroom: values.attachedWashroom,
-              cctv: values.cctv,
-              chair: values.chair,
-              cooler: values.cooler,
-              inverterBackup: values.inverterBackup,
-              parking: values.parking,
-              biweeklycleaning: values.biweeklycleaning,
-              allDayElectricity: values.allDayElectricity,
-              generator: values.generator,
-              geyser: values.geyser,
-              indoorGames: values.indoorGames,
-              pillow: values.pillow,
-              waterByRO: values.waterByRO,
-              securityGuard: values.securityGuard,
-              table: values.table,
-              wiFi: values.wiFi,
-              foodIncluded: values.foodIncluded,
-              bed: values.bed,
-              vegetarienMess: values.vegetarienMess,
-              allDayWaterSupply: values.allDayWaterSupply,
-              gym: values.gym,
-              allDayWarden: values.allDayWarden,
-              airconditioner: values.airconditioner,
-            },
-            images: uploadedImagePaths, // Pass the uploaded image paths
-          };
+      const mainFormData = {
+        name: values.name,
+        about: values.about,
+        price: values.price,
+        hostelType: values.hostelType,
+        state: values.state,
+        city: values.city,
+        location: values.location,
+        latitude: values.latitude,
+        longitude: values.longitude,
+        address: values.address,
+        houseRules: values.houseRules,
+        gender: values.gender,
+        isAvailable: values.isAvailable,
+        facilities: {
+          Almirah: values.Almirah,
+          attachedWashroom: values.attachedWashroom,
+          cctv: values.cctv,
+          chair: values.chair,
+          cooler: values.cooler,
+          inverterBackup: values.inverterBackup,
+          parking: values.parking,
+          biweeklycleaning: values.biweeklycleaning,
+          allDayElectricity: values.allDayElectricity,
+          generator: values.generator,
+          geyser: values.geyser,
+          indoorGames: values.indoorGames,
+          pillow: values.pillow,
+          waterByRO: values.waterByRO,
+          securityGuard: values.securityGuard,
+          table: values.table,
+          wiFi: values.wiFi,
+          foodIncluded: values.foodIncluded,
+          bed: values.bed,
+          vegetarienMess: values.vegetarienMess,
+          allDayWaterSupply: values.allDayWaterSupply,
+          gym: values.gym,
+          allDayWarden: values.allDayWarden,
+          airconditioner: values.airconditioner,
+        },
+        images: uploadedImagePaths,
+      };
 
-          const mainApiResponse = await fetch("/api/add-hostel", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(mainFormData),
-          });
+      const mainApiResponse = await fetch("/api/add-hostel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(mainFormData),
+      });
 
-          if (!mainApiResponse.ok) {
-            throw new Error(`Main form submission failed with status: ${mainApiResponse.status}`);
-          }
-
-          const mainApiResult = await mainApiResponse.json();
-          console.log("Form submitted successfully:", mainApiResult);
-        } catch (error) {
-          console.error("Error submitting form:", error);
-        }
+      if (!mainApiResponse.ok) {
+        throw new Error(`Main form submission failed with status: ${mainApiResponse.status}`);
       }
+
+      const mainApiResult = await mainApiResponse.json();
+      console.log("Form submitted successfully:", mainApiResult);
+
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
     return <div>
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} 
-            className="space-y-6">
-                <h3 className="text-lg font-bold">
-                    {hostel ? "Update your Hostel" : "Add the New Hostel"}
-                </h3>
-                <div className="flex flex-col md:flex-row gap-6">
-                    <div className="flex-1 flex flex-col gap-6">
-                            <FormField
-                                control={form.control}
-                                name ="name"
-                             <FormLabel>Hostel Name</FormLabel>
-                                        <FormDescription>Enter your Hostel Name.</FormDescription>
-                                            <FormControl>
-                                                <Input placeholder="Govindam Residency" {...field} />
-                                            </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                                      render={({ field }) => (
-                                    <FormItem>
-                                 />
-                             <FormField
-                                control={form.control}
-                                name ="about"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>About Hostel</FormLabel>
-                                        <FormDescription>Add Desciption about your Hostel </FormDescription>
-                                            <FormControl>
-                                                <Textarea placeholder="Welcome to Govindam Residency, your home away from home! Nestled in a peaceful yet vibrant location, our hostel offers a comfortable and relaxing stay for travelers and students alike." {...field} />
-                                            </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <div>
-                                <FormLabel>Choose Facility</FormLabel>
-                                <FormDescription>Choose the Facility Carefully</FormDescription>
-                                <div className="grid grid-cols-2 gap-4 mt-2">
-                                {Object.entries(facilityLabels).map(([fieldName, label]) => (
-                                    <FormField
-                                        key={fieldName}
-                                        control={form.control}
-                                        name={fieldName}
-                                        render={({ field }) => (
-                                            <FormItem className="flex flex-row items-center space-x-3">
-                                                <FormControl>
-                                                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                                                </FormControl>
-                                                <FormLabel>{label}</FormLabel>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                ))}
-                            </div>
-                            </div>
-                            <div className="border-dashed border-2 border-black-600">
-                              <FileUpload/>
-                            </div>
-                          
-                    </div>
-                      <div className="flex-1 flex flex-col gap-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <FormField
-                            control={form.control}
-                            name="state"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Select State</FormLabel>
-                                <FormDescription>Select the state as per the hostel actual location</FormDescription>
-                                <Select
-                                  disabled={isLoading}
-                                  onValueChange={field.onChange}
-                                  value={field.value}
-                                  defaultValue={field.value}
-                                >
-                                  <SelectTrigger className="w-[180px]">
-                                    <SelectValue defaultValue={field.value} placeholder="Select State" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {states.map((state) => (
-                                      <SelectItem key={state.isoCode} value={state.isoCode}>
-                                        {state.name}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        <FormField 
-                                  control={form.control} 
-                                  name="city" 
-                                  render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Select City</FormLabel>
-                                    <FormDescription>Select the city as per the hostel actual location</FormDescription>
-                                    <Select
-                                      disabled={isLoading || cities.length === 0} // Disable if no cities loaded
-                                      onValueChange={field.onChange}
-                                      value={field.value}
-                                      >
-                                      <SelectTrigger className="w-[180px]">
-                                        <SelectValue defaultValue={field.value} placeholder="Select City" />
-                                      </SelectTrigger>
-                                    <SelectContent>
-                                      {cities.map((city) => (
-                                        <SelectItem key={city.name} value={city.name}>
-                                          {city.name}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                          </div>
-                    </div>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <h3 className="text-lg font-bold">
+              {hostel ? "Update your Hostel" : "Add the New Hostel"}
+            </h3>
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-1 flex flex-col gap-6">
+                {/* Hostel Name Field */}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hostel Name</FormLabel>
+                      <FormDescription>Enter your Hostel Name.</FormDescription>
+                      <FormControl>
+                        <Input placeholder="Govindam Residency" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* About Hostel Field */}
+                <FormField
+                  control={form.control}
+                  name="about"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>About Hostel</FormLabel>
+                      <FormDescription>Add a description about your Hostel.</FormDescription>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Welcome to Govindam Residency, your home away from home! Nestled in a peaceful yet vibrant location, our hostel offers a comfortable and relaxing stay for travelers and students alike."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Facilities Checkbox */}
+                <div>
+                  <FormLabel>Choose Facility</FormLabel>
+                  <FormDescription>Choose the Facility Carefully.</FormDescription>
+                  <div className="grid grid-cols-2 gap-4 mt-2">
+                    {Object.entries(facilityLabels).map(([fieldName, label]) => (
+                      <FormField
+                        key={fieldName}
+                        control={form.control}
+                        name={fieldName}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center space-x-3">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel>{label}</FormLabel>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ))}
+                  </div>
                 </div>
-                
-            </form>
+
+                {/* File Upload */}
+                <div className="border-dashed border-2 border-black-600">
+                  <FileUpload />
+                </div>
+              </div>
+
+              <div className="flex-1 flex flex-col gap-6">
+                {/* Price */}
+                      <FormField
+                      control={form.control}
+                      name="price"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Hostel's Price</FormLabel>
+                          <FormDescription>Enter the as Price/month.</FormDescription>
+                          <FormControl>
+                            <Input placeholder="7,000" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                  {/* Gender for Hostel */}
+                  <FormField
+                    control={form.control}
+                    name="gender"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Hostel is For</FormLabel>
+                        <FormDescription>
+                          Select the hostel's gender.
+                        </FormDescription>
+                        <Select
+                          // disabled={isLoading || cities.length === 0}
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue
+                              defaultValue={field.value}
+                              placeholder="Select City"
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {cities.map((city) => (
+                              <SelectItem key={city.name} value={city.name}>
+                                {city.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                {/* State and City Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  
+                  <FormField
+                    control={form.control}
+                    name="state"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Select State</FormLabel>
+                        <FormDescription>
+                          Select the state as per the hostel's actual location.
+                        </FormDescription>
+                        <Select
+                          disabled={isLoading}
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue
+                              defaultValue={field.value}
+                              placeholder="Select State"
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {states.map((state) => (
+                              <SelectItem key={state.isoCode} value={state.isoCode}>
+                                {state.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Select City</FormLabel>
+                        <FormDescription>
+                          Select the city as per the hostel's actual location.
+                        </FormDescription>
+                        <Select
+                          // disabled={isLoading || cities.length === 0}
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue
+                              defaultValue={field.value}
+                              placeholder="Select City"
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {cities.map((city) => (
+                              <SelectItem key={city.name} value={city.name}>
+                                {city.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+          </form>
         </Form>
+
     </div>
 }
 
