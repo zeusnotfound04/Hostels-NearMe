@@ -15,14 +15,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
+import { Button } from "@/components/ui/button";
 import useLocation from "@/hooks/useLocation";
 import { useState, useEffect } from "react";
 import { ICity, IState } from "country-state-city";
+import { Loader2, Pencil, PencilLine } from "lucide-react";
 
 interface AddHostelFormProps {
   hostel: Hostel
 }
+
+const houseRulesLabels : Record<string , string> = {
+  isNonVeg : "Non-Veg Allowed",
+}
+
 
 const facilityLabels: Record<string, string> = {
   Almirah: "Almirah",
@@ -96,20 +102,6 @@ const formSchema = z.object({
       message: "Location must be at least 3 characters long",
     }),
 
-  latitude: z
-    .number()
-    .optional()
-    .refine((val) => val === undefined || (val >= -90 && val <= 90), {
-      message: "Latitude must be between -90 and 90",
-    }),
-
-  longitude: z
-    .number()
-    .optional()
-    .refine((val) => val === undefined || (val >= -180 && val <= 180), {
-      message: "Longitude must be between -180 and 180",
-    }),
-
   address: z
     .string()
     .min(5, {
@@ -159,6 +151,7 @@ const formSchema = z.object({
 });
 
 export const AddHostelForm = ({ hostel }: AddHostelFormProps) => {
+  
   const [files, setFiles] = useState<FileList | null>(null);
   const [states, setStates] = useState<IState[]>([]);
   const [cities, setCities] = useState<ICity[]>([]);
@@ -167,14 +160,12 @@ export const AddHostelForm = ({ hostel }: AddHostelFormProps) => {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues : {
+    defaultValues :  {
       name: "",
       about:  "",
       price:  0,
       hostelType:  "SINGLE", // Default to "SINGLE" if not provided
       location:  "",
-      latitude: undefined,
-      longitude: undefined,
       address:  "",
       images: [],
       gender: "BOYS", 
@@ -207,6 +198,7 @@ export const AddHostelForm = ({ hostel }: AddHostelFormProps) => {
     
   }
   });
+
   useEffect(() => {
     const fetchStates = async () => {
       setIsLoading(true);
@@ -245,94 +237,20 @@ export const AddHostelForm = ({ hostel }: AddHostelFormProps) => {
 
     fetchCities();
   }, [form.watch("state")]);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFiles(e.target.files);
+}
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      setIsLoading(true);
-
-      const imageFormData = new FormData();
-      values.images.forEach((image) => {
-        imageFormData.append("images", image);
-      });
-
-      const imageUploadResponse = await fetch("/api/upload-images", {
-        method: "POST",
-        body: imageFormData,
-      });
-
-      if (!imageUploadResponse.ok) {
-        throw new Error(`Image upload failed with status: ${imageUploadResponse.status}`);
-      }
-
-      const imageUploadResult = await imageUploadResponse.json();
-      const uploadedImagePaths = imageUploadResult.paths;
-
-      const mainFormData = {
-        name: values.name,
-        about: values.about,
-        price: values.price,
-        hostelType: values.hostelType,
-        state: values.state,
-        city: values.city,
-        location: values.location,
-        latitude: values.latitude,
-        longitude: values.longitude,
-        address: values.address,
-        houseRules: values.houseRules,
-        gender: values.gender,
-        isAvailable: values.isAvailable,
-        facilities: {
-          Almirah: values.Almirah,
-          attachedWashroom: values.attachedWashroom,
-          cctv: values.cctv,
-          chair: values.chair,
-          cooler: values.cooler,
-          inverterBackup: values.inverterBackup,
-          parking: values.parking,
-          biweeklycleaning: values.biweeklycleaning,
-          allDayElectricity: values.allDayElectricity,
-          generator: values.generator,
-          geyser: values.geyser,
-          indoorGames: values.indoorGames,
-          pillow: values.pillow,
-          waterByRO: values.waterByRO,
-          securityGuard: values.securityGuard,
-          table: values.table,
-          wiFi: values.wiFi,
-          foodIncluded: values.foodIncluded,
-          bed: values.bed,
-          vegetarienMess: values.vegetarienMess,
-          allDayWaterSupply: values.allDayWaterSupply,
-          gym: values.gym,
-          allDayWarden: values.allDayWarden,
-          airconditioner: values.airconditioner,
-        },
-        images: uploadedImagePaths,
-      };
-
-      const mainApiResponse = await fetch("/api/add-hostel", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(mainFormData),
-      });
-
-      if (!mainApiResponse.ok) {
-        throw new Error(`Main form submission failed with status: ${mainApiResponse.status}`);
-      }
-
-      const mainApiResult = await mainApiResponse.json();
-      console.log("Form submitted successfully:", mainApiResult);
-
+        console.log("Form values:", values);
     } catch (error) {
-      console.error("Error submitting form:", error);
-    } finally {
-      setIsLoading(false);
+      console.error('Error submitting form:', error);
+      
     }
   }
     return <div>
-        <Form {...form}>
+          <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <h3 className="text-lg font-bold">
               {hostel ? "Update your Hostel" : "Add the New Hostel"}
@@ -340,117 +258,165 @@ export const AddHostelForm = ({ hostel }: AddHostelFormProps) => {
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1 flex flex-col gap-6">
                 {/* Hostel Name Field */}
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Hostel Name</FormLabel>
-                      <FormDescription>Enter your Hostel Name.</FormDescription>
-                      <FormControl>
-                        <Input placeholder="Govindam Residency" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* About Hostel Field */}
-                <FormField
-                  control={form.control}
-                  name="about"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>About Hostel</FormLabel>
-                      <FormDescription>Add a description about your Hostel.</FormDescription>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Welcome to Govindam Residency, your home away from home! Nestled in a peaceful yet vibrant location, our hostel offers a comfortable and relaxing stay for travelers and students alike."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Facilities Checkbox */}
-                <div>
-                  <FormLabel>Choose Facility</FormLabel>
-                  <FormDescription>Choose the Facility Carefully.</FormDescription>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {Object.entries(facilityLabels).map(([fieldName, label]) => (
                       <FormField
-                        key={fieldName}
                         control={form.control}
-                        name={fieldName}
+                        name="name"
                         render={({ field }) => (
-                          <FormItem className="flex flex-row items-center space-x-3">
+                          <FormItem>
+                            <FormLabel>Hostel Name</FormLabel>
+                            <FormDescription>Enter your Hostel Name.</FormDescription>
                             <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Input placeholder="Govindam Residency" {...field} />
                             </FormControl>
-                            <FormLabel>{label}</FormLabel>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                    ))}
-                  </div>
-                </div>
 
-                {/* File Upload */}
-                <div className="border-dashed border-2 border-black-600">
-                  <FileUpload />
-                </div>
-              </div>
-
-              <div className="flex-1 flex flex-col gap-6">
-                {/* Price */}
+                      {/* About Hostel Field */}
                       <FormField
-                      control={form.control}
-                      name="price"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Hostel's Price</FormLabel>
-                          <FormDescription>Enter the as Price/month.</FormDescription>
-                          <FormControl>
-                            <Input placeholder="7,000" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        control={form.control}
+                        name="about"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>About Hostel</FormLabel>
+                            <FormDescription>Add a description about your Hostel.</FormDescription>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Welcome to Govindam Residency, your home away from home! Nestled in a peaceful yet vibrant location, our hostel offers a comfortable and relaxing stay for travelers and students alike."
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  {/* Gender for Hostel */}
+                      {/* Facilities Checkbox */}
+                          <div>
+                            <FormLabel>Choose Facility</FormLabel>
+                            <FormDescription>Choose the Facility Carefully.</FormDescription>
+                              <div className="grid grid-cols-2 gap-4 mt-2">
+                                  {Object.entries(facilityLabels).map(([fieldName, label]) => (
+                                          <FormField
+                                            key={fieldName}
+                                            control={form.control}
+                                            name={fieldName}
+                                            render={({ field }) => (
+                                              <FormItem className="flex flex-row items-center space-x-3">
+                                                <FormControl>
+                                                  <Checkbox
+                                                    checked={!!field.value}
+                                                    onCheckedChange={field.onChange}
+                                                  />
+                                                </FormControl>
+                                                <FormLabel>{label}</FormLabel>
+                                                <FormMessage />
+                                              </FormItem>
+                                            )}
+                                          />
+                                        ))}
+                                </div>
+                          </div>
+
+                          <FormField
+                        control={form.control}
+                        name="price"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Upload the Image</FormLabel>
+                         
+                            <FormControl>
+                              <Input
+                                type="file"
+                                name="images"
+                                accept="image/*"
+                                onChange={handleChange}
+                                
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+
+                </div>
+          
+              <div className="flex-1 flex flex-col gap-6">
+                    {/* Price */}
+                      <FormField
+                        control={form.control}
+                        name="price"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Hostel's Price</FormLabel>
+                            <FormDescription>Enter the price per month.</FormDescription>
+                            <FormControl>
+                              <Input
+                                placeholder="7,000"
+                                type="number"
+                                {...field}
+                                onChange={(e) => field.onChange(Number(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+
+                        {/* Gender for Hostel */}
+                        <FormField
+                          control={form.control}
+                          name="gender"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Choose the hostel's gender</FormLabel>
+                              <FormDescription>
+                                Specify whether the hostel is for boys or girls.
+                              </FormDescription>
+                              <Select
+                                onValueChange={field.onChange}
+                                value={field.value}
+                              >
+                                <SelectTrigger className="w-[180px]">
+                                  <SelectValue
+                                    defaultValue={field.value}
+                                    placeholder="Select Hostel's Gender"
+                                  />
+                                </SelectTrigger>
+                                <SelectContent>
+                                <SelectItem value="BOYS">Boys</SelectItem>
+                                <SelectItem value="GIRLS">Girls</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                 {/* Hostel Type Field */}
                   <FormField
                     control={form.control}
-                    name="gender"
+                    name="hostelType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Hostel is For</FormLabel>
+                        <FormLabel>Select Hostel's Sharing type</FormLabel>
                         <FormDescription>
-                          Select the hostel's gender.
+                          Choose the sharing type of the hostel.
                         </FormDescription>
                         <Select
-                          // disabled={isLoading || cities.length === 0}
+                          disabled={isLoading}
                           onValueChange={field.onChange}
                           value={field.value}
                         >
                           <SelectTrigger className="w-[180px]">
-                            <SelectValue
-                              defaultValue={field.value}
-                              placeholder="Select City"
-                            />
+                            <SelectValue placeholder="Select Hostel type" />
                           </SelectTrigger>
                           <SelectContent>
-                            {cities.map((city) => (
-                              <SelectItem key={city.name} value={city.name}>
-                                {city.name}
-                              </SelectItem>
-                            ))}
+                            <SelectItem value="SINGLE">Single</SelectItem>
+                            <SelectItem value="SHARED">Shared</SelectItem>
+                            <SelectItem value="DORMITORY">Dormitory</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -460,77 +426,113 @@ export const AddHostelForm = ({ hostel }: AddHostelFormProps) => {
                 {/* State and City Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   
-                  <FormField
-                    control={form.control}
-                    name="state"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Select State</FormLabel>
-                        <FormDescription>
-                          Select the state as per the hostel's actual location.
-                        </FormDescription>
-                        <Select
-                          disabled={isLoading}
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue
-                              defaultValue={field.value}
-                              placeholder="Select State"
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {states.map((state) => (
-                              <SelectItem key={state.isoCode} value={state.isoCode}>
-                                {state.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={form.control}
+                      name="state"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Select State</FormLabel>
+                          <FormDescription>
+                            Select the state as per the hostel's actual location.
+                          </FormDescription>
+                          <Select
+                            disabled={isLoading}
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue
+                                defaultValue={field.value}
+                                placeholder="Select State"
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {states.map((state) => (
+                                <SelectItem key={state.isoCode} value={state.isoCode}>
+                                  {state.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <FormField
-                    control={form.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Select City</FormLabel>
-                        <FormDescription>
-                          Select the city as per the hostel's actual location.
-                        </FormDescription>
-                        <Select
-                          // disabled={isLoading || cities.length === 0}
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue
-                              defaultValue={field.value}
-                              placeholder="Select City"
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Select City</FormLabel>
+                          <FormDescription>
+                            Select the city as per the hostel's actual location.
+                          </FormDescription>
+                          <Select
+                            
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue
+                                defaultValue={field.value}
+                                placeholder="Select City"
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {cities.map((city) => (
+                                <SelectItem key={city.name} value={city.name}>
+                                  {city.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                    {/* House Rules */}
+                    <div>
+                        <FormLabel>Choose House Rules</FormLabel>
+                        <FormDescription>Choose the House Rules Carefully.</FormDescription>
+                        <div className="grid grid-cols-2 gap-4 mt-2">
+                          {Object.entries(houseRulesLabels).map(([fieldName, label]) => (
+                            <FormField
+                              key={fieldName}
+                              control={form.control}
+                              name={fieldName}
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center space-x-3">
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={!!field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                  <FormLabel>{label}</FormLabel>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
                             />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {cities.map((city) => (
-                              <SelectItem key={city.name} value={city.name}>
-                                {city.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          ))}
+                        </div>
                 </div>
+                <div>
+                      <div className="flex justify-between gap-2 flex-wrap">
+                                  <Button type="submit" className="w-full md:w-auto">
+                                <Pencil className="mr-2 h-4 w-4" />Create Hostel
+                </Button>
+
               </div>
+                </div>
+
             </div>
-          </form>
+          </div>
+          
+        </form>
         </Form>
 
     </div>
-}
-
+ }

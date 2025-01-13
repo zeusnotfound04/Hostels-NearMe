@@ -53,8 +53,6 @@ model Hostel {
   price             Float
   hostelType        HostelType
   location          String
-  latitude          Float?  
-  longitude         Float?
   address           String
   about             String     
   images            String[]        
