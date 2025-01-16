@@ -70,3 +70,22 @@ export const hostelFormSchema = z.object({
 });
 
 export type HostelFormValues = z.infer<typeof hostelFormSchema>;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

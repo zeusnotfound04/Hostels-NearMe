@@ -52,7 +52,8 @@ model Hostel {
   name              String
   price             Float
   hostelType        HostelType
-  location          String
+  state             String
+  city              String
   address           String
   about             String     
   images            String[]        
@@ -87,7 +88,7 @@ model Hostel {
   updatedAt         DateTime        @updatedAt
   bookings          Booking[]       // Relation to Booking model
   adminHostels      AdminHostel[]   // Many-to-many relation with Admin model
-  @@index([location]) // Index on location for optimized searching by location
+
 }
 
 
