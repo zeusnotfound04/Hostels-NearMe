@@ -2,6 +2,7 @@
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FileUpload } from "@/components/ui/acefileupload";
 import * as z from "zod";
 import { cn } from "@/utils/utils";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ const formSchema = z.object({
   state: z.string(),
   city: z.string(),
   hostelType: z.string(),
+  images: z.array(z.instanceof(File)).max(4),
   ...Object.keys(facilityLabels).reduce((acc, key) => {
     acc[key] = z.boolean();
     return acc;
@@ -48,7 +50,7 @@ export default function AddhostelForm() {
         acc[key] = false;
         return acc;
       }, {} as Record<string, boolean>),
-    
+      images: [],
     },
   });
 
@@ -417,7 +419,30 @@ export default function AddhostelForm() {
 
                 
 
+                            <FormField
+                              control={form.control}
+                              name="images"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Upload Images</FormLabel>
+                                  <FormControl>
+                                    <FileUpload
+                                      onChange={(files) => {
+                                        // Combine existing images with newly uploaded ones
+                                        const newFiles = field.value ? [...field.value, ...files] : files;
 
+                                        // Limit to a maximum of 4 images
+                                        field.onChange(newFiles.slice(0, 4));
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormDescription>
+                                    You can upload up to 4 images. Supported formats: JPG, PNG, etc.
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
 
 
               <FormLabel>House Rules</FormLabel>
