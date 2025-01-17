@@ -18,7 +18,7 @@ import { cities , hostelGenders , states , sharingtypes } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-
+import { useSession } from "next-auth/react";
 
 const formSchema = z.object({
   name: z.string(),
@@ -44,6 +44,8 @@ const formSchema = z.object({
 });
 
 export default function AddhostelForm() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
 
   const [Loading, setLoading] = useState<boolean>(false);
   const { toast } = useToast();
@@ -66,6 +68,15 @@ export default function AddhostelForm() {
 
  
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!session?.user) {
+      toast({
+        variant: "destructive",
+        description: "Please log in to create a hostel",
+      });
+      router.push("/login");
+      return;
+    }
+
     setLoading(true);
   
     try {

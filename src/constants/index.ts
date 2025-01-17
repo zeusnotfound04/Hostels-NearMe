@@ -45,3 +45,17 @@ export const sharingtypes = [
         value: "DORMITORY",
       },
     ] as const;
+
+
+
+export const requiredFields = [
+      'name',
+      'about',
+      'price',
+      'gender',
+      'state',
+      'city',
+      'hostelType',
+      'address',
+      'images'
+    ];
