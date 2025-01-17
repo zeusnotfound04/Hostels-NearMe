@@ -27,19 +27,22 @@ export const getHostelById = async(hostelId : string) =>{
 
 }
 
-export const uploadtoS3 =  async (file  , filename    ) => {
-    console.log(filename, "filename")
-    const fileBuffer = file
-    console.log(fileBuffer)
-
-    const paramas = {
-        Bucket : process.env.AWS_S3_BUCKET_NAME,
-        Key : `hostelsImage/${filename}-${Date.now()}`,
-        Body : fileBuffer,
-        ContentType : "image/png"
-    }
-    const command = new PutObjectCommand(paramas)
-    await s3Client.send(command)
-    return filename
-    
-}
+export const uploadtoS3 = async (file: Buffer, filename: string, contentType: string) => {
+    console.log(filename, "filename");
+    const fileBuffer = file;
+    console.log(fileBuffer);
+  
+    const timestampedFilename = `${filename}-${Date.now()}`;
+  
+    const params = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: `hostelsImage/${timestampedFilename}`,
+      Body: fileBuffer,
+      ContentType: contentType, 
+    };
+  
+    const command = new PutObjectCommand(params);
+    await s3Client.send(command);
+  
+    return `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/hostelsImage/${timestampedFilename}`;
+  };

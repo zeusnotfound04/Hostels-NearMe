@@ -1,5 +1,5 @@
 "use client";
-import { toast } from "sonner";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileUpload } from "@/components/ui/acefileupload";
@@ -15,6 +15,10 @@ import { Check, ChevronsUpDown, PencilIcon } from "lucide-react";
 import { facilityLabels , houseRulesLabels } from "@/constants/label";
 import { Checkbox } from "./ui/checkbox";
 import { cities , hostelGenders , states , sharingtypes } from "@/constants";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+
 
 const formSchema = z.object({
   name: z.string(),
@@ -27,18 +31,24 @@ const formSchema = z.object({
   state: z.string(),
   city: z.string(),
   hostelType: z.string(),
+  address: z.string(),
   images: z.array(z.instanceof(File)).max(4),
-  ...Object.keys(facilityLabels).reduce((acc, key) => {
+  ...Object.keys(facilityLabels).reduce((acc, key) => {   //facilities
     acc[key] = z.boolean();
     return acc;
   }, {} as Record<string, z.ZodBoolean>),
-  ...Object.keys(houseRulesLabels).reduce((acc, key) => {
+  ...Object.keys(houseRulesLabels).reduce((acc, key) => {  //house rules
     acc[key] = z.boolean();
     return acc;
   }, {} as Record<string, z.ZodBoolean>)
 });
 
 export default function AddhostelForm() {
+
+  const [Loading, setLoading] = useState<boolean>(false);
+  const { toast } = useToast();
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,17 +64,39 @@ export default function AddhostelForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+ 
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+  
     try {
-      console.log(values);
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
+      const formData = new FormData();
+      values.images.forEach((file: File) => {
+        formData.append("files", file);
+      });
+  
+      const uploadResponse = await axios.post("/api/imageUpload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const uploadedImageUrls = uploadResponse.data.fileUrls;
+
+      const hostelData = {
+        ...values,
+        images: uploadedImageUrls, 
+      };
+  
+      await axios.post("/api/hostels", hostelData);
+      toast({
+        variant: "success",
+        description: "Hostel Created Successfully! 🎉🎉",
+      });
     } catch (error) {
-      console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
+      console.error("Error creating hostel:", error);
+      toast({
+        variant: "destructive",
+        description: "Error creating hostel. Please try again.",
+      });
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -103,7 +135,7 @@ export default function AddhostelForm() {
                             <FormLabel>About Hostel</FormLabel>
                             <FormControl>
                               <Textarea
-                                placeholder="Placeholder"
+                                placeholder="Welcome to Govindam Residency, your home away from home!"
                                 className="resize-none"
                                 {...field}
                               />
@@ -122,7 +154,7 @@ export default function AddhostelForm() {
                               <FormField
                                 key={key}
                                 control={form.control}
-                                name={key}    // Flattened facility key
+                                name={key}    
                                 render={({ field }) => (
                                   <FormItem className="flex items-center space-x-4">
                                     <FormControl>
@@ -138,7 +170,24 @@ export default function AddhostelForm() {
                             ))}
                           </div>
 
-
+                          <FormField
+                          control={form.control}
+                          name="address"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Address</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="916, Gali Chandi Wali, Main Bazaar, Rajeev Gandhi Nagar, Kota, Rajasthan"
+                                  type="text"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormDescription>Enter your Address.</FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
                    
                   </div>
@@ -416,9 +465,6 @@ export default function AddhostelForm() {
                     </FormItem>
                     )}
                   />
-
-                
-
                             <FormField
                               control={form.control}
                               name="images"
@@ -437,7 +483,7 @@ export default function AddhostelForm() {
                                     />
                                   </FormControl>
                                   <FormDescription>
-                                    You can upload up to 4 images. Supported formats: JPG, PNG, etc.
+                                    You can upload up to 4 images. Supported formats : PNG.
                                   </FormDescription>
                                   <FormMessage />
                                 </FormItem>

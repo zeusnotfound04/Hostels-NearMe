@@ -1,3 +1,4 @@
+// lib/auth.ts
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./prisma";
@@ -84,7 +85,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        token.name = user.name;
+        token.username = user.username;
       }
       console.log(token);
       return token;
@@ -93,7 +94,7 @@ export const authOptions: NextAuthOptions = {
       session.user = {
         id: token.id,
         email: token.email,
-        name: token.name,
+        username: token.username,
       };
       console.log(session);
       return session;
