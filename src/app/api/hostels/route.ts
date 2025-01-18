@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { HostelType, Gender } from "@prisma/client";
-import { requiredFields } from "@/constants/";
+import { requiredFields } from "@/constants";
 
 
 
@@ -99,6 +99,187 @@ export async function POST(req: NextRequest) {
       { 
         error: "Failed to create hostel",
         details: error instanceof Error ? error.message : "Unknown error"
+      },
+      { status: 500 }
+    );
+  }
+}
+
+
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    console.log('Received search params:', Object.fromEntries(searchParams));
+
+    // Basic pagination setup
+    const page = parseInt(searchParams.get("page") ?? "1");
+    const limit = parseInt(searchParams.get("limit") ?? "10");
+    const skip = (page - 1) * limit;
+
+    // Initialize base filters
+    const filters: any = {
+      isAvailable: searchParams.get("isAvailable") === "true",
+    };
+
+    // Handle search (combined name and city search)
+    if (searchParams.get("search")) {
+      const searchTerm = searchParams.get("search");
+      filters.OR = [
+        {
+          name: {
+            contains: searchTerm,
+            mode: "insensitive",
+          }
+        },
+        {
+          city: {
+            contains: searchTerm,
+            mode: "insensitive",
+          }
+        }
+      ];
+    }
+
+    // Hostel type filter
+    if (searchParams.get("hostelType")) {
+      filters.hostelType = searchParams.get("hostelType") as HostelType;
+    }
+
+    // Gender filter
+    if (searchParams.get("gender")) {
+      filters.gender = searchParams.get("gender") as Gender;
+    }
+
+    // City filter (exact match)
+    if (searchParams.get("city") && !searchParams.get("search")) {
+      filters.city = {
+        contains: searchParams.get("city"),
+        mode: "insensitive",
+      };
+    }
+
+    // State filter
+    if (searchParams.get("state")) {
+      filters.state = {
+        contains: searchParams.get("state"),
+        mode: "insensitive",
+      };
+    }
+
+    // Price range filter
+    if (searchParams.get("minPrice") || searchParams.get("maxPrice")) {
+      filters.price = {};
+      
+      if (searchParams.get("minPrice")) {
+        filters.price.gte = parseFloat(searchParams.get("minPrice")!);
+      }
+      
+      if (searchParams.get("maxPrice")) {
+        filters.price.lte = parseFloat(searchParams.get("maxPrice")!);
+      }
+    }
+
+    // Boolean amenities filters
+    const booleanFields = [
+      "isNonVeg", "Almirah", "attachedWashroom", "cctv", "chair",
+      "cooler", "inverterBackup", "parking", "biweeklycleaning",
+      "allDayElectricity", "generator", "geyser", "indoorGames",
+      "pillow", "waterByRO", "securityGuard", "table", "wiFi",
+      "foodIncluded", "bed", "vegetarienMess", "allDayWaterSupply",
+      "gym", "allDayWarden", "airconditioner"
+    ];
+
+    booleanFields.forEach(field => {
+      const value = searchParams.get(field);
+      if (value === "true" || value === "false") {
+        filters[field] = value === "true";
+      }
+    });
+
+    console.log('Applied filters:', JSON.stringify(filters, null, 2));
+
+    // Get total count for pagination
+    const total = await prisma.hostel.count({
+      where: filters,
+    });
+
+    // Fetch hostels with filters and pagination
+    const hostels = await prisma.hostel.findMany({
+      where: filters,
+      skip,
+      take: limit,
+      orderBy: [
+        {
+          isAvailable: 'desc' // Show available hostels first
+        },
+        {
+          createdAt: 'desc' // Then sort by creation date
+        }
+      ],
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        hostelType: true,
+        gender: true,
+        state: true,
+        city: true,
+        address: true,
+        about: true,
+        images: true,
+        isAvailable: true,
+        isNonVeg: true,
+        Almirah: true,
+        attachedWashroom: true,
+        cctv: true,
+        chair: true,
+        cooler: true,
+        inverterBackup: true,
+        parking: true,
+        biweeklycleaning: true,
+        allDayElectricity: true,
+        generator: true,
+        geyser: true,
+        indoorGames: true,
+        pillow: true,
+        waterByRO: true,
+        securityGuard: true,
+        table: true,
+        wiFi: true,
+        foodIncluded: true,
+        bed: true,
+        vegetarienMess: true,
+        allDayWaterSupply: true,
+        gym: true,
+        allDayWarden: true,
+        airconditioner: true,
+        createdAt: true,
+        updatedAt: true,
+      }
+    });
+
+    console.log(`Found ${hostels.length} hostels out of ${total} total`);
+
+    // Return response with pagination metadata
+    return NextResponse.json({
+      hostels,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+      filters: Object.fromEntries(searchParams), // Include applied filters in response
+    });
+
+  } catch (error) {
+    console.error("Error fetching hostels:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to fetch hostels",
+        details: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );

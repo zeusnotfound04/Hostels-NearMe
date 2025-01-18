@@ -42,7 +42,6 @@ const formSchema = z.object({
     return acc;
   }, {} as Record<string, z.ZodBoolean>)
 });
-
 export default function AddhostelForm() {
   const router = useRouter();
   const { data: session, status } = useSession();
