@@ -16,6 +16,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select";
 import {AlertDialog,AlertDialogAction,AlertDialogCancel,AlertDialogContent,AlertDialogDescription,AlertDialogFooter,AlertDialogHeader,AlertDialogTitle,} from '@/components/ui/alert-dialog';
 
+
+import { Hostel } from '@/types/';
+
 // Icons
 import {Pencil,Trash2,Building2,MapPin,IndianRupee,Wifi,Utensils,Shield,Warehouse,Trees,Power,Droplet,Dumbbell,Wind,} from 'lucide-react';
 
@@ -30,46 +33,6 @@ enum Gender {
   FEMALE = 'FEMALE'
 }
 
-interface Hostel {
-  id: string;
-  name: string;
-  price: number;
-  hostelType: HostelType;
-  gender: Gender;
-  state: string;
-  city: string;
-  address: string;
-  about: string;
-  images: string[];
-  isAvailable: boolean;
-  isNonVeg: boolean;
-  Almirah: boolean;
-  attachedWashroom: boolean;
-  cctv: boolean;
-  chair: boolean;
-  cooler: boolean;
-  inverterBackup: boolean;
-  parking: boolean;
-  biweeklycleaning: boolean;
-  allDayElectricity: boolean;
-  generator: boolean;
-  geyser: boolean;
-  indoorGames: boolean;
-  pillow: boolean;
-  waterByRO: boolean;
-  securityGuard: boolean;
-  table: boolean;
-  wiFi: boolean;
-  foodIncluded: boolean;
-  bed: boolean;
-  vegetarienMess: boolean;
-  allDayWaterSupply: boolean;
-  gym: boolean;
-  allDayWarden: boolean;
-  airconditioner: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
 
 const amenityGroups = {
   basicFurniture: {
@@ -167,48 +130,74 @@ export default function HostelManagement() {
     };
   
     const fetchHostels = async () => {
-        try {
-          setLoading(true);
-          
-          const params = new URLSearchParams({
-            page: currentPage.toString(),
-            limit: '10',
-            isAvailable: 'true' // Add this since your API expects it
-          });
-      
-          if (selectedType !== "all") {
-            params.append('hostelType', selectedType);
-          }
-          if (selectedCity) {
-            params.append('city', selectedCity);
-          }
-          if (minPrice) {
-            params.append('minPrice', minPrice);
-          }
-          if (maxPrice) {
-            params.append('maxPrice', maxPrice);
-          }
-          if (searchTerm) {
-            // Add search by name logic in city contains filter
-            params.append('city', searchTerm);
-          }
-      
-          const response = await axios.get(`/api/hostels?${params.toString()}`);
-          
-          // Update this to match your API response structure
-          setHostels(response.data.hostels);
-          setTotalPages(response.data.pagination.totalPages);
-          
-        } catch (error) {
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to fetch hostels"
-          });
-        } finally {
-          setLoading(false);
+      try {
+        setLoading(true);
+        
+        // Base parameters
+        const params = new URLSearchParams({
+          page: currentPage.toString(),
+          limit: '10',
+          isAvailable: 'true'
+        });
+    
+        // Add filters only if they have valid values
+        if (selectedType && selectedType !== "all") {
+          params.append('hostelType', selectedType);
         }
-      };
+    
+        if (searchTerm?.trim()) {
+          params.append('search', searchTerm.trim());
+        }
+    
+        if (selectedCity?.trim()) {
+          params.append('city', selectedCity.trim());
+        }
+    
+        // Validate price values before adding
+        const minPriceNum = Number(minPrice);
+        const maxPriceNum = Number(maxPrice);
+    
+        if (!isNaN(minPriceNum) && minPriceNum >= 0) {
+          params.append('minPrice', minPriceNum.toString());
+        }
+    
+        if (!isNaN(maxPriceNum) && maxPriceNum > 0) {
+          params.append('maxPrice', maxPriceNum.toString());
+        }
+    
+        console.log('Request URL:', `/api/hostels?${params.toString()}`);
+        
+        const response = await axios.get(`/api/hostels?${params.toString()}`);
+        
+        if (!response.data) {
+          throw new Error('No data received from server');
+        }
+    
+        console.log('Response:', {
+          status: response.status,
+          data: response.data,
+          hostels: response.data.hostels?.length
+        });
+    
+        setHostels(response.data.hostels || []);
+        setTotalPages(response.data.pagination?.totalPages || 1);
+        
+      } catch (error: any) {
+        console.error('Fetch error details:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        });
+        
+        toast({
+          variant: "destructive",
+          title: "Error fetching hostels",
+          description: error.response?.data?.details || error.message || "An unexpected error occurred"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
       const handleDelete = async (hostelId: string) => {
         try {
           const response = await axios.delete(`/api/hostels/${hostelId}`);

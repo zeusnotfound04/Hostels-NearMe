@@ -16,3 +16,45 @@ export type FormSchema = {
     isNonVeg: boolean;
   } & Record<keyof typeof facilityLabels, boolean> // Dynamically add facilities
     & Record<keyof typeof houseRulesLabels, boolean>; // Dynamically add house rules
+
+
+export interface Hostel {
+  id: string;
+  name: string;
+  price: number;
+  hostelType: HostelType;
+  gender: Gender;
+  state: string;
+  city: string;
+  address: string;
+  about: string;
+  images: string[];
+  isAvailable: boolean;
+  isNonVeg: boolean;
+  Almirah: boolean;
+  attachedWashroom: boolean;
+  cctv: boolean;
+  chair: boolean;
+  cooler: boolean;
+  inverterBackup: boolean;
+  parking: boolean;
+  biweeklycleaning: boolean;
+  allDayElectricity: boolean;
+  generator: boolean;
+  geyser: boolean;
+  indoorGames: boolean;
+  pillow: boolean;
+  waterByRO: boolean;
+  securityGuard: boolean;
+  table: boolean;
+  wiFi: boolean;
+  foodIncluded: boolean;
+  bed: boolean;
+  vegetarienMess: boolean;
+  allDayWaterSupply: boolean;
+  gym: boolean;
+  allDayWarden: boolean;
+  airconditioner: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

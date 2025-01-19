@@ -4,6 +4,7 @@ import Image from "next/image";
 import logo from "../../public/logo/logo.jpg";
 import { RiAccountCircleFill } from "react-icons/ri";
 
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 

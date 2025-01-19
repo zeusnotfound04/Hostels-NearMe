@@ -99,6 +99,7 @@ export default function AddhostelForm() {
         variant: "success",
         description: "Hostel Created Successfully! 🎉🎉",
       });
+      router.push("/admin/hostels");
     } catch (error) {
       console.error("Error creating hostel:", error);
       toast({

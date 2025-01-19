@@ -61,16 +61,16 @@ model Hostel {
   isAvailable       Boolean         @default(true)
   isNonVeg          Boolean         @default(false)
   Almirah           Boolean         @default(false)
-  attachedWashroom  Boolean         @default(false)
+  attachedWashroom  Boolean         @default(false) 
   cctv              Boolean         @default(false)
   chair             Boolean         @default(false)
   cooler            Boolean         @default(false)
-  inverterBackup    Boolean         @default(false)
+  inverterBackup    Boolean         @default(false) 
   parking           Boolean         @default(false)
   biweeklycleaning  Boolean         @default(false) //Rooms cleaned twice a week 
   allDayElectricity Boolean         @default(false) //24*7 electricity
   generator         Boolean         @default(false)
-  geyser            Boolean         @default(false)
+  geyser            Boolean         @default(false) 
   indoorGames       Boolean         @default(false)
   pillow            Boolean         @default(false)
   waterByRO         Boolean         @default(false)  //RO  Water 
