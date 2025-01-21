@@ -16,6 +16,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select";
 import {AlertDialog,AlertDialogAction,AlertDialogCancel,AlertDialogContent,AlertDialogDescription,AlertDialogFooter,AlertDialogHeader,AlertDialogTitle,} from '@/components/ui/alert-dialog';
 
+import {GymIcon , WardenIcon , GeneratorIcon , GeyserIcon , GirlsIcon , BoysIcon , CCTVIcon , LocationIcon , AirConditionerIcon , ChairIcon , SecurityGuardIcon , ROWaterIcon , CleaningIcon , CoolerIcon , VegetarianMessIcon , TableIcon , PillowIcon , FoodIcon , IndoorGamesIcon , WashroomIcon , WaterSupply , BedIcon , ElectricityIcon , InvertorIcon , ParkingIcon , AlmirahIcon , WifiIcon, AvailableIcon  } from "@/components/ui/icon"
+
 
 import { Hostel } from '@/types/';
 
@@ -32,6 +34,35 @@ enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE'
 }
+
+const customAmenityTexts: Record<string, string> = {
+  bed: "Comfortable Beds for Rest",
+  pillow: "Soft Pillows for Comfort",
+  table: "Study Tables for Focus",
+  chair: "Ergonomic Chairs for Support",
+  Almirah: "Spacious Almirahs for Storage",
+  attachedWashroom: "Private Washrooms for Convenience",
+  parking: "Secure Parking for Vehicles",
+  gym: "Fully Equipped Gym for Fitness",
+  indoorGames: "Indoor Games for Leisure",
+  biweeklycleaning: "Regular Cleaning for Hygiene",
+  securityGuard: "24/7 Security for Safety",
+  allDayWarden: "On-Site Warden for Assistance",
+  wiFi: "High-Speed WiFi for Access",
+  airconditioner: "Cool, Air-Conditioned Rooms",
+  cooler: "Room Coolers for Comfort",
+  geyser: "Hot Water Geysers for Convenience",
+  allDayElectricity: "Nonstop Electricity, Always Available",
+  inverterBackup: "Power Backup for Reliability",
+  generator: "Generator Backup for Emergencies",
+  waterByRO: "RO-Purified Water for Safety",
+  allDayWaterSupply: "24/7 Water Supply",
+  foodIncluded: "Delicious Meals Provided",
+  vegetarienMess: "Healthy Vegetarian Meals",
+  isNonVeg: "Tasty Non-Veg Options",
+  cctv: "CCTV Surveillance for Security",
+};
+
 
 
 const amenityGroups = {
@@ -65,17 +96,35 @@ const amenityGroups = {
   }
 };
 
+
 const amenityIcons: Record<string, JSX.Element> = {
-  wiFi: <Wifi className="h-4 w-4" />,
-  foodIncluded: <Utensils className="h-4 w-4" />,
-  securityGuard: <Shield className="h-4 w-4" />,
-  parking: <Warehouse className="h-4 w-4" />,
-  indoorGames: <Trees className="h-4 w-4" />,
-  allDayElectricity: <Power className="h-4 w-4" />,
-  waterByRO: <Droplet className="h-4 w-4" />,
-  gym: <Dumbbell className="h-4 w-4" />,
-  airconditioner: <Wind className="h-4 w-4" />,
+  bed: <BedIcon width={18} height={18} />,
+  pillow: <PillowIcon width={18} height={18} />,
+  table: <TableIcon width={18} height={18} />,
+  chair: <ChairIcon width={18} height={18} />,
+  Almirah: <AlmirahIcon width={18} height={18} />,
+  attachedWashroom: <WashroomIcon width={18} height={18} />,
+  parking: <ParkingIcon width={18} height={18} />,
+  gym: <GymIcon width={18} height={18} />,
+  indoorGames: <IndoorGamesIcon width={18} height={18} />,
+  biweeklycleaning: <CleaningIcon width={18} height={18} />,
+  securityGuard: <SecurityGuardIcon width={18} height={18} />,
+  allDayWarden: <Shield className="h-4 w-4"/>,
+  wiFi: <WifiIcon width={18} height={18} />,
+  airconditioner: <AirConditionerIcon width={18} height={18} />,
+  cooler: <CoolerIcon width={18} height={18} />,
+  geyser: <GeyserIcon width={18} height={18} />,
+  allDayElectricity: <ElectricityIcon width={18} height={18} />,
+  inverterBackup: <InvertorIcon width={18} height={18} />,
+  generator: <GeneratorIcon width={18} height={18} />,
+  waterByRO: <ROWaterIcon width={18} height={18} />,
+  allDayWaterSupply: <WaterSupply width={18} height={18} />,
+  foodIncluded: <FoodIcon width={18} height={18} />,
+  vegetarienMess: <VegetarianMessIcon width={18} height={18} />,
+  isNonVeg: <Utensils className="h-4 w-4" />,
+  cctv: <CCTVIcon  width={18} height={18}/>,
 };
+
 
 export default function HostelManagement() {
     const router = useRouter();
@@ -112,6 +161,8 @@ export default function HostelManagement() {
         
         return () => clearTimeout(timer);
       }, [searchTerm, currentPage, selectedType, selectedCity, minPrice, maxPrice]);
+
+    
   
     const handlePriceRangeChange = (value: string) => {
       setPriceRange(value);
@@ -306,101 +357,104 @@ export default function HostelManagement() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {hostels.map((hostel) => (
             <Card key={hostel.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <CardHeader className="p-0">
-                <div className="relative h-48 w-full">
-                  <Image
-                    src={hostel.images[0] || '/placeholder-hostel.jpg'}
-                    alt={hostel.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                  {!hostel.isAvailable && (
-                    <Badge variant="destructive" className="absolute top-2 right-2">
-                      Not Available
-                    </Badge>
-                  )}
+            <CardHeader className="p-0">
+              <div className="relative h-48 w-full">
+                <Image
+                  src={hostel.images[0] || '/placeholder-hostel.jpg'}
+                  alt={hostel.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+                {!hostel.isAvailable && (
+                  <Badge variant="destructive" className="absolute top-2 right-2">
+                    Not Available
+                  </Badge>
+                )}
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-4 space-y-4">
+              <div className="flex justify-between items-start">
+                <CardTitle className="text-xl">{hostel.name}</CardTitle>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => router.push(`/hostels/edit/${hostel.id}`)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setSelectedHostel(hostel);
+                      setShowDeleteDialog(true);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
                 </div>
-              </CardHeader>
-  
-              <CardContent className="p-4 space-y-4">
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-xl">{hostel.name}</CardTitle>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => router.push(`/hostels/edit/${hostel.id}`)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setSelectedHostel(hostel);
-                        setShowDeleteDialog(true);
-                      }}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-lg font-semibold">
+                  <IndianRupee className="h-4 w-4" />
+                  <span>{formatPrice(hostel.price)}/month</span>
                 </div>
-  
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-lg font-semibold">
-                    <IndianRupee className="h-4 w-4" />
-                    <span>{formatPrice(hostel.price)}/month</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Building2 className="h-4 w-4" />
-                    <span>{hostel.hostelType} Hostel</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <MapPin className="h-4 w-4" />
-                    <span>{hostel.city}, {hostel.state}</span>
-                  </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Building2 className="h-4 w-4" />
+                  <span>{hostel.hostelType} Hostel</span>
                 </div>
-  
-                <Tabs defaultValue="amenities" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="amenities">Amenities</TabsTrigger>
-                    <TabsTrigger value="about">About</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="amenities" className="mt-4">
-                    <div className="grid grid-cols-2 gap-2">
-                      {Object.entries(amenityGroups).map(([groupKey, group]) => (
-                        group.items.some(item => hostel[item as keyof Hostel]) && (
-                          <div key={groupKey} className="space-y-2">
-                            <h4 className="text-sm font-medium">{group.title}</h4>
-                            {group.items.map(item => (
-                              hostel[item as keyof Hostel] && (
-                                <Badge key={item} variant="secondary" className="mr-2">
-                                  {amenityIcons[item] || null}
-                                  <span className="ml-1">{item.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                </Badge>
-                              )
-                            ))}
-                          </div>
-                        )
-                      ))}
-                    </div>
-                  </TabsContent>
-                  <TabsContent value="about">
-                    <p className="text-sm text-gray-600">{hostel.about}</p>
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-  
-              <CardFooter className="p-4 bg-gray-50">
-                <Button
-                  className="w-full"
-                  onClick={() => router.push(`/hostels/${hostel.id}`)}
-                >
-                  View Details
-                </Button>
-              </CardFooter>
-            </Card>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <LocationIcon height={18} width={18} />
+                  <span>{hostel.city}, {hostel.state}</span>
+                </div>
+              </div>
+
+              <Tabs defaultValue="amenities" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="amenities">Amenities</TabsTrigger>
+                  <TabsTrigger value="about">About</TabsTrigger>
+                </TabsList>
+                <TabsContent value="amenities" className="mt-4">
+<div className="grid grid-cols-2 gap-4">
+  {Object.entries(amenityGroups).map(([groupKey, group]) => (
+    group.items.some(item => hostel[item as keyof typeof hostel]) && (
+      <div key={groupKey} className="space-y-2">
+        <h4 className="text-sm font-medium">{group.title}</h4>
+        <div className="flex flex-wrap gap-2">
+          {group.items.map(item => (
+            hostel[item as keyof typeof hostel] && (
+              <Badge key={item} variant="secondary" className="flex items-center gap-1">
+                {amenityIcons[item] || <span className="h-4 w-4" />} {/* Fallback icon */}
+                <span>{customAmenityTexts[item] || item.replace(/([A-Z])/g, ' $1').trim()}</span>
+              </Badge>
+            )
+          ))}
+        </div>
+      </div>
+    )
+  ))}
+</div>
+</TabsContent>
+
+                <TabsContent value="about">
+                  <p className="text-sm text-gray-600">{hostel.about}</p>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+
+            <CardFooter className="p-4 bg-gray-50">
+              <Button
+                className="w-full"
+                onClick={() => router.push(`/hostels/${hostel.id}`)}
+              >
+                View Details
+              </Button>
+            </CardFooter>
+          </Card>
           ))}
         </div>
   
