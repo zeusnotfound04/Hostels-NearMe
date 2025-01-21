@@ -155,7 +155,7 @@ export const SecurityGuardIcon: React.FC<GymIconProps> = ({ width , height, ...p
 	</g>
 </svg>
 );
-Wa
+
 
 
 export const ChairIcon: React.FC<GymIconProps> = ({ width , height, ...props }) => (
