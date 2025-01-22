@@ -1,4 +1,4 @@
-import AddhostelForm from "@/components/AddhostelForm"
+import AddhostelForm from "@/components/HostelForm"
 
 function Page() {
     return (

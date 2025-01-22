@@ -11,6 +11,39 @@ interface RouteParams {
 }
 
 
+export async function GET(req: Request, { params }: RouteParams) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized access" },
+        { status: 401 }
+      );
+    }
+    const hostel = await prisma.hostel.findUnique({
+      where: {
+        id: params.hostelId,
+      },
+    });
+
+    if (!hostel) {
+      return NextResponse.json(
+        { error: "Hostel not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(hostel);
+  } catch (error) {
+    console.error("Error fetching hostel:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch hostel" },
+      { status: 500 }
+    );
+  }
+}
+
 
 export async function PATCH(req: Request, { params }: RouteParams) {
   try {

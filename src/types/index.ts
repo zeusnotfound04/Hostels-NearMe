@@ -1,5 +1,5 @@
 import { facilityLabels, houseRulesLabels } from "@/constants/label";
-
+import { HostelType , Gender } from "@prisma/client";
 
 
 export type FormSchema = {
@@ -17,6 +17,8 @@ export type FormSchema = {
   } & Record<keyof typeof facilityLabels, boolean> // Dynamically add facilities
     & Record<keyof typeof houseRulesLabels, boolean>; // Dynamically add house rules
 
+
+  
 
 export interface Hostel {
   id: string;
@@ -55,6 +57,6 @@ export interface Hostel {
   gym: boolean;
   allDayWarden: boolean;
   airconditioner: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
