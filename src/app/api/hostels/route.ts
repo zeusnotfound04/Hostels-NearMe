@@ -60,7 +60,6 @@ export async function POST(req: NextRequest) {
         hostelType: body.hostelType as HostelType,
         address: body.address,
         images: body.images,
-        // Boolean facilities with proper defaults
         isAvailable: body.isAvailable ?? true,
         isNonVeg: body.isNonVeg ?? false,
         Almirah: body.Almirah ?? false,

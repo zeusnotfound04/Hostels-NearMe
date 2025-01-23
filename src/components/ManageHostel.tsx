@@ -191,9 +191,9 @@ export default function HostelManagement() {
           isAvailable: 'true'
         });
     
-        // Add filters only if they have valid values
+
         if (selectedType && selectedType !== "all") {
-          params.append('hostelType', selectedType);
+          params.append('gender', selectedType);
         }
     
         if (searchTerm?.trim()) {
@@ -204,7 +204,6 @@ export default function HostelManagement() {
           params.append('city', selectedCity.trim());
         }
     
-        // Validate price values before adding
         const minPriceNum = Number(minPrice);
         const maxPriceNum = Number(maxPrice);
     
@@ -312,8 +311,8 @@ export default function HostelManagement() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value={HostelType.BOYS}>Boys Hostel</SelectItem>
-              <SelectItem value={HostelType.GIRLS}>Girls Hostel</SelectItem>
+              <SelectItem value="BOYS">Boys Hostel</SelectItem>
+              <SelectItem value="GIRLS">Girls Hostel</SelectItem>
             </SelectContent>
           </Select>
           <Select value={priceRange} onValueChange={handlePriceRangeChange}>
