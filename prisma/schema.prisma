@@ -132,3 +132,45 @@ model Booking {
  
 }
 
+model AdminInsights {
+  id                   String   @id @default(uuid())
+  totalBookings        Int      @default(0)  // Track total bookings
+  confirmedBookings    Int      @default(0)  // Track confirmed bookings
+  cancelledBookings    Int      @default(0)  // Track cancelled bookings
+  totalUsers           Int      @default(0)  // Track total users
+  newUsersThisMonth    Int      @default(0)  // Track new users this month
+  activeHostelsCount   Int      @default(0)  // Track active hostels (those with bookings)
+  bookingConversionRate Float    @default(0)  // Confirmed bookings / Total bookings
+  cancellationRate     Float    @default(0)  // Cancelled bookings / Total bookings
+  avgBookingsPerUser   Float    @default(0)  // Average bookings per user
+  trendingHostelId     String?  // ID of the trending hostel (highest bookings in last 30 days)
+  listHostelRequests   Int      @default(0)  // Count of total "list your hostel" requests
+  pendingRequests      Int      @default(0)  // Count of pending "list your hostel" requests
+  cancelledRequests    Int      @default(0)  // Count of rejected "list your hostel" requests
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+
+
+model ListHostelRequest {
+  id               String   @id @default(uuid())
+  ownerName        String   // Name of the hostel owner
+  contactEmail     String   // Contact email of the owner
+  contactPhone     String   // Contact phone number of the owner
+  hostelName       String   // Name of the hostel they want to list
+  location         String   // Location of the hostel (City/State)
+  message          String   // Additional details or message from the owner
+  status           RequestStatus @default(PENDING) // Status of the request
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([status]) // Index on status for faster querying
+}
+
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}

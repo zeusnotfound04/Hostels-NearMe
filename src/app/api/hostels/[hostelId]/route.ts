@@ -11,9 +11,10 @@ interface RouteParams {
 }
 
 
-export async function GET(req: Request, { params }: RouteParams) {
+export async function GET(req: Request, { params  }: RouteParams) {
   try {
     const session = await getServerSession(authOptions);
+
     
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -21,9 +22,12 @@ export async function GET(req: Request, { params }: RouteParams) {
         { status: 401 }
       );
     }
+
+    const {hostelId} = params
+
     const hostel = await prisma.hostel.findUnique({
       where: {
-        id: params.hostelId,
+        id: hostelId,
       },
     });
 
@@ -163,10 +167,11 @@ export async function DELETE(req: Request, { params }: RouteParams) {
       );
     }
 
+    const {hostelId} = params
 
     const deletedHostel = await prisma.hostel.delete({
       where: {
-        id: params.hostelId
+        id: hostelId
       },
     });
 

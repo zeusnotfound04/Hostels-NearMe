@@ -494,7 +494,7 @@ export default function HostelManagement() {
         <Button
           className="fixed bottom-6 right-6"
           size="lg"
-          onClick={() => router.push('/hostels/new')}
+          onClick={() => router.push('/admin/hostels/addHostels')}
         >
           Add New Hostel
         </Button>
