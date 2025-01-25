@@ -36,6 +36,12 @@ enum BookingStatus {
 }
 
 enum Gender {
+  MALE
+  FEMALE
+}
+
+
+enum HostelGender {
   BOYS
   GIRLS
  
@@ -57,7 +63,7 @@ model Hostel {
   address           String
   about             String     
   images            String[]        
-  gender            Gender
+  gender            HostelGender
   isAvailable       Boolean         @default(true)
   isNonVeg          Boolean         @default(false)
   Almirah           Boolean         @default(false)
@@ -116,11 +122,13 @@ model AdminHostel {
 model Booking {
   id               String        @id @default(uuid())
   userId           String
+  username         String
+  hostelName       String 
   hostelId         String
   status           BookingStatus @default(PENDING)
   referenceId      String        @unique // Unique booking reference for tracking
   phoneNumber      String
-  gender           Gender        // User's gender
+  userGender       Gender        // User's gender
   address          String        // User's address
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt

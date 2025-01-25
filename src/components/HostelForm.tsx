@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { HostelFormProps } from "@/types";
 
 
 
@@ -50,10 +51,6 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
-interface HostelFormProps {
-  hostelId?: string;
-  initialData?: any;
-}
 
 export default function HostelForm({hostelId  , initialData  }: HostelFormProps) {
   const router = useRouter();

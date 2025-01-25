@@ -2,6 +2,9 @@ import { createUserWithAccount, getUserbyEmail } from "@/utils/user";
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcrypt";
 import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import {startOfMonth , endOfMonth} from "date-fns"
+import { updateAdminInsights } from "@/actions/adminInsights/updateInsights";
 
 // Define Zod schema for request body validation
 const userSchema = z.object({
@@ -38,6 +41,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const totalUserBefore = await prisma.user.count();
+
     // Hash the password
     const hashedPassword = await hash(password, 10);
     console.log("Hashed Password", hashedPassword)
@@ -48,6 +53,25 @@ export async function POST(req: NextRequest) {
       email,
       password: hashedPassword,
     });
+
+    const startOfThisMonth = startOfMonth(new Date())
+    const endOfThisMonth = endOfMonth(new Date())
+
+    const newUsersThisMonth = await prisma.user.count({
+      where : {
+        createdAt : {
+          gte : startOfThisMonth,
+          lte : endOfThisMonth, 
+        }
+      }
+    })
+
+    const totalUsersAfter = totalUserBefore + 1 ;
+
+    await updateAdminInsights({
+      totalUsers : totalUsersAfter,
+      newUsersThisMonth : newUsersThisMonth, 
+    })
 
     return NextResponse.json(
       {

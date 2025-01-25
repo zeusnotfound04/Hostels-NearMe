@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { uploadtoS3 } from "@/lib/action";
+import { uploadtoS3 } from "@/actions";
 
 export async function POST(req: Request): Promise<Response> {
   try {
