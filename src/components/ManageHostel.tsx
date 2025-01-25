@@ -380,7 +380,7 @@ export default function HostelManagement() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => router.push(`/admin/hostels/${hostel.id}/edit`)}
+                    onClick={() => router.push(`/test/${hostel.id}`)}   //--->`/admin/hostels/${hostel.id}/`
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
@@ -494,7 +494,7 @@ export default function HostelManagement() {
         <Button
           className="fixed bottom-6 right-6"
           size="lg"
-          onClick={() => router.push('/hostels/new')}
+          onClick={() => router.push('/admin/hostels/addHostels')}
         >
           Add New Hostel
         </Button>

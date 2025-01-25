@@ -60,3 +60,25 @@ export interface Hostel {
   createdAt: Date;
   updatedAt: Date;
 }
+
+
+
+export interface EditHostelPageProps {
+  params: {
+    hostelId: string;
+  };
+}
+
+
+export interface TestingProps{
+  params : {
+    hostelId : string
+    hostelName? : string 
+  }
+}
+
+
+export interface HostelFormProps {
+  hostelId?: string;
+  initialData?: any;
+}

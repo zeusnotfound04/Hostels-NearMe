@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { HostelFormProps } from "@/types";
 
 
 
@@ -50,10 +51,6 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
-interface HostelFormProps {
-  hostelId?: string;
-  initialData?: any;
-}
 
 export default function HostelForm({hostelId  , initialData  }: HostelFormProps) {
   const router = useRouter();
@@ -66,6 +63,14 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: '',  // Initialize with empty string
+      about: '',
+      price: 0,  // Keep as string to handle input
+      gender: '', 
+      state: '',
+      city: '',
+      hostelType: '',
+      address: '',
       ...Object.keys(facilityLabels).reduce((acc, key) => {
         acc[key] = false;
         return acc;
@@ -74,7 +79,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
         acc[key] = false;
         return acc;
       }, {} as Record<string, boolean>),
-      images: undefined,
+      images: [],
       existingImages: [],
     },
   });
@@ -83,7 +88,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
       const formattedData = {
         ...initialData,
         price: initialData.price.toString(),
-        images: undefined,
+        images: [],
         existingImages: initialData.images || [], // Store existing image URLs
       };
       form.reset(formattedData);
@@ -547,7 +552,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
         <FormControl>
           <FileUpload
             onChange={(files) => {
-              const newFiles = field.value ? [...field.value, ...files] : files;
+              const newFiles = field.value ? [...field.value, ...files] : files ||  [];
               field.onChange(newFiles.slice(0, 4));
             }}
           />
