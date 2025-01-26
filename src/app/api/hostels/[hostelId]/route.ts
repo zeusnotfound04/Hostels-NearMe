@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { HostelType, Gender } from "@prisma/client";
+import { HostelType, HostelGender } from "@prisma/client";
 
 interface RouteParams {
   params: {
@@ -78,7 +78,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
       );
     }
 
-    if (body.gender && !Object.values(Gender).includes(body.gender)) {
+    if (body.gender && !Object.values(HostelGender).includes(body.gender)) {
       return NextResponse.json(
         { error: "Invalid gender value" },
         { status: 400 }

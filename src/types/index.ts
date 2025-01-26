@@ -1,5 +1,5 @@
 import { facilityLabels, houseRulesLabels } from "@/constants/label";
-import { HostelType , Gender } from "@prisma/client";
+import { HostelType , HostelGender } from "@prisma/client";
 
 
 export type FormSchema = {
@@ -25,7 +25,7 @@ export interface Hostel {
   name: string;
   price: number;
   hostelType: HostelType;
-  gender: Gender;
+  gender: HostelGender;
   state: string;
   city: string;
   address: string;
