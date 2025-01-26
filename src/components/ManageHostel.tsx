@@ -15,86 +15,22 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select";
 import {AlertDialog,AlertDialogAction,AlertDialogCancel,AlertDialogContent,AlertDialogDescription,AlertDialogFooter,AlertDialogHeader,AlertDialogTitle,} from '@/components/ui/alert-dialog';
-
+import { amenityGroups } from '@/constants/label';
+import { customAmenityTexts } from '@/constants/label';
 import {GymIcon , WardenIcon , GeneratorIcon , GeyserIcon , GirlsIcon , BoysIcon , CCTVIcon , LocationIcon , AirConditionerIcon , ChairIcon , SecurityGuardIcon , ROWaterIcon , CleaningIcon , CoolerIcon , VegetarianMessIcon , TableIcon , PillowIcon , FoodIcon , IndoorGamesIcon , WashroomIcon , WaterSupply , BedIcon , ElectricityIcon , InvertorIcon , ParkingIcon , AlmirahIcon , WifiIcon, AvailableIcon  } from "@/components/ui/icon"
-
 
 import { Hostel } from '@/types/';
 
 // Icons
-import {Pencil,Trash2,Building2,MapPin,IndianRupee,Wifi,Utensils,Shield,Warehouse,Trees,Power,Droplet,Dumbbell,Wind,} from 'lucide-react';
-
-// Types
-enum HostelType {
-  BOYS = 'BOYS',
-  GIRLS = 'GIRLS'
-}
-
-enum Gender {
-  MALE = 'MALE',
-  FEMALE = 'FEMALE'
-}
-
-const customAmenityTexts: Record<string, string> = {
-  bed: "Comfortable Beds for Rest",
-  pillow: "Soft Pillows for Comfort",
-  table: "Study Tables for Focus",
-  chair: "Ergonomic Chairs for Support",
-  Almirah: "Spacious Almirahs for Storage",
-  attachedWashroom: "Private Washrooms for Convenience",
-  parking: "Secure Parking for Vehicles",
-  gym: "Fully Equipped Gym for Fitness",
-  indoorGames: "Indoor Games for Leisure",
-  biweeklycleaning: "Regular Cleaning for Hygiene",
-  securityGuard: "24/7 Security for Safety",
-  allDayWarden: "On-Site Warden for Assistance",
-  wiFi: "High-Speed WiFi for Access",
-  airconditioner: "Cool, Air-Conditioned Rooms",
-  cooler: "Room Coolers for Comfort",
-  geyser: "Hot Water Geysers for Convenience",
-  allDayElectricity: "Nonstop Electricity, Always Available",
-  inverterBackup: "Power Backup for Reliability",
-  generator: "Generator Backup for Emergencies",
-  waterByRO: "RO-Purified Water for Safety",
-  allDayWaterSupply: "24/7 Water Supply",
-  foodIncluded: "Delicious Meals Provided",
-  vegetarienMess: "Healthy Vegetarian Meals",
-  isNonVeg: "Tasty Non-Veg Options",
-  cctv: "CCTV Surveillance for Security",
-};
+import {Pencil,Trash2,Building2,MapPin,IndianRupee,Utensils,Shield} from 'lucide-react';
 
 
 
-const amenityGroups = {
-  basicFurniture: {
-    title: 'Basic Furniture',
-    items: ['bed', 'pillow', 'table', 'chair', 'Almirah']
-  },
-  facilities: {
-    title: 'Facilities',
-    items: ['attachedWashroom', 'parking', 'gym', 'indoorGames']
-  },
-  services: {
-    title: 'Services',
-    items: ['biweeklycleaning', 'securityGuard', 'allDayWarden']
-  },
-  comfort: {
-    title: 'Comfort & Utilities',
-    items: ['wiFi', 'airconditioner', 'cooler', 'geyser']
-  },
-  power: {
-    title: 'Power & Water',
-    items: ['allDayElectricity', 'inverterBackup', 'generator', 'waterByRO', 'allDayWaterSupply']
-  },
-  food: {
-    title: 'Food & Dining',
-    items: ['foodIncluded', 'vegetarienMess', 'isNonVeg']
-  },
-  security: {
-    title: 'Security',
-    items: ['cctv']
-  }
-};
+//To-do 
+// 1. Add the available icon
+// 2. Replace the test redirect url with the original url
+// 3. Add the Girls and Boys Icon in the hostel card
+
 
 
 const amenityIcons: Record<string, JSX.Element> = {

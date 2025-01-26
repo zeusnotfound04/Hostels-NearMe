@@ -59,3 +59,5 @@ export const requiredFields = [
       'address',
       'images'
     ];
+
+

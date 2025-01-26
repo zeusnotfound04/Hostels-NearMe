@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 
-export async function updateActiveHostelsCout() {
+export async function updateActiveHostelsCount() {
     try {
         
         const activeHostelsCount = await prisma.hostel.count({
@@ -25,3 +25,5 @@ export async function updateActiveHostelsCout() {
     }
     
 }
+
+

@@ -8,7 +8,10 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
-
+enum Gender {
+  MALE
+  FEMALE
+}
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -35,10 +38,7 @@ enum BookingStatus {
   CANCELLED
 }
 
-enum Gender {
-  MALE
-  FEMALE
-}
+
 
 
 enum HostelGender {
@@ -122,7 +122,7 @@ model AdminHostel {
 model Booking {
   id               String        @id @default(uuid())
   userId           String
-  username         String
+  username         String?
   hostelName       String 
   hostelId         String
   status           BookingStatus @default(PENDING)

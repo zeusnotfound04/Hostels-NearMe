@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { HostelType, Gender } from "@prisma/client";
+import { HostelType, HostelGender } from "@prisma/client";
 import { requiredFields } from "@/constants";
 
 
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!Object.values(Gender).includes(body.gender)) {
+    if (!Object.values(HostelGender).includes(body.gender)) {
       return NextResponse.json(
         { error: "Invalid gender value" },
         { status: 400 }
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
         name: body.name,
         about: body.about,
         price: parseFloat(body.price),
-        gender: body.gender as Gender,
+        gender: body.gender as HostelGender,
         state: body.state,
         city: body.city,
         hostelType: body.hostelType as HostelType,
@@ -151,7 +151,7 @@ export async function GET(req: NextRequest) {
 
     // Gender filter
     if (searchParams.get("gender")) {
-      filters.gender = searchParams.get("gender") as Gender;
+      filters.gender = searchParams.get("gender") as HostelGender;
     }
 
     // City filter (exact match)
