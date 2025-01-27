@@ -51,6 +51,8 @@ export const authOptions: NextAuthOptions = {
         if (!isPasswordValid) {
           throw new Error('Incorrect password');
         }
+        
+        console.log("User fetched in authorize :" , user)
 
         return user;
       },
@@ -86,6 +88,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.email = user.email;
         token.username = user.username;
+        token.role = (user as any).role;
       }
       console.log(token);
       return token;
@@ -95,6 +98,7 @@ export const authOptions: NextAuthOptions = {
         id: token.id,
         email: token.email,
         username: token.username,
+        role : token.role as string
       };
       console.log(session);
       return session;

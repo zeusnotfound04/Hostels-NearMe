@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { HostelType, HostelGender } from "@prisma/client";
 import { requiredFields } from "@/constants";
+import { updateActiveHostelsCount } from "@/utils/hostels";
 
 
 
@@ -92,6 +93,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
+
+    // await updateActiveHostelsCount();
     return NextResponse.json(
       { message: "Hostel Created Successfully", hostel },
       { status: 201 }
