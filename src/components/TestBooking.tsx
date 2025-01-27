@@ -56,6 +56,7 @@ interface testHostel{
 }
 
 export default function TestBooking( {hostelId , hostelName} : testHostel) {
+  
 
   const form = useForm < z.infer < typeof formSchema >> ({
     resolver: zodResolver(formSchema),
@@ -66,6 +67,16 @@ export default function TestBooking( {hostelId , hostelName} : testHostel) {
     try {
         const bookingData = { hostelId, hostelName ,  ...values, } 
         console.log("Booking Data" , bookingData)
+
+        const response = await axios.post("/api/bookings", bookingData);
+
+        
+        if (response.status === 201) {
+          toast.success("Booking created successfully!");
+          console.log("Booking Response:", response.data);
+        } else {
+          toast.error("Failed to create booking. Please try again.");
+        }
       
     } catch (error) {
       console.error("Form submission error", error);
