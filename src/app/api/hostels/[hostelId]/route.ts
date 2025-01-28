@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { HostelType, HostelGender } from "@prisma/client";
+import { updateActiveHostelsCount } from "@/utils/hostels";
 
 interface RouteParams {
   params: {
@@ -128,6 +129,8 @@ export async function PATCH(req: Request, { params }: RouteParams) {
         ...(body.airconditioner !== undefined && { airconditioner: body.airconditioner }),
       },
     });
+
+    await updateActiveHostelsCount(); 
 
     return NextResponse.json({
       message: "Hostel updated successfully",

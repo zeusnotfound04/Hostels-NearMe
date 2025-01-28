@@ -132,7 +132,6 @@ model Booking {
   address          String        // User's address
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
-
   user             User          @relation(fields: [userId], references: [id])
   hostel           Hostel        @relation(fields: [hostelId], references: [id])
 
