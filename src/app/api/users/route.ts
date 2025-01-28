@@ -68,10 +68,12 @@ export async function POST(req: NextRequest) {
 
     const totalUsersAfter = totalUserBefore + 1 ;
 
-    await updateAdminInsights({
-      totalUsers : totalUsersAfter,
-      newUsersThisMonth : newUsersThisMonth, 
-    })
+    console.log("Total Users Before", totalUserBefore)
+
+    // await updateAdminInsights({
+    //   totalUsers : totalUsersAfter,
+    //   newUsersThisMonth : newUsersThisMonth, 
+    // })
 
     return NextResponse.json(
       {

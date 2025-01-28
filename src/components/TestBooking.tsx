@@ -66,6 +66,7 @@ export default function TestBooking( {hostelId , hostelName} : testHostel) {
     try {
         const bookingData = { hostelId, hostelName ,  ...values, } 
         console.log("Booking Data" , bookingData)
+        
       
     } catch (error) {
       console.error("Form submission error", error);
