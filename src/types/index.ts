@@ -1,3 +1,4 @@
+import { Hostel } from '@/types/';
 import { facilityLabels, houseRulesLabels } from "@/constants/label";
 import { HostelType , HostelGender } from "@prisma/client";
 
@@ -81,4 +82,11 @@ export interface TestingProps{
 export interface HostelFormProps {
   hostelId?: string;
   initialData?: any;
+}
+
+
+export interface BookingDetailsPageProps {
+  params: {
+    bookingId: string;
+  };
 }

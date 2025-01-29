@@ -41,6 +41,13 @@ export const authOptions: NextAuthOptions = {
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
+          select : {
+            id : true,
+            email : true,
+            username : true,
+            role : true,
+            password : true
+          }
         });
 
         if (!user) {
@@ -98,7 +105,7 @@ export const authOptions: NextAuthOptions = {
         id: token.id,
         email: token.email,
         username: token.username,
-        role : token.role as string
+        role : token.role as string,
       };
       console.log(session);
       return session;

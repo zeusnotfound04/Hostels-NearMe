@@ -7,12 +7,6 @@ import { requiredFields } from "@/constants";
 import { updateActiveHostelsCount } from "@/utils/hostels";
 
 
-
-
-
-
-
-
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
