@@ -1,5 +1,5 @@
 // import  {AddHostelForm}  from "@/components/forms/AddHostelsFrom";
-import HostelManagement from "@/components/ManageHostel"
+import HostelManagement from "@/components/hostels/ManageHostel"
 
 
 function Page() {

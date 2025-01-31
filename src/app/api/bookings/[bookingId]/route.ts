@@ -24,6 +24,8 @@ export async function GET(req: Request, { params }: RouteParams) {
 
     const { bookingId } = params;
 
+  
+
     const booking = await prisma.booking.findUnique({
       where: {
         id: bookingId,
@@ -39,6 +41,7 @@ export async function GET(req: Request, { params }: RouteParams) {
       },
     });
 
+    console.log("Booking data in the backend:", booking);
     if (!booking) {
       return NextResponse.json(
         { error: "Booking not found" },

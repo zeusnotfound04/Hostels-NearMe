@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import SessionProviderWrapper from "./SessionProviderWrapper"; // Import the wrapper
+import SessionProviderWrapper from "../components/providers/SessionProviderWrapper"; // Import the Session Provider
+import ReactQueryProvider from "../components/providers/ReactQueryProvider"; // Import the React Query Provider
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Container from "@/components/Container";
-import { Toaster } from "@/components/ui/toaster"
-
-
+import Container from "@/components/ui/Container";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,16 +18,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className=""
-      >
+      <body>
         <SessionProviderWrapper>
-          <Navbar/>
+          <ReactQueryProvider>
+            <Navbar />
             <Container>
-              {children} 
-              <Toaster/>
+              {children}
+              <Toaster />
             </Container>
-          </SessionProviderWrapper>
+          </ReactQueryProvider>
+        </SessionProviderWrapper>
       </body>
     </html>
   );
