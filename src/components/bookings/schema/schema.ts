@@ -1,13 +1,19 @@
-import { z } from "zod"
+import { z } from "zod";
+import { BookingStatus , Gender } from "@/constants";
 
-// We're keeping a simple non-relational schema here.
-// IRL, you will have a schema for your data models.
-export const taskSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  status: z.string(),
-  label: z.string(),
-  priority: z.string(),
-})
+export const bookingSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string(),
+  username: z.string().nullable(),
+  hostelName: z.string(),
+  hostelId: z.string(),
+  status: z.nativeEnum(BookingStatus),
+  referenceId: z.string(),
+  phoneNumber: z.string(),
+  userGender: z.nativeEnum(Gender),
+  address: z.string(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
 
-export type Task = z.infer<typeof taskSchema>
+export type Booking = z.infer<typeof bookingSchema>;

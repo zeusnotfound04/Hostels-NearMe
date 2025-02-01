@@ -1,85 +1,54 @@
-"use client"
-import { promises as fs } from "fs"
-import path from "path"
-import { Metadata } from "next"
-import Image from "next/image"
-import { z } from "zod"
-import { useQuery } from "@tanstack/react-query"
+"use client";
 
-import { columns } from "@/components/bookings/components/columns"
-import { DataTable } from "@/components/bookings/components/data-table"
-import { taskSchema } from "@/components/bookings/schema/schema"
-
-export const metadata: Metadata = {
-  title: "Tasks",
-  description: "A task and issue tracker build using Tanstack Table.",
-}
-
-interface BookingDetailsProps {
-    bookingId: string;
-  }
+import { useQuery } from "@tanstack/react-query";
+import { bookingColumns } from "@/components/bookings/components/columns";
+import { DataTable } from "@/components/bookings/components/data-table";
 
 const fetchBookingDetails = async () => {
-    const response = await fetch(`/api/bookings`);
-    if (!response.ok) throw new Error("Failed to fetch booking details");
-    const data = await response.json();
-    console.log("Fetched Booking Data at client side:", data); // Log inside query function
-    return data;
-  };
+  const response = await fetch(`/api/bookings`);
+  if (!response.ok) throw new Error("Failed to fetch booking details");
+  const data = await response.json();
+  // Return the booking array from the response
+  return data.booking;
+};
 
+export default function ManagingBooking() {
+  const { data: bookings, isLoading, error } = useQuery({
+    queryKey: ["bookings"],
+    queryFn: fetchBookingDetails,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
 
-// // Simulate a database read for tasks.
-// async function getTasks() {
-//   const data = await fs.readFile(
-//     path.join(process.cwd(), "src/data/tasks.json")
-//   )
-
-//   const tasks = JSON.parse(data.toString())
-
-//   return z.array(taskSchema).parse(tasks)
-// }
-
-export default function ManagingBooking () {
-    const { data: allBookings, isLoading, error } = useQuery({
-        queryKey: ["bookings"], // Ensures caching per bookingId
-        queryFn: () => fetchBookingDetails(),
-        staleTime: 5 * 60 * 1000, // 5 minutes before re-fetching
-        gcTime: 10 * 60 * 1000, // 10 minutes in cache before garbage collection
-        refetchOnWindowFocus: false, // Prevents unnecessary refetching when tab is focused
-      })
-
-  return (  
+  return (
     <>
-        <div>
-            <h1>Manage Bookings</h1>
-        </div>
-      {/* <div className="md:hidden">
-        <Image
-          src="/examples/tasks-light.png"
-          width={1280}
-          height={998}
-          alt="Playground"
-          className="block dark:hidden"
-        />
-        <Image
-          src="/examples/tasks-dark.png"
-          width={1280}
-          height={998}
-          alt="Playground"
-          className="hidden dark:block"
-        />
+      <div className="p-6">
+        <h1 className="text-3xl font-bold">Manage Bookings</h1>
       </div>
-      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+
+      <div className="h-full flex-1 flex-col space-y-8 p-8">
         <div className="flex items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
             <p className="text-muted-foreground">
-              Here&apos;s a list of your tasks for this month!
+              Here&apos;s a list of your bookings for this month!
             </p>
           </div>
         </div>
-        <DataTable data={tasks} columns={columns} />
-      </div> */}
+
+        {isLoading && <p>Loading bookings...</p>}
+        {error && (
+          <p className="text-red-500">Error fetching bookings: {error.message}</p>
+        )}
+
+        {/* Only render the table when we have data */}
+        {bookings && bookings.length > 0 ? (
+          <DataTable data={bookings} columns={bookingColumns} />
+        ) : (
+          !isLoading && <p>No bookings found.</p>
+        )}
+      </div>
     </>
-  )
-}
+  );
+} 

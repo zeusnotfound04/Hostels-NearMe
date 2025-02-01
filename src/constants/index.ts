@@ -61,3 +61,15 @@ export const requiredFields = [
     ];
 
 
+
+    export enum BookingStatus {
+      PENDING = "PENDING",
+      CONFIRMED = "CONFIRMED",
+      CANCELLED = "CANCELLED",
+    }
+    
+    export enum Gender {
+      MALE = "MALE",
+      FEMALE = "FEMALE"
+    }
+    

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { labels } from "@/constants/label"
-import { taskSchema } from "@/components/bookings/schema/schema"
+import { bookingSchema } from "@/components/bookings/schema/schema"
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
@@ -28,7 +28,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = taskSchema.parse(row.original)
+  const task = bookingSchema.parse(row.original)
 
   return (
     <DropdownMenu>

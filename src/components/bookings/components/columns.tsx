@@ -5,12 +5,26 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import { labels, priorities, statuses } from "@/constants/label"
-import { Task } from "@/components/bookings/schema/schema"
+import { BookingStatus, Gender } from "@/constants/"
 import { DataTableColumnHeader } from "./data-table-column-headers"
 import { DataTableRowActions } from "./data-table-row-actions"
 
-export const columns: ColumnDef<Task>[] = [
+interface Booking {
+  id: string;
+  userId: string;
+  username?: string;
+  hostelName: string;
+  hostelId: string;
+  status: BookingStatus;
+  referenceId: string;
+  phoneNumber: string;
+  userGender: Gender;
+  address: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const bookingColumns: ColumnDef<Booking>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -35,32 +49,30 @@ export const columns: ColumnDef<Task>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: "id",
+{
+    accessorKey: "referenceId",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Task" />
+      <DataTableColumnHeader column={column} title="Reference ID" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
-    enableSorting: false,
-    enableHiding: false,
+    cell: ({ row }) => (
+      <div className="min-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">
+        {row.getValue("referenceId")}
+      </div>
+    ),
+}, 
+  {
+    accessorKey: "username",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="User" />
+    ),
+    cell: ({ row }) => <span>{row.getValue("username")}</span>,
   },
   {
-    accessorKey: "title",
+    accessorKey: "hostelName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" />
+      <DataTableColumnHeader column={column} title="Hostel Name" />
     ),
-    cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.label)
-
-      return (
-        <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("title")}
-          </span>
-        </div>
-      )
-    },
+    cell: ({ row }) => <span>{row.getValue("hostelName")}</span>,
   },
   {
     accessorKey: "status",
@@ -68,56 +80,29 @@ export const columns: ColumnDef<Task>[] = [
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      const status = statuses.find(
-        (status) => status.value === row.getValue("status")
-      )
-
-      if (!status) {
-        return null
-      }
-
-      return (
-        <div className="flex w-[100px] items-center">
-          {status.icon && (
-            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{status.label}</span>
-        </div>
-      )
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      const statusKey = row.getValue("status") as keyof typeof BookingStatus;
+      const status = BookingStatus[statusKey];
+  
+      return status ? <Badge variant="outline">{status}</Badge> : null;
     },
   },
+  
   {
-    accessorKey: "priority",
+    accessorKey: "phoneNumber",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Priority" />
+      <DataTableColumnHeader column={column} title="Phone" />
     ),
-    cell: ({ row }) => {
-      const priority = priorities.find(
-        (priority) => priority.value === row.getValue("priority")
-      )
-
-      if (!priority) {
-        return null
-      }
-
-      return (
-        <div className="flex items-center">
-          {priority.icon && (
-            <priority.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{priority.label}</span>
-        </div>
-      )
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
+    cell: ({ row }) => <span>{row.getValue("phoneNumber")}</span>,
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Created At" />
+    ),
+    cell: ({ row }) => <span>{new Date(row.getValue("createdAt")).toLocaleDateString()}</span>,
   },
   {
     id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,
   },
-]
+];
