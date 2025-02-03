@@ -33,7 +33,33 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+interface Booking {
+  id: string;
+  address: string;
+  createdAt: string;
+  updatedAt: string;
+  phoneNumber: string;
+  referenceId: string;
+  status: string;
+  hostel: {
+    id: string;
+    name: string;
+  };
+  hostelId: string;
+  hostelName: string;
+  user: {
+    id: string;
+    username: string;
+    email: string;
+  };
+  userId: string;
+  username: string;
+  userGender: string;
+}
+
+
+export function DataTable<TData, TValue>({ columns, data  }: DataTableProps<TData, TValue>) {
+
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -71,13 +97,13 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow 
                   key={headerGroup.id}
-                  className="bg-zinc-50 transition-colors hover:bg-zinc-100"
+                  className="bg-zinc-50  transition-colors hover:bg-zinc-100"
                 >
                   {headerGroup.headers.map((header) => (
                     <TableHead 
                       key={header.id} 
                       colSpan={header.colSpan}
-                      className="text-zinc-700 font-semibold py-4 px-6 whitespace-nowrap"
+                      className="text-black font-bold py-4 px-6 whitespace-nowrap"
                     >
                       {header.isPlaceholder
                         ? null

@@ -68,7 +68,7 @@ export async function GET(req:Request) {
 
 
 
-        const user = session.user as UserWithRole;
+        const user = session.user;
         console.log("USER" , user)
         const role = user.role; 
         console.log("ROLE" , role)
@@ -87,6 +87,7 @@ export async function GET(req:Request) {
                 }
             }
         })
+        console.log(booking)
 
         return NextResponse.json({booking} , {status : 200 })
     } catch (error) {

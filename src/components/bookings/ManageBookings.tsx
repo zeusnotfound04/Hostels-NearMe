@@ -3,23 +3,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { bookingColumns } from "@/components/bookings/components/columns";
 import { DataTable } from "@/components/bookings/components/data-table";
+import { useBookings } from "@/hooks/useBookings";
 
-const fetchBookingDetails = async () => {
-  const response = await fetch(`/api/bookings`);
-  if (!response.ok) throw new Error("Failed to fetch booking details");
-  const data = await response.json();
-  // Return the booking array from the response
-  return data.booking;
-};
+
 
 export default function ManagingBooking() {
-  const { data: bookings, isLoading, error } = useQuery({
-    queryKey: ["bookings"],
-    queryFn: fetchBookingDetails,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-    refetchOnWindowFocus: false,
-  });
+  const { data : bookings, isLoading, error } = useBookings();
+ 
 
   return (
     <>

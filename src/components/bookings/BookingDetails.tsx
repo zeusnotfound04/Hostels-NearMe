@@ -1,6 +1,7 @@
 "use client"
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
+import { BlurFade } from "@/components/ui/blur-fade";
 
 interface Hostel {
   name: string;
@@ -16,7 +17,7 @@ interface User {
 
 interface Booking {
   bookingId: string;
-  status: "PENDING" | "CONFIRMED" | "REJECTED" | "COMPLETED";
+  status: "PENDING" | "CONFIRMED" | "CANCELLED";
   createdAt: string;
   lastUpdatedAt: string;
   hostel: Hostel;
@@ -30,10 +31,9 @@ interface BookingDetailsProps {
 }
 
 const statusColors: Record<Booking['status'], string> = {
-  PENDING: "bg-yellow-100 text-yellow-700",
-  CONFIRMED: "bg-green-100 text-green-700",
-  REJECTED: "bg-red-100 text-red-700",
-  COMPLETED: "bg-blue-100 text-blue-700",
+  PENDING: "bg-yellow-100 text-yellow-700 border-yellow-200",
+  CONFIRMED: "bg-green-100 text-green-700 border-green-200",
+  CANCELLED: "bg-blue-100 text-blue-700 border-blue-200",
 };
 
 const fetchBookingDetails = async (bookingId: string) => {
@@ -47,8 +47,8 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ bookingId }) => {
     queryKey: ["bookings", bookingId],
     queryFn: () => fetchBookingDetails(bookingId),
     enabled: !!bookingId,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 10 * 60 * 30, // 30 minutes
+    staleTime: 1000 * 60 * 5,
+    gcTime: 10 * 60 * 30,
     refetchOnWindowFocus: false,
   });
 
@@ -61,106 +61,121 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ bookingId }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-6xl mx-auto p-10 bg-gradient-to-br from-white to-gray-50 shadow-lg rounded-3xl border border-gray-200"
+      className="max-w-6xl mx-auto p-4 sm:p-6 md:p-8 lg:p-12 bg-gradient-to-br from-white to-gray-50 shadow-xl rounded-2xl sm:rounded-3xl border border-gray-200"
     >
-      {/* Header Section */}
-      <div className="mb-10">
-        <motion.div 
+      <BlurFade delay={0.3} inView>
+        <div className="mb-6 sm:mb-8 lg:mb-12">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-200 pb-4 sm:pb-6 lg:pb-8 gap-4 sm:gap-0"
+          >
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold tracking-wide text-[#902920]">
+              Booking Details
+            </h1>
+            <span
+              className={`px-3 py-2 sm:px-4 sm:py-2 lg:px-6 lg:py-3 text-sm sm:text-base lg:text-lg font-bold rounded-full shadow-lg border ${
+                statusColors[booking.status] || "bg-gray-100 text-gray-700"
+              }`}
+            >
+              {booking.status}
+            </span>
+          </motion.div>
+          
+          <div className="mt-4 sm:mt-6 lg:mt-8">
+            <p className="text-base sm:text-lg font-medium text-gray-600">Booking Reference ID:</p>
+            <p className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 text-transparent bg-clip-text">
+              {booking.referenceId}
+            </p>
+          </div>
+          <p className="mt-2 sm:mt-3 lg:mt-4 text-sm sm:text-base text-gray-500">
+            <span className="font-semibold">Date of Booking:</span>{' '}
+            <span className="font-bold">{new Date(booking.createdAt).toLocaleString()}</span>
+          </p>
+        </div>
+      </BlurFade>
+
+      <BlurFade delay={0.3 * 2} inView>
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="flex justify-between items-center border-b pb-6"
+          transition={{ delay: 0.4 }}
+          className="mb-8 sm:mb-10 lg:mb-14"
         >
-          <h1 className="text-5xl font-bold text-[#902920]">Booking Details</h1>
-          <span
-            className={`px-5 py-2 text-base font-semibold rounded-full shadow-lg ${
-              statusColors[booking.status] || "bg-gray-100 text-gray-700"
-            }`}
-          >
-            {booking.status}
-          </span>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-4 sm:mb-6 lg:mb-10">Booking Summary</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-10">
+            <div className="p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-white to-gray-50 shadow-lg rounded-xl sm:rounded-2xl border border-gray-300 hover:shadow-xl transition-shadow duration-300">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6">Hostel Information</h3>
+              <div className="space-y-2 sm:space-y-3 lg:space-y-4">
+                <p className="text-sm sm:text-base text-gray-600">
+                  <span className="font-medium">Hostel Name:</span>{' '}
+                  <span className="font-bold text-gray-900">{booking.hostel.name}</span>
+                </p>
+                <p className="text-sm sm:text-base text-gray-600">
+                  <span className="font-medium">Hostel Address:</span>{' '}
+                  <span className="font-bold text-gray-900">{booking.hostel.address}</span>
+                </p>
+              </div>
+            </div>
+            
+            <div className="p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-white to-gray-50 shadow-lg rounded-xl sm:rounded-2xl border border-gray-300 hover:shadow-xl transition-shadow duration-300">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6">User Details</h3>
+              <div className="space-y-2 sm:space-y-3 lg:space-y-4">
+                <p className="text-sm sm:text-base text-gray-600">
+                  <span className="font-medium">Name:</span>{' '}
+                  <span className="font-bold text-gray-900">{booking.user.name}</span>
+                </p>
+                <p className="text-sm sm:text-base text-gray-600">
+                  <span className="font-medium">Gender:</span>{' '}
+                  <span className="font-bold text-gray-900">{booking.user.gender}</span>
+                </p>
+                <p className="text-sm sm:text-base text-gray-600">
+                  <span className="font-medium">Phone:</span>{' '}
+                  <span className="font-bold text-gray-900">{booking.user.phone}</span>
+                </p>
+              </div>
+            </div>
+          </div>
         </motion.div>
-        <div className="mt-6">
-          <p className="text-sm font-medium text-gray-600">Booking Reference ID:</p>
-          <p className="text-3xl font-bold text-gray-700">{booking.referenceId}</p>
-        </div>
-        <p className="mt-4 text-sm text-gray-500">Date of Booking: {new Date(booking.createdAt).toLocaleString()}</p>
-      </div>
+      </BlurFade>
 
-      {/* Booking Summary Section */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="mb-12"
-      >
-        <h2 className="text-4xl font-bold text-gray-800 mb-8">Booking Summary</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Hostel Information */}
-          <div className="p-8 bg-gradient-to-br from-white to-gray-50 shadow-md rounded-2xl border border-gray-300">
-            <h3 className="text-2xl font-semibold text-gray-700 mb-4">Hostel Information</h3>
-            <p className="text-sm text-gray-600 mb-2">Hostel Name: <span className="font-semibold">{booking.hostel.name}</span></p>
-            <p className="text-sm text-gray-600">Hostel Address: <span className="font-semibold">{booking.hostel.address}</span></p>
+      <BlurFade delay={0.3 * 2} inView>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mb-6 sm:mb-8 lg:mb-12"
+        >
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-4 sm:mb-6 lg:mb-10">Additional Details</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-10">
+            <div className="p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-white to-gray-50 shadow-lg rounded-xl sm:rounded-2xl border border-gray-300 hover:shadow-xl transition-shadow duration-300">
+              <p className="text-sm sm:text-base text-gray-600">
+                <span className="font-medium">User Address:</span>{' '}
+                <span className="font-bold text-gray-900">{booking.user.address}</span>
+              </p>
+            </div>
+            
+            <div className="p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-white to-gray-50 shadow-lg rounded-xl sm:rounded-2xl border border-gray-300 hover:shadow-xl transition-shadow duration-300">
+              <p className="text-sm sm:text-base text-gray-600">
+                <span className="font-medium">Last Updated:</span>{' '}
+                <span className="font-bold text-gray-900">{new Date(booking.lastUpdatedAt).toLocaleString()}</span>
+              </p>
+            </div>
           </div>
-          {/* User Details */}
-          <div className="p-8 bg-gradient-to-br from-white to-gray-50 shadow-md rounded-2xl border border-gray-300">
-            <h3 className="text-2xl font-semibold text-gray-700 mb-4">User Details</h3>
-            <p className="text-sm text-gray-600 mb-2">Name: <span className="font-semibold">{booking.user.name}</span></p>
-            <p className="text-sm text-gray-600 mb-2">Gender: <span className="font-semibold">{booking.user.gender}</span></p>
-            <p className="text-sm text-gray-600">Phone: <span className="font-semibold">{booking.user.phone}</span></p>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Additional Details Section */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="mb-12"
-      >
-        <h2 className="text-4xl font-bold text-gray-800 mb-8">Additional Details</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* User Address */}
-          <div className="p-8 bg-gradient-to-br from-white to-gray-50 shadow-md rounded-2xl border border-gray-300">
-            <p className="text-sm text-gray-600">User Address: <span className="font-semibold">{booking.user.address}</span></p>
-          </div>
-          {/* Last Updated */}
-          <div className="p-8 bg-gradient-to-br from-white to-gray-50 shadow-md rounded-2xl border border-gray-300">
-            <p className="text-sm text-gray-600">Last Updated: <span className="font-semibold">{new Date(booking.lastUpdatedAt).toLocaleString()}</span></p>
-          </div>
-        </div>
-        {booking.notes && (
-          <div className="mt-8 p-8 bg-gradient-to-br from-white to-gray-50 shadow-md rounded-2xl border border-gray-300">
-            <p className="text-sm text-gray-600">Notes: <span className="font-semibold">{booking.notes}</span></p>
-          </div>
-        )}
-      </motion.div>
+          
+          {booking.notes && (
+            <div className="mt-4 sm:mt-6 lg:mt-10 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-white to-gray-50 shadow-lg rounded-xl sm:rounded-2xl border border-gray-300 hover:shadow-xl transition-shadow duration-300">
+              <p className="text-sm sm:text-base text-gray-600">
+                <span className="font-medium">Notes:</span>{' '}
+                <span className="font-bold text-gray-900">{booking.notes}</span>
+              </p>
+            </div>
+          )}
+        </motion.div>
+      </BlurFade>
     </motion.div>
   );
 }
 
 export default BookingDetails;
-
-
-
-// Example usage
-// const booking = {
-//   bookingId: "BOOK12345",
-//   status: "CONFIRMED",
-//   createdAt: "2025-01-26T10:00:00Z",
-//   lastUpdatedAt: "2025-01-27T10:00:00Z",
-//   hostel: {
-//     name: "Sunrise Hostel",
-//     address: "123, Main Street, City",
-//   },
-//   user: {
-//     name: "John Doe",
-//     gender: "Male",
-//     phone: "+91 12345 67890",
-//     address: "45, Elm Road, City",
-//   },
-//   notes: "Requested early check-in.",
-// };
-
-// <BookingDetails booking={booking} />
