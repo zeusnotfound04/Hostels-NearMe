@@ -1,4 +1,5 @@
-import { Hostel } from '@/types/';
+import { use } from '@tanstack/react-query';
+
 import { facilityLabels, houseRulesLabels } from "@/constants/label";
 import { HostelType , HostelGender } from "@prisma/client";
 
@@ -88,5 +89,83 @@ export interface HostelFormProps {
 export interface BookingDetailsPageProps {
   params: {
     bookingId: string;
+  };
+}
+
+export interface Booking {
+  id: string;
+  status: "PENDING" | "CONFIRMED" | "CANCELLED";
+  createdAt: string;
+  lastUpdatedAt: string;
+  referenceId: string;
+  notes?: string;
+  hostelName? : string;
+  username? : string;
+  userGender? : string;
+  phoneNumber? : string;
+  address? : string;
+
+  hostel: {
+    id: string;
+    name: string;
+    address: string;
+
+
+  };
+  user: {
+    
+    id?: string;
+    username?: string;
+    userGender?: string;
+    email?: string;
+
+    phoneNumber?: string;
+    address?: string;
+  };
+}
+
+
+export interface BookingDetails {
+  id: string;
+  status: "PENDING" | "CONFIRMED" | "CANCELLED";
+  createdAt: string;
+  lastUpdatedAt: string;
+  referenceId: string;
+  notes?: string;
+  hostelName? : string;
+  username? : string;
+  userGender? : string;
+  phoneNumber? : string;
+  address? : string;
+
+  hostel: {
+    id: string;
+    name: string;
+    address: string;
+    airconditioner? : string;
+allDayElectricity? : string;
+allDayWarden? : string;
+allDayWaterSupply? : string;
+attachedWashroom? : string;
+bed? : string;
+cctv? : string;
+foodIncluded? : string;
+generator? : string;
+geyser? : string;
+gym? : string;
+wiFi? : string;
+hostelType? : string;
+
+
+
+  };
+  user: {
+    id?: string;
+    username?: string;
+    userGender?: string;
+    email?: string;
+    role? : string;
+    phoneNumber?: string;
+    address?: string;
   };
 }

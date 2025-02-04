@@ -29,7 +29,7 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
 
   // ✅ Handle edit navigation
   const handleEdit = () => {
-    router.push(`/admin/booking/edit/${bookingId}`);
+    router.push(`/admin/bookings/edit/${bookingId}`);
   };
 
   // ✅ Handle delete action

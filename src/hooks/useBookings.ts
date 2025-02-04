@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery , useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 const fetchBookingDetails = async () => {
   const response = await fetch(`/api/bookings`);
@@ -17,3 +18,22 @@ export const useBookings = () => {
     refetchOnWindowFocus: false,
   });
 };
+
+
+const updateBookingDetails = async ({bookingId , formData} : {bookingId : string , formData : {status : string , notes? : string}}) => {
+  const response = await axios.patch(`/api/bookings/${bookingId}`, formData, {
+    headers: { "Content-Type": "application/json" },
+  });
+  return response.data;
+}
+
+export const useUpdateBooking = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn : updateBookingDetails,
+    onSuccess : () => {
+      queryClient.invalidateQueries( { queryKey :  ["bookings"]});
+    }
+  })
+}
