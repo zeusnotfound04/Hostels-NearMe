@@ -1,8 +1,7 @@
-"use client"
-
+import AdminInsightsDashboard from "@/components/insights/Dashboard"
 
 export default function Page(){
     return <div>
-        Dashboard
+        <AdminInsightsDashboard/>
     </div>
 }

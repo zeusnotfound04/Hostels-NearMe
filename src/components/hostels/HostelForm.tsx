@@ -232,7 +232,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
                               <FormField
                                 key={key}
                                 control={form.control}
-                                name={key}    
+                                name={key as keyof FormValues}    // Typecast to keyof FormValues
                                 render={({ field }) => (
                                   <FormItem className="flex items-center space-x-4">
                                     <FormControl>
@@ -582,7 +582,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
                   <FormField
                     key={key}
                     control={form.control}
-                    name={key}
+                    name={key as keyof FormValues}    // Typecast to keyof FormValues
                     render={({ field }) => (
                       <FormItem className="flex items-center space-x-4">
                         <FormControl>

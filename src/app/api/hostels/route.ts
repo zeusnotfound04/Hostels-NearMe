@@ -5,13 +5,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { HostelType, HostelGender } from "@prisma/client";
 import { requiredFields } from "@/constants";
 import { updateActiveHostelsCount } from "@/utils/hostels";
+import { isAdmin } from "@/utils/user";
 
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    if (!session?.user?.id || !isAdmin(session.user.role) ) {
       return NextResponse.json(
         { error: "You must be logged in to create a hostel" },
         { status: 401 }

@@ -183,28 +183,28 @@ const BookingEditForm: React.FC<BookingEditFormProps> = ({ booking }) => {
         {/* Hostel Information */}
         <AnimatedSection title="Hostel Details" delay={0.2}>
           <div className="space-y-4">
-            <InfoItem icon={Home} label="Hostel Type" value={booking.hostel.hostelType} accent={true} />
-            <InfoItem icon={Users} label="Gender Type" value={booking.hostel.gender} />
+            <InfoItem icon={Home} label="Hostel Type" value={booking.hostel.hostelType as string} accent={true} />
+            <InfoItem icon={Users} label="Gender Type" value={booking.hostel.gender as string} />
             <InfoItem icon={MapPin} label="Address" value={`${booking.hostel.address}, ${booking.hostel.city}, ${booking.hostel.state}`} accent={true} />
-            <InfoItem icon={IndianRupee} label="Monthly Rent" value={`₹${booking.hostel.price.toLocaleString()}`} accent={true} />
+            <InfoItem icon={IndianRupee} label="Monthly Rent" value={`₹${booking.hostel.price.toLocaleString()}` } accent={true} />
           </div>
         </AnimatedSection>
 
         {/* Amenities Grid */}
         <AnimatedSection title="Hostel Amenities" delay={0.3}>
           <div className="grid grid-cols-2 gap-4">
-            <AmenityItem name="Air Conditioner" value={booking.hostel.airconditioner} />
-            <AmenityItem name="24/7 Electricity" value={booking.hostel.allDayElectricity} />
-            <AmenityItem name="Warden Available" value={booking.hostel.allDayWarden} />
-            <AmenityItem name="Water Supply" value={booking.hostel.allDayWaterSupply} />
-            <AmenityItem name="Attached Washroom" value={booking.hostel.attachedWashroom} />
-            <AmenityItem name="Bed Provided" value={booking.hostel.bed} />
-            <AmenityItem name="CCTV" value={booking.hostel.cctv} />
-            <AmenityItem name="Food Included" value={booking.hostel.foodIncluded} />
-            <AmenityItem name="Generator" value={booking.hostel.generator} />
-            <AmenityItem name="Geyser" value={booking.hostel.geyser} />
-            <AmenityItem name="Gym" value={booking.hostel.gym} />
-            <AmenityItem name="WiFi" value={booking.hostel.wiFi} />
+            <AmenityItem name="Air Conditioner" value={booking.hostel.airconditioner as boolean} />
+            <AmenityItem name="24/7 Electricity" value={booking.hostel.allDayElectricity as boolean} />
+            <AmenityItem name="Warden Available" value={booking.hostel.allDayWarden as boolean} />
+            <AmenityItem name="Water Supply" value={booking.hostel.allDayWaterSupply as boolean} />
+            <AmenityItem name="Attached Washroom" value={booking.hostel.attachedWashroom as boolean} />
+            <AmenityItem name="Bed Provided" value={booking.hostel.bed as boolean} />
+            <AmenityItem name="CCTV" value={booking.hostel.cctv as boolean} />
+            <AmenityItem name="Food Included" value={booking.hostel.foodIncluded as boolean} />
+            <AmenityItem name="Generator" value={booking.hostel.generator as boolean} />
+            <AmenityItem name="Geyser" value={booking.hostel.geyser as boolean} />
+            <AmenityItem name="Gym" value={booking.hostel.gym as boolean} />
+            <AmenityItem name="WiFi" value={booking.hostel.wiFi as boolean} />
           </div>
         </AnimatedSection>
 

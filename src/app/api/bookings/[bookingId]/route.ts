@@ -2,6 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isAdmin } from "@/utils/user";
 
 interface RouteParams {
   params: {
@@ -9,7 +10,7 @@ interface RouteParams {
   };
 }
 
-const isAdmin = (role: string | undefined) => role === "ADMIN";
+
 
 export async function GET(req: Request, { params }: RouteParams) {
   try {
