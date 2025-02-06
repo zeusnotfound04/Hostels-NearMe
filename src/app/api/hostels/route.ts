@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { HostelType, HostelGender } from "@prisma/client";
 import { requiredFields } from "@/constants";
-import { updateActiveHostelsCount } from "@/utils/hostels";
 import { isAdmin } from "@/utils/user";
 
 

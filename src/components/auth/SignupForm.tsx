@@ -7,6 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 // Zod schema for form validation
 const SignupSchema = z.object({
@@ -16,6 +17,7 @@ const SignupSchema = z.object({
 });
 
 export default function SignupForm() {
+  const router = useRouter();
   const [formData , setFormData]= useState({
     username: "",
     email: "",  
@@ -45,6 +47,7 @@ export default function SignupForm() {
     try {
       const response = await axios.post("/api/users", formData);
       console.log(response.data);
+      router.push("/"); 
     } catch (error: any) {
       if (error.response && error.response.status === 400) {
         setError("User already exists");

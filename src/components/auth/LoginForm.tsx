@@ -50,8 +50,9 @@ export default function LoginForm() {
         setAuthError("Invalid email or password");
       } else {
         // Successful login
-        router.push(callbackUrl);
+        
         router.refresh(); // Refresh to update authentication state
+        router.push("/");
       }
     } catch (error) {
       setAuthError("An unexpected error occurred. Please try again later.");

@@ -89,7 +89,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
         ...initialData,
         price: initialData.price.toString(),
         images: [],
-        existingImages: initialData.images || [], // Store existing image URLs
+        existingImages: initialData.images || [],
       };
       form.reset(formattedData);
     }
