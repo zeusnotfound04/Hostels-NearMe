@@ -98,6 +98,7 @@ const calculatePredictiveInsights = (data: AdminInsights) => {
 const AdminInsightsDashboard: React.FC = () => {
   const fetchInsights = async (): Promise<AdminInsights> => {
     const { data } = await axios.get('/api/insights');
+    console.log("DATA IN THE CLIENT COMPONENT" , data)
     return data;
   };
 

@@ -5,7 +5,7 @@ export default function Page() {
     return (
         <div>
             <h1>Test Component</h1>
-        {/* <ListRequestForm/> */}
+        <ListRequestForm/>
         </div>
     );
 }
