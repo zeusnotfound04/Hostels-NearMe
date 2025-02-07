@@ -51,3 +51,6 @@ export async function getUserbyEmail(email: User['email']) {
    
   }
 }
+
+
+export const isAdmin = (role: string | undefined) => role === "ADMIN";

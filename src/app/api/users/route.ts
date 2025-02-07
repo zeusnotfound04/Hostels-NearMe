@@ -4,7 +4,7 @@ import { hash } from "bcrypt";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import {startOfMonth , endOfMonth} from "date-fns"
-import { updateAdminInsights } from "@/actions/adminInsights/updateInsights";
+
 
 // Define Zod schema for request body validation
 const userSchema = z.object({

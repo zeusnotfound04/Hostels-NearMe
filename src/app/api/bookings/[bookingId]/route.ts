@@ -2,6 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isAdmin } from "@/utils/user";
 
 interface RouteParams {
   params: {
@@ -9,7 +10,7 @@ interface RouteParams {
   };
 }
 
-const isAdmin = (role: string | undefined) => role === "ADMIN";
+
 
 export async function GET(req: Request, { params }: RouteParams) {
   try {
@@ -23,6 +24,8 @@ export async function GET(req: Request, { params }: RouteParams) {
     }
 
     const { bookingId } = params;
+
+  
 
     const booking = await prisma.booking.findUnique({
       where: {
@@ -39,6 +42,7 @@ export async function GET(req: Request, { params }: RouteParams) {
       },
     });
 
+    console.log("Booking data in the backend:", booking);
     if (!booking) {
       return NextResponse.json(
         { error: "Booking not found" },

@@ -117,7 +117,7 @@ export default function TestBooking( {hostelId , hostelName} : testHostel) {
                   <PhoneInput
                     placeholder="Placeholder"
                     {...field}
-                    defaultCountry="TR"
+                    defaultCountry="IN"
                   />
                 </FormControl>
               <FormDescription>Enter your phone number.</FormDescription>

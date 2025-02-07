@@ -162,11 +162,14 @@ model AdminInsights {
 
 model ListHostelRequest {
   id               String   @id @default(uuid())
+  userId           String   // ID of the user who requested to list their hostel
   ownerName        String   // Name of the hostel owner
   contactEmail     String   // Contact email of the owner
   contactPhone     String   // Contact phone number of the owner
   hostelName       String   // Name of the hostel they want to list
-  location         String   // Location of the hostel (City/State)
+  state            String   // State where the hostel is located
+  city             String   // City where the hostel is located
+  address          String   // Address of the hostel
   message          String   // Additional details or message from the owner
   status           RequestStatus @default(PENDING) // Status of the request
   createdAt        DateTime @default(now())

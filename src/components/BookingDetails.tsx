@@ -170,3 +170,4 @@ export default BookingDetails;
 // };
 
 // <BookingDetails booking={booking} />
+

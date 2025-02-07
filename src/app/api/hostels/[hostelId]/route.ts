@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { HostelType, HostelGender } from "@prisma/client";
 import { updateActiveHostelsCount } from "@/utils/hostels";
+import { isAdmin } from "@/utils/user";
 
 interface RouteParams {
   params: {
@@ -54,7 +55,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!session?.user?.id || !isAdmin(session.user.role) ) {
       return NextResponse.json(
         { error: "Unauthorized access" },
         { status: 401 }
@@ -156,7 +157,7 @@ export async function DELETE(req: Request, { params }: RouteParams) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!session?.user?.id || !isAdmin(session.user.role)) {
       return NextResponse.json(
         { error: "Unauthorized access" },
         { status: 401 }

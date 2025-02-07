@@ -60,13 +60,18 @@ export async function POST(req:Request) {
 export async function GET(req:Request) {
 
     try {
-        const session = await getServerSession();
+        const session = await getServerSession(authOptions);
 
         if (!session?.user){
             return NextResponse.json({ error : "Unauthorized"} , { status : 401})
         }
 
-        const { role } = session.user ; 
+
+
+        const user = session.user;
+        console.log("USER" , user)
+        const role = user.role; 
+        console.log("ROLE" , role)
         if ( role !== "ADMIN") {
             return NextResponse.json({ error : "Forbidden : Access is restricted to admins"})
         }
@@ -77,12 +82,12 @@ export async function GET(req:Request) {
                 user : {
                     select : { id : true , email : true , username : true}
                 }, 
-
                 hostel : {
                     select : { id : true , name : true },
                 }
             }
         })
+        console.log(booking)
 
         return NextResponse.json({booking} , {status : 200 })
     } catch (error) {
