@@ -4,7 +4,8 @@ import ListRequestForm from "@/components/ListHostelRequest/RequestForm";
 export default function Page() {
     return (
         <div>
-        <ListRequestForm/>
+            <h1>Test Component</h1>
+        {/* <ListRequestForm/> */}
         </div>
     );
 }

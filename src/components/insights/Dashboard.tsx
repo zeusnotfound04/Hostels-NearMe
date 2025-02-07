@@ -211,7 +211,7 @@ const AdminInsightsDashboard: React.FC = () => {
         </TooltipProvider>
       </motion.div>
 
-      {/* Key Metrics Grid */}
+      
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -295,7 +295,7 @@ const AdminInsightsDashboard: React.FC = () => {
         </motion.div>
       </motion.div>
 
-      {/* Predictive Insights Section */}
+      
       {predictiveInsights && (
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
@@ -382,7 +382,7 @@ const AdminInsightsDashboard: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Charts Section */}
+      
       <motion.div 
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}

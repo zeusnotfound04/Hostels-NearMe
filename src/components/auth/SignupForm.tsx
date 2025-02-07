@@ -9,7 +9,7 @@ import { z } from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-// Zod schema for form validation
+
 const SignupSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters long"),
   email: z.string().email("Invalid email address"),

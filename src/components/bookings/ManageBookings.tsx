@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { bookingColumns } from "@/components/bookings/components/columns";
 import { DataTable } from "@/components/bookings/components/data-table";
 import { useBookings } from "@/hooks/useBookings";
