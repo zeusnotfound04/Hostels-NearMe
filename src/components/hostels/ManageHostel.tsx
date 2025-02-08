@@ -13,12 +13,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select";
-import {AlertDialog,AlertDialogAction,AlertDialogCancel,AlertDialogContent,AlertDialogDescription,AlertDialogFooter,AlertDialogHeader,AlertDialogTitle,} from '@/components/ui/alert-dialog';
+import { Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select";
+import { AlertDialog,AlertDialogAction,AlertDialogCancel, AlertDialogContent , AlertDialogDescription , AlertDialogFooter,AlertDialogHeader,AlertDialogTitle,} from '@/components/ui/alert-dialog';
 import { amenityGroups } from '@/constants/label';
 import { customAmenityTexts } from '@/constants/label';
 import {GymIcon , WardenIcon , GeneratorIcon , GeyserIcon , GirlsIcon , BoysIcon , CCTVIcon , LocationIcon , AirConditionerIcon , ChairIcon , SecurityGuardIcon , ROWaterIcon , CleaningIcon , CoolerIcon , VegetarianMessIcon , TableIcon , PillowIcon , FoodIcon , IndoorGamesIcon , WashroomIcon , WaterSupply , BedIcon , ElectricityIcon , InvertorIcon , ParkingIcon , AlmirahIcon , WifiIcon, AvailableIcon  } from "@/components/ui/icon"
-
+// import useHostelManagement from '@/hooks/useHostelManagement';
 import { Hostel } from '@/types/';
 
 // Icons
@@ -26,10 +26,7 @@ import {Pencil,Trash2,Building2,MapPin,IndianRupee,Utensils,Shield} from 'lucide
 
 
 
-//To-do 
-// 1. Add the available icon
-// 2. Replace the test redirect url with the original url
-// 3. Add the Girls and Boys Icon in the hostel card
+
 
 
 
@@ -66,7 +63,7 @@ export default function HostelManagement() {
     const router = useRouter();
     const { data: session, status } = useSession();
     const { toast } = useToast();
-    
+
     // State
     const [hostels, setHostels] = useState<Hostel[]>([]);
     const [loading, setLoading] = useState(false);
@@ -80,8 +77,10 @@ export default function HostelManagement() {
     const [maxPrice, setMaxPrice] = useState('');
     const [selectedType, setSelectedType] = useState<string>("all");
     const [priceRange, setPriceRange] = useState<string>("all");
-  
-    // Debounced search effect
+
+  console.log("Hostels :" , hostels)
+
+    // Debounced search effec21 
     useEffect(() => {
       const timer = setTimeout(() => {
         fetchHostels();
@@ -291,24 +290,50 @@ export default function HostelManagement() {
         {/* Hostels Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {hostels.map((hostel) => (
-            <Card key={hostel.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-            <CardHeader className="p-0">
-              <div className="relative h-48 w-full">
-                <Image
-                  src={hostel.images[0] || '/placeholder-hostel.jpg'}
-                  alt={hostel.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
+          <Card key={hostel.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+          <CardHeader className="p-0">
+            <div className="relative h-64"> {/* Increased height */}
+              <div className="absolute inset-0 grid grid-cols-2 gap-0.5 bg-gray-200"> {/* Added gap and background */}
+                {hostel.images.slice(0, 4).map((image, index) => (
+                  <div 
+                    key={index} 
+                    className="relative w-full h-32 overflow-hidden" // Fixed height for each image container
+                  >
+                    <Image
+                      src={image || '/placeholder-hostel.jpg'}
+                      alt={`${hostel.name} - Image ${index + 1}`}
+                      fill
+                      className="object-cover hover:scale-110 transition-transform duration-200"
+                      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 16vw"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="absolute top-2 right-2 flex gap-2 z-10">
                 {!hostel.isAvailable && (
-                  <Badge variant="destructive" className="absolute top-2 right-2">
+                  <Badge variant="destructive">
                     Not Available
                   </Badge>
                 )}
+                <Badge 
+                  variant="secondary"
+                  className="flex items-center gap-1 bg-white/90 backdrop-blur-sm"
+                >
+                  {hostel.gender === 'GIRLS' ? (
+                    <>
+                      <GirlsIcon width={18} height={18} />
+                      <span>Girls Hostel</span>
+                    </>
+                  ) : (
+                    <>
+                      <BoysIcon width={18} height={18} />
+                      <span>Boys Hostel</span>
+                    </>
+                  )}
+                </Badge>
               </div>
-            </CardHeader>
-
+            </div>
+          </CardHeader>
             <CardContent className="p-4 space-y-4">
               <div className="flex justify-between items-start">
                 <CardTitle className="text-xl">{hostel.name}</CardTitle>
@@ -316,7 +341,7 @@ export default function HostelManagement() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => router.push(`/test/${hostel.id}`)}   //--->`/admin/hostels/${hostel.id}/`
+                    onClick={() => router.push(`/admin/hostels/${hostel.id}/edit`)}   //--->`/admin/booking/${hostel.id}/`
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>

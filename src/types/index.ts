@@ -171,3 +171,28 @@ export type AdminInsights = {
   cancellationRate: number;
   avgBookingsPerUser: number;
 };
+
+
+export interface FilterState {
+  search : string;
+  type : string;
+  city : string;
+  priceRange : {
+    min : string;
+    max : string;
+  },
+  page : number;
+}
+
+
+export interface HostelState {
+  data: Hostel[];
+  totalPages: number;
+  loading: boolean;
+  error: string | null;
+}
+
+export interface DeleteDialogState {
+  isOpen: boolean;
+  hostel: Hostel | null;
+}

@@ -30,6 +30,7 @@ export async function GET(){
                 
             )
         }
+        console.log("Insights in the backend :", insights)
 
 
         return NextResponse.json({...insights , timestamp : new Date().toISOString() , status : 200});

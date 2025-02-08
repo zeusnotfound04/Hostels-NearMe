@@ -1,7 +1,7 @@
 
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import HostelForm from "@/components/HostelForm";
+import HostelForm from "@/components/hostels/HostelForm";
 import { EditHostelPageProps } from "@/types";
 import  { getHostel } from "@/actions"
  
