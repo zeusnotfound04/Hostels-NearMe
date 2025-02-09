@@ -46,6 +46,7 @@
     "date-fns": "^4.1.0",
     "formidable": "^3.5.2",
     "framer-motion": "^11.16.2",
+    "ioredis": "^5.5.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.469.0",
     "next": "15.0.4",
@@ -72,7 +73,7 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^20",
+    "@types/node": "^20.17.17",
     "@types/node-cron": "^3.0.11",
     "@types/react": "^19",
     "@types/react-dom": "^19",

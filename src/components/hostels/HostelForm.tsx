@@ -573,7 +573,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
       </FormItem>
     )}
   />
-  */
+  
 
 
               <FormLabel>House Rules</FormLabel>

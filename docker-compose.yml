@@ -13,3 +13,13 @@ services:
     volumes:
       - ./db-docker:/var/lib/postgresql/data  # Use relative path for better compatibility
     restart: always
+
+  redis:
+    image: redis:latest
+    container_name: redisDB
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - ./redis-data:/data
+    restart: always

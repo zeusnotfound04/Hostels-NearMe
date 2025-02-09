@@ -24,9 +24,8 @@ import { Hostel } from '@/types/';
 // Icons
 import {Pencil,Trash2,Building2,MapPin,IndianRupee,Utensils,Shield} from 'lucide-react';
 
-
-
-
+import { Skeleton } from '@/components/ui/skeleton';
+import {SkeletonGrid} from '@/components/hostels/components/skeleton';
 
 
 
@@ -224,12 +223,20 @@ export default function HostelManagement() {
   
     if (loading && hostels.length === 0) {
       return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+        <div className="container mx-auto p-4 space-y-6">
+          {/* Search and Filter Controls Skeletons */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <h1>Loading....</h1>
+            {/* <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" /> */}
+          </div>
+          
+          {/* Hostel Cards Grid Skeleton */}
+          <SkeletonGrid />
         </div>
       );
     }
-  
     return (
       <div className="container mx-auto p-4 space-y-6">
         {/* Search and Filter Controls */}
@@ -286,7 +293,7 @@ export default function HostelManagement() {
             </Button>
           </div>
         )}
-  
+    
         {/* Hostels Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {hostels.map((hostel) => (

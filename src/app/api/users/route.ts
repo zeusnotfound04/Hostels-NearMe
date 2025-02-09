@@ -41,7 +41,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const totalUserBefore = await prisma.user.count();
 
     // Hash the password
     const hashedPassword = await hash(password, 10);
@@ -54,26 +53,9 @@ export async function POST(req: NextRequest) {
       password: hashedPassword,
     });
 
-    const startOfThisMonth = startOfMonth(new Date())
-    const endOfThisMonth = endOfMonth(new Date())
 
-    const newUsersThisMonth = await prisma.user.count({
-      where : {
-        createdAt : {
-          gte : startOfThisMonth,
-          lte : endOfThisMonth, 
-        }
-      }
-    })
 
-    const totalUsersAfter = totalUserBefore + 1 ;
 
-    console.log("Total Users Before", totalUserBefore)
-
-    // await updateAdminInsights({
-    //   totalUsers : totalUsersAfter,
-    //   newUsersThisMonth : newUsersThisMonth, 
-    // })
 
     return NextResponse.json(
       {
