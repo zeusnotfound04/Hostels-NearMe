@@ -1,20 +1,16 @@
 import Redis from 'ioredis';
+import { RateLimiterRedis} from 'rate-limiter-flexible';
 
-const redis = new Redis(process.env.REDIS_URL!);
+const redisClient = new Redis({
+    host: "127.0.0.1",
+    port: 6379,
+    enableOfflineQueue: false,
 
+})
 
-export async function rateLimit(key: string, maxRequests: number, duration: number) {
-    
-
-    const current = await redis.incr(key);
-
-    if (current === 1) {
-        await redis.expire(key, 60);
-    }
-
-    return current > 5;  // we will allow max 5 requests per minute
-
-}
-
-
-export default redis;
+export const rateLimiter = new RateLimiterRedis({
+    storeClient: redisClient,
+    keyPrefix: "login_fail_ip",
+    points: 5,
+    duration: 60,
+})

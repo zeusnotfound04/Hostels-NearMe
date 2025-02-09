@@ -53,6 +53,7 @@
     "next-auth": "^4.24.11",
     "node-cron": "^3.0.3",
     "prisma": "^6.0.1",
+    "rate-limiter-flexible": "^5.0.5",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
