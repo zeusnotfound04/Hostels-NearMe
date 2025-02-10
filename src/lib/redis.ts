@@ -8,7 +8,7 @@ const redisClient = new Redis({
 
 })
 
-export const rateLimiter = new RateLimiterRedis({
+export const rateLimit = new RateLimiterRedis({
     storeClient: redisClient,
     keyPrefix: "login_fail_ip",
     points: 5,

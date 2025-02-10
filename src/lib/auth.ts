@@ -1,4 +1,4 @@
-import redis, { rateLimit } from "@/lib/redis";
+// import  { rateLimit } from "@/lib/redis";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./prisma";
@@ -39,14 +39,14 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Email and password are required');
         }
 
-        const ip = req?.headers?.["x-client"] || "unknown";
-        const key = `login_attempt_${ip}`;
+        // const ip = req?.headers?.["x-client"] || "unknown";
+        // const key = `login_attempt_${ip}`;
 
-        const isAllowed = await rateLimit(key, 5, 60);
+        // // const isAllowed = await rateLimit(key, 5, 60);
 
-        if (!isAllowed) {
-          throw new Error('Too many login attempts');
-        }
+        // if (!isAllowed) {
+        //   throw new Error('Too many login attempts');
+        // }
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
