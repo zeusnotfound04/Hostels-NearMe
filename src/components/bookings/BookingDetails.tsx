@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { BlurFade } from "@/components/ui/blur-fade";
+import { BookingDetailsSkeleton } from "@/components/bookings/components/skeleton";
 
 interface Hostel {
   name: string;
@@ -52,7 +53,7 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ bookingId }) => {
     refetchOnWindowFocus: false,
   });
 
-  if (isLoading) return <p className="text-gray-700">Loading...</p>;
+  if (isLoading) return <BookingDetailsSkeleton />;
   if (error) return <p className="text-red-600">Error loading booking details.</p>;
   if (!booking) return <p className="text-gray-700">No booking found.</p>;
 

@@ -27,12 +27,11 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
   const booking = bookingSchema.parse(row.original);
   const bookingId = booking.id;
 
-  // ✅ Handle edit navigation
+  
   const handleEdit = () => {
     router.push(`/admin/bookings/edit/${bookingId}`);
   };
 
-  // ✅ Handle delete action
   const handleDelete = () => {
     deleteBooking.mutate(bookingId);
   };

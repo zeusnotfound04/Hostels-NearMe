@@ -16,6 +16,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+
 import {
   Table,
   TableBody,
@@ -28,10 +29,9 @@ import {
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
+import { DataTableSkeleton } from "./skeleton";
+
+
 
 interface Booking {
   id: string;
@@ -58,8 +58,11 @@ interface Booking {
 }
 
 
-export function DataTable<TData, TValue>({ columns, data  }: DataTableProps<TData, TValue>) {
-
+export function DataTable<TData, TValue>({ 
+  columns, 
+  data, 
+  isLoading = false 
+}: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -87,6 +90,10 @@ export function DataTable<TData, TValue>({ columns, data  }: DataTableProps<TDat
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  if (isLoading) {
+    return <DataTableSkeleton columns={columns} />;
+  }
+
   return (
     <div className="space-y-4">
       <DataTableToolbar table={table} />
@@ -97,7 +104,7 @@ export function DataTable<TData, TValue>({ columns, data  }: DataTableProps<TDat
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow 
                   key={headerGroup.id}
-                  className="bg-zinc-50  transition-colors hover:bg-zinc-100"
+                  className="bg-zinc-50 transition-colors hover:bg-zinc-100"
                 >
                   {headerGroup.headers.map((header) => (
                     <TableHead 
