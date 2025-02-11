@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials.password) {
           throw new Error('Email and password are required');
         }
-
+          
         // const ip = req?.headers?.["x-client"] || "unknown";
         // const key = `login_attempt_${ip}`;
 

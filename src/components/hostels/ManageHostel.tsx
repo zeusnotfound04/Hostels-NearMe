@@ -79,7 +79,7 @@ export default function HostelManagement() {
 
   console.log("Hostels :" , hostels)
 
-    // Debounced search effec21 
+  
     useEffect(() => {
       const timer = setTimeout(() => {
         fetchHostels();
