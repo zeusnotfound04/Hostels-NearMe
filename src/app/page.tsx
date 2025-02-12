@@ -6,6 +6,9 @@ import { HostelSearch } from "@/components/home/HostelSearch";
 import { getServerSession } from "next-auth";
 import { CalenderIcon } from "@/components/ui/icon";
 import { StepBooking } from "@/components/home/StepBooking";
+import { PromiseSection } from "@/components/home/PromiseSection";
+import {MissionVisionSection} from "@/components/home/VissionCard";
+import Testimonials from "@/components/home/Testimonials";
 
 export default async function  Home() {
   const session = await getServerSession();
@@ -19,6 +22,10 @@ export default async function  Home() {
    
 
       <StepBooking/>
+      <PromiseSection/>
+      <Testimonials/>
+      <MissionVisionSection/>
+
     <div>
       </div>
              <h1>Welcome sir</h1>

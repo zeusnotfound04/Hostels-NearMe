@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Container from "@/components/ui/Container";
 import { Toaster } from "@/components/ui/toaster";
+import Footer from "@/components/ui/Footer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,6 +27,7 @@ export default function RootLayout({
               {children}
               <Toaster />
             </Container>
+            <Footer/>
           </ReactQueryProvider>
         </SessionProviderWrapper>
       </body>

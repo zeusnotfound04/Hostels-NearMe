@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           message: "Validation error",
-          errors: error.errors, // Zod provides detailed error messages
+          errors: error.errors, 
         },
         { status: 400 }
       );

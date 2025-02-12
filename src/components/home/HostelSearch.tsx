@@ -43,7 +43,7 @@ export function HostelSearch() {
             className="w-full outline-none text-gray-700 text-lg" />
         </div>
 
-        <div className='border-l border-gray-200 px-4 flex items-center'>
+        <div className='border-l border-gray-400 px-4 flex items-center'>
           <HostelIcon />
           <Select defaultValue="SINGLE">
             <SelectTrigger className="w-full border-none shadow-none focus:ring-0">
@@ -57,7 +57,7 @@ export function HostelSearch() {
           </Select>
         </div>
 
-        <div className="border-l border-gray-200 px-6 flex items-center min-w-[200px]">
+        <div className="border-l border-gray-400 px-6 flex items-center min-w-[200px]">
           <div className="w-6 h-6 ">
             <BoysIcon />
           </div>
