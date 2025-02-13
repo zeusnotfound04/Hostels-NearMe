@@ -8,7 +8,7 @@ import { CalenderIcon } from "@/components/ui/icon";
 import { StepBooking } from "@/components/home/StepBooking";
 import { PromiseSection } from "@/components/home/PromiseSection";
 import {MissionVisionSection} from "@/components/home/VissionCard";
-import Testimonials from "@/components/home/Testimonials";
+import {Testimonials} from "@/components/home/Testimonials";
 
 export default async function  Home() {
   const session = await getServerSession();
