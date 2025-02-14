@@ -153,9 +153,13 @@ export async function PATCH(req: Request, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(req: Request, { params }: RouteParams) {
+export async function DELETE(req: Request,  { params }: RouteParams) {
   try {
+    console.log("Inside delete")    
+
     const session = await getServerSession(authOptions);
+
+    const {hostelId} = await params;
     
     if (!session?.user?.id || !isAdmin(session.user.role)) {
       return NextResponse.json(
@@ -164,14 +168,16 @@ export async function DELETE(req: Request, { params }: RouteParams) {
       );
     }
 
-    if (!params.hostelId) {
+
+
+
+    if (!hostelId) {
       return NextResponse.json(
         { error: "Hostel ID is required" },
         { status: 400 }
       );
     }
 
-    const {hostelId} = params
 
     const deletedHostel = await prisma.hostel.delete({
       where: {
@@ -185,6 +191,7 @@ export async function DELETE(req: Request, { params }: RouteParams) {
     }, { status: 200 });
 
   } catch (error) {
+    console.log("Chud gye GURU")
     console.error("Error deleting hostel:", error);
     if (error instanceof Error) {
       return NextResponse.json(

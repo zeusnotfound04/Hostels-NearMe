@@ -10,15 +10,15 @@ export function Testimonials() {
   return (
     <div className="container mx-auto px-4 py-16 relative">
       {/* Left side arrows */}
-      <Image src={ArrowL1} alt="Arrow 1" width={150} height={150} className="absolute -left-20 top-40 hidden md:block" />
-      <Image src={ArrowL2} alt="Arrow 2" width={150} height={150} className="absolute left-20 top-80 hidden md:block" />
+      <Image src={ArrowL1} alt="Arrow 1" width={150} height={150} className="absolute -left-[10rem] top-[5rem] hidden md:block" />
+      <Image src={ArrowL2} alt="Arrow 2" width={150} height={150} className="absolute rotate-180 -left-[10rem]  top-[35rem] hidden md:block" />
       
       {/* Center arrow */}
-      <Image src={BigArrow} alt="Big Arrow" width={150} height={150} className="absolute left-1/2 -translate-x-1/2 top-20 hidden md:block" />
+      <Image src={BigArrow} alt="Big Arrow" width={90} height={90} className="absolute left-[12rem]  -translate-x-1/2 top-[7rem] hidden md:block" />
       
       {/* Right side arrows */}
-      <Image src={ArrowR1} alt="Arrow 3" width={150} height={150} className="absolute -right-20 top-40 hidden md:block" />
-      <Image src={ArrowR2} alt="Arrow 4" width={150} height={150} className="absolute right-20 top-80 hidden md:block" />
+      <Image src={ArrowR1} alt="Arrow 3" width={150} height={150} className="absolute rotate-180 -right-[10rem] top-[1rem] hidden md:block" />
+      <Image src={ArrowR2} alt="Arrow 4" width={150} height={150} className="absolute -right-[10rem] top-[35rem] hidden md:block" />
 
       <div className="text-center mb-12">
         <h2 className="text-4xl md:text-5xl font-bold mb-2">Don't Just Take Our Word for It</h2>

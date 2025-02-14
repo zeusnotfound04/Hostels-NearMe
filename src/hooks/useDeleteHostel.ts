@@ -6,6 +6,7 @@ interface DeleteResponse {
 }
 
 const deleteHostel = async (hostelId : string) : Promise<DeleteResponse> => {
+    console.log("Deleting hostel with id: ", hostelId);
     const response = await axios.delete(`/api/hostels/${hostelId}`);
     return response.data;
 }
