@@ -7,8 +7,9 @@ import { getServerSession } from "next-auth";
 import { CalenderIcon } from "@/components/ui/icon";
 import { StepBooking } from "@/components/home/StepBooking";
 import { PromiseSection } from "@/components/home/PromiseSection";
-import {MissionVisionSection} from "@/components/home/VissionCard";
+import MissionVisionCards from "@/components/home/VissionCard";
 import {Testimonials} from "@/components/home/Testimonials";
+import { HostelListing } from "@/components/home/HostelListing";
 
 export default async function  Home() {
   const session = await getServerSession();
@@ -20,11 +21,12 @@ export default async function  Home() {
       <div className="z-10 w-full max-w-6xl items-center justify-between font-sans text-sm ">
           <HostelSearch />
    
-
+  <HostelListing/>
       <StepBooking/>
+    
       <PromiseSection/>
       <Testimonials/>
-      <MissionVisionSection/>
+      <MissionVisionCards/>
 
     <div>
       </div>

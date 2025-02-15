@@ -1,9 +1,8 @@
 import { useRef, useState, useMemo } from "react";
 import Image from "next/image";
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { MapPin, Wind, Bath, Coffee, Wifi, Camera, BatteryCharging, Dumbbell, Gamepad2, ShieldCheck, ParkingSquare, Utensils, Droplet } from 'lucide-react';
-import { LocationIcon } from "@/components/ui/icon";
-import { Hostel } from "@/types";
+import { LocationIcon , AirConditionerIcon , VegetarianMessIcon , WashroomIcon , WifiIcon , CCTVIcon , ElectricityIcon , GymIcon , IndoorGamesIcon , SecurityGuardIcon , ParkingIcon , FoodIcon , ROWaterIcon} from "@/components/ui/icon";
+import { Hostel  } from "@/types";
 
 const springConfig = {
   damping: 30,
@@ -26,18 +25,18 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
   const springScale = useSpring(1, springConfig);
 
   const amenities = useMemo(() => [
-    { label: 'AC & Non AC', show: hostel.airconditioner || hostel.cooler, icon: <Wind className="w-4 h-4" /> },
-    { label: 'Veg Only', show: !hostel.isNonVeg, icon: <Coffee className="w-4 h-4" /> },
-    { label: 'Attached Washroom', show: hostel.attachedWashroom, icon: <Bath className="w-4 h-4" /> },
-    { label: 'WiFi', show: hostel.wiFi, icon: <Wifi className="w-4 h-4" /> },
-    { label: 'CCTV', show: hostel.cctv, icon: <Camera className="w-4 h-4" /> },
-    { label: 'Power Backup', show: hostel.inverterBackup || hostel.generator, icon: <BatteryCharging className="w-4 h-4" /> },
-    { label: 'Gym', show: hostel.gym, icon: <Dumbbell className="w-4 h-4" /> },
-    { label: 'Indoor Games', show: hostel.indoorGames, icon: <Gamepad2 className="w-4 h-4" /> },
-    { label: 'Security Guard', show: hostel.securityGuard, icon: <ShieldCheck className="w-4 h-4" /> },
-    { label: 'Parking', show: hostel.parking, icon: <ParkingSquare className="w-4 h-4" /> },
-    { label: 'Food Included', show: hostel.foodIncluded, icon: <Utensils className="w-4 h-4" /> },
-    { label: 'RO Water', show: hostel.waterByRO, icon: <Droplet className="w-4 h-4" /> }
+    { label: 'AC & Non AC', show: hostel.airconditioner || hostel.cooler, icon: <AirConditionerIcon  width={30} height={30} color="black" /> },
+    { label: 'Veg Only', show: !hostel.isNonVeg, icon: <VegetarianMessIcon  width={24} height={24}  color="black" /> },
+    { label: 'Attached Washroom', show: hostel.attachedWashroom, icon: <WashroomIcon  width={24} height={24} color="black"/> },
+    { label: 'WiFi', show: hostel.wiFi, icon: <WifiIcon  width={24} height={24}  color="black" /> },
+    { label: 'CCTV', show: hostel.cctv, icon: <CCTVIcon  width={24} height={24}  color="black" /> },
+    { label: 'Power Backup', show: hostel.inverterBackup || hostel.generator, icon: <ElectricityIcon  width={24} height={24} color="black" /> },
+    { label: 'Gym', show: hostel.gym, icon: <GymIcon  width={24} height={24} color="black" /> },
+    { label: 'Indoor Games', show: hostel.indoorGames, icon: <IndoorGamesIcon  width={24} height={24}  color="black"/> },
+    { label: 'Security Guard', show: hostel.securityGuard, icon: <SecurityGuardIcon  width={24} height={24} color="black"  /> },
+    { label: 'Parking', show: hostel.parking, icon: <ParkingIcon  width={24} height={24} color="black" /> },
+    { label: 'Food Included', show: hostel.foodIncluded, icon: <FoodIcon  width={20} height={20}  /> },
+    { label: 'RO Water', show: hostel.waterByRO, icon: <ROWaterIcon  width={24} height={24} color="black" /> }
   ].filter(amenity => amenity.show), [hostel]);
 
   const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -132,10 +131,10 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
       
       <div className="p-6">
         <h3 className="text-xl font-bold mb-1 text-gray-800 line-clamp-1">{hostel.name}</h3>
-        <p className="text-sm text-gray-600 mb-2">{hostel.hostelType} | {hostel.gender} Hostel</p>
+      
         
         <div className="flex items-start text-gray-700 mb-4">
-          <MapPin className="w-5 h-5 mr-2 text-red-500 flex-shrink-0 mt-0.5" />
+          <LocationIcon className="w-5 h-5 mr-2 text-red-500 flex-shrink-0 mt-0.5" />
           <span className="text-sm line-clamp-2">{`${hostel.address}, ${hostel.city}, ${hostel.state}`}</span>
         </div> 
         
@@ -144,7 +143,7 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
             {amenities.map((amenity, index) => (
               <div 
                 key={index}
-                className="flex items-center bg-gray-50 px-3 py-1.5 rounded-full text-xs font-medium text-gray-700 border border-gray-100 hover:bg-gray-100 transition-colors"
+                className="flex items-center bg-gray-50 px-3 py-1.5 rounded-full text-xs font-medium text-gray-700 border border-[#902920]  transition-colors"
               >
                 <span className="text-blue-500 mr-1.5">{amenity.icon}</span>
                 {amenity.label}

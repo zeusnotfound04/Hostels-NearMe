@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import FooterBG from "../../../public/icons/FooterBG.png"
 
 const Footer = () => {
   return (
@@ -17,7 +18,7 @@ const Footer = () => {
       <div className="absolute top-0 left-0 right-0 container mx-auto px-4">
         <div className="relative">
           <Image 
-            src="/images/buildings.png" 
+            src=""
             alt="City buildings" 
             width={1200} 
             height={150}

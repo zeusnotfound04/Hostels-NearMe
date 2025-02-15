@@ -79,8 +79,8 @@ export function HostelSearch() {
       </div>
     </div>
     <div className="items-center mt-12 flex space-x-1 justify-center">
-      <CalenderIcon/>   
-      <h2 className="text-">Free Cancellation & Flexible Booking available</h2>
+      <CalenderIcon color='black'/>   
+      <h2 className="text-"> <span className=' font-bold'>Free Cancellation</span> & <span className='font-bold'>Flexible Booking</span> available</h2>
       </div>
     </div>
   )

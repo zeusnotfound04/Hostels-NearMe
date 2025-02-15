@@ -1,4 +1,4 @@
-import { HostelCard } from "@/components/home/HostelCard";
+
 import { HostelListing } from "@/components/home/HostelListing";
 import ListRequestForm from "@/components/ListHostelRequest/RequestForm";
 
