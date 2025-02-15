@@ -26,7 +26,7 @@ export function HostelSearch() {
 
       <div className='relative z-10'>
         <h1 className="text-3xl font-bold mb-2 text-white">
-          Welcome to Hostels Near Me
+          Welcome to Hostelsnearme
         </h1>
         <p className="text-white text-xl italic mb-12">
           Your Ultimate Hostel-Hunting Wingman!
