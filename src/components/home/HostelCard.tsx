@@ -1,8 +1,8 @@
 import { useRef, useState, useMemo } from "react";
 import Image from "next/image";
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { LocationIcon , AirConditionerIcon , VegetarianMessIcon , WashroomIcon , WifiIcon , CCTVIcon , ElectricityIcon , GymIcon , IndoorGamesIcon , SecurityGuardIcon , ParkingIcon , FoodIcon , ROWaterIcon} from "@/components/ui/icon";
-import { Hostel  } from "@/types";
+import { LocationIcon, AirConditionerIcon, VegetarianMessIcon, WashroomIcon, WifiIcon, CCTVIcon, ElectricityIcon, GymIcon, IndoorGamesIcon, SecurityGuardIcon, ParkingIcon, FoodIcon, ROWaterIcon } from "@/components/ui/icon";
+import { Hostel } from "@/types";
 
 const springConfig = {
   damping: 30,
@@ -25,18 +25,18 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
   const springScale = useSpring(1, springConfig);
 
   const amenities = useMemo(() => [
-    { label: 'AC & Non AC', show: hostel.airconditioner || hostel.cooler, icon: <AirConditionerIcon  width={30} height={30} color="black" /> },
-    { label: 'Veg Only', show: !hostel.isNonVeg, icon: <VegetarianMessIcon  width={24} height={24}  color="black" /> },
-    { label: 'Attached Washroom', show: hostel.attachedWashroom, icon: <WashroomIcon  width={24} height={24} color="black"/> },
-    { label: 'WiFi', show: hostel.wiFi, icon: <WifiIcon  width={24} height={24}  color="black" /> },
-    { label: 'CCTV', show: hostel.cctv, icon: <CCTVIcon  width={24} height={24}  color="black" /> },
-    { label: 'Power Backup', show: hostel.inverterBackup || hostel.generator, icon: <ElectricityIcon  width={24} height={24} color="black" /> },
-    { label: 'Gym', show: hostel.gym, icon: <GymIcon  width={24} height={24} color="black" /> },
-    { label: 'Indoor Games', show: hostel.indoorGames, icon: <IndoorGamesIcon  width={24} height={24}  color="black"/> },
-    { label: 'Security Guard', show: hostel.securityGuard, icon: <SecurityGuardIcon  width={24} height={24} color="black"  /> },
-    { label: 'Parking', show: hostel.parking, icon: <ParkingIcon  width={24} height={24} color="black" /> },
-    { label: 'Food Included', show: hostel.foodIncluded, icon: <FoodIcon  width={20} height={20}  /> },
-    { label: 'RO Water', show: hostel.waterByRO, icon: <ROWaterIcon  width={24} height={24} color="black" /> }
+    { label: 'AC & Non AC', show: hostel.airconditioner || hostel.cooler, icon: <AirConditionerIcon width={20} height={20} color="black" /> },
+    { label: 'Veg Only', show: !hostel.isNonVeg, icon: <VegetarianMessIcon width={20} height={20} color="black" /> },
+    { label: 'Attached Washroom', show: hostel.attachedWashroom, icon: <WashroomIcon width={20} height={20} color="black"/> },
+    { label: 'WiFi', show: hostel.wiFi, icon: <WifiIcon width={20} height={20} color="black" /> },
+    { label: 'CCTV', show: hostel.cctv, icon: <CCTVIcon width={20} height={20} color="black" /> },
+    { label: 'Power Backup', show: hostel.inverterBackup || hostel.generator, icon: <ElectricityIcon width={20} height={20} color="black" /> },
+    { label: 'Gym', show: hostel.gym, icon: <GymIcon width={20} height={20} color="black" /> },
+    { label: 'Indoor Games', show: hostel.indoorGames, icon: <IndoorGamesIcon width={20} height={20} color="black"/> },
+    { label: 'Security Guard', show: hostel.securityGuard, icon: <SecurityGuardIcon width={20} height={20} color="black" /> },
+    { label: 'Parking', show: hostel.parking, icon: <ParkingIcon width={20} height={20} color="black" /> },
+    { label: 'Food Included', show: hostel.foodIncluded, icon: <FoodIcon width={20} height={20} /> },
+    { label: 'RO Water', show: hostel.waterByRO, icon: <ROWaterIcon width={20} height={20} color="black" /> }
   ].filter(amenity => amenity.show), [hostel]);
 
   const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -69,7 +69,7 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
   return (
     <motion.div
       ref={cardRef}
-      className="flex-shrink-0 w-[320px] sm:w-[300px] md:w-full bg-white rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl [perspective:1200px]"
+      className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-full bg-white rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl [perspective:1200px]"
       onMouseMove={handleMouse}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -80,13 +80,13 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
         transformStyle: "preserve-3d"
       }}
     >
-      <div className="relative h-60 w-full">
+      <div className="relative h-48 sm:h-60 w-full">
         {images.length > 0 ? (
           <Image
             src={images[currentImage]}
             alt={`${hostel.name} - Image ${currentImage + 1}`}
             fill
-            sizes="(max-width: 768px) 320px, 100%"
+            sizes="(max-width: 768px) 280px, (max-width: 1024px) 320px, 100%"
             priority={currentImage === 0}
             className="object-cover transition-opacity duration-300"
           />
@@ -129,41 +129,38 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
         )}
       </div>
       
-      <div className="p-6">
-        <h3 className="text-xl sm:text-lg font-bold mb-1 text-gray-800 line-clamp-1">{hostel.name}</h3>
+      <div className="p-4 sm:p-6">
+        <h3 className="text-lg sm:text-xl font-bold mb-1 text-gray-800 line-clamp-1">{hostel.name}</h3>
       
-        
-        <div className="flex items-start text-gray-700 mb-4">
-          <LocationIcon className="w-5 h-5 mr-2 text-red-500 flex-shrink-0 mt-0.5" />
-          <span className="text-sm sm:text-xs line-clamp-2">{`${hostel.address}, ${hostel.city}, ${hostel.state}`}</span>
+        <div className="flex items-start text-gray-700 mb-3 sm:mb-4">
+          <LocationIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 text-red-500 flex-shrink-0 mt-0.5" />
+          <span className="text-xs sm:text-sm line-clamp-2">{`${hostel.address}, ${hostel.city}, ${hostel.state}`}</span>
         </div> 
         
-
         {amenities.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
             {amenities.map((amenity, index) => (
               <div 
                 key={index}
-                className="flex items-center bg-gray-50 px-3 py-1.5 rounded-full text-xs sm:text-[10px] font-medium text-gray-700 border border-[#902920]  transition-colors"
+                className="flex items-center bg-gray-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium text-gray-700 border border-[#902920] transition-colors"
               >
-                <span className="text-blue-500 mr-1.5">{amenity.icon}</span>
+                <span className="text-blue-500 mr-1 sm:mr-1.5">{amenity.icon}</span>
                 {amenity.label}
               </div>
             ))}
           </div>
         )}
         
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+        <div className="flex items-center justify-between mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100">
           <div>
-            <span className="text-2xl sm:text-xl font-bold text-gray-900">₹{hostel.price.toLocaleString()}</span>
-            <span className="text-gray-600 text-sm ml-1">/month</span>
+            <span className="text-xl sm:text-2xl font-bold text-gray-900">₹{hostel.price.toLocaleString()}</span>
+            <span className="text-gray-600 text-xs sm:text-sm ml-1">/month</span>
             <br />
-            <span className="text-gray-600 text-sm ml-1">Starting from</span>
-            
+            <span className="text-gray-600 text-xs sm:text-sm">Starting from</span>
           </div>
           <a
             href={`/book/${hostel.id}`}
-            className="bg-[#F10000] text-white px-6 py-2.5 rounded-lg font-bold hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-sm hover:shadow-md focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+            className="bg-[#F10000] text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-bold hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-sm hover:shadow-md focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
           >
             Book Now
           </a>
