@@ -2,18 +2,15 @@ import { createUserWithAccount, getUserbyEmail } from "@/utils/user";
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcrypt";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
-import {startOfMonth , endOfMonth} from "date-fns"
 
 
-// Define Zod schema for request body validation
+
 const userSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-// Define a TypeScript type for user creation based on Zod schema
 type UserRequestBody = z.infer<typeof userSchema>;
 
 export async function POST(req: NextRequest) {

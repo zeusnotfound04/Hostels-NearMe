@@ -5,51 +5,60 @@ import { Hostel } from "@/types";
 
 export function HostelListing() {
   const { data, isLoading, error } = useFetchHostels({ page: 1 }, 3);
-  console.log("This this Raw data", data);
   const hostels = data?.hostels || [];
-  console.log("This is the Hostel Log", hostels);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (!data || !data.hostels || data.hostels.length === 0) return <p>No hostels available</p>;
+  if (isLoading) return (
+    <div className="container mx-auto px-4 py-12 flex justify-center items-center">
+      <p className="text-lg">Loading...</p>
+    </div>
+  );
+
+  if (!data || !data.hostels || data.hostels.length === 0) return (
+    <div className="container mx-auto px-4 py-12 flex justify-center items-center">
+      <p className="text-lg">No hostels available</p>
+    </div>
+  );
 
   if (error) {
     console.error(error);
-    return <p>Failed to load hostels</p>;
+    return (
+      <div className="container mx-auto px-4 py-12 flex justify-center items-center">
+        <p className="text-lg text-red-500">Failed to load hostels</p>
+      </div>
+    );
   }
 
   return (
     <div className="bg-white min-h-screen">
-      <div className="container mx-auto px-4 py-12">
-        <div className="text-left mb-12">
-          <h1 className="text-4xl md:text-4xl font-bold mb-4 bg-gradient-to-r text-black bg-clip-text">
+      <div className="container mx-auto px-4 py-8 sm:py-12">
+        <div className="text-left mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2 sm:mb-4 text-black">
             Discover Our Finest Stays
           </h1>
-          <p className="text-lg md:text-lg text-black max-w-2xl">
+          <p className="text-base sm:text-lg text-black max-w-2xl">
             Discover hostels designed for comfort and convenience, tailored just for you.
           </p>
         </div>
 
-        <div className="md:hidden -mx-4 px-4">
-          <div className="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory scrollbar-hide">
-            {hostels.length > 0 ? (
-              hostels.map((hostel: Hostel) => (
-                <div key={hostel.id} className="snap-center flex-shrink-0 w-[300px]">
-                  <HostelCard hostel={hostel} />
-                </div>
-              ))
-            ) : (
-              <p className="text-center text-gray-500 w-full">No hostels available</p>
-            )}
+        {/* Mobile Horizontal Scroll */}
+        <div className="md:hidden overflow-x-auto -mx-4">
+          <div className="flex px-4 gap-4 pb-6 snap-x snap-mandatory scrollbar-hide">
+            {hostels.map((hostel: Hostel) => (
+              <div 
+                key={hostel.id} 
+                className="snap-center flex-shrink-0 w-[280px] sm:w-[320px]"
+              >
+                <HostelCard hostel={hostel} />
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Desktop Grid Layout */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {hostels.length > 0 ? (
-            hostels.map((hostel) => <HostelCard key={hostel.id} hostel={hostel} />)
-          ) : (
-            <p className="text-center text-gray-500 col-span-full">No hostels available</p>
-          )}
+        <div className="hidden md:grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+          {hostels.map((hostel) => (
+            <HostelCard key={hostel.id} hostel={hostel} />
+          ))}
         </div>
       </div>
     </div>

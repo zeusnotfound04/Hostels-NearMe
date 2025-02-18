@@ -45,7 +45,7 @@
     "country-state-city": "^3.2.1",
     "date-fns": "^4.1.0",
     "formidable": "^3.5.2",
-    "framer-motion": "^11.16.2",
+    "framer-motion": "^11.18.2",
     "ioredis": "^5.5.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.469.0",

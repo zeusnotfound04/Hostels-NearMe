@@ -69,7 +69,7 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
   return (
     <motion.div
       ref={cardRef}
-      className="flex-shrink-0 w-[320px] md:w-full bg-white rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl [perspective:1200px]"
+      className="flex-shrink-0 w-[320px] sm:w-[300px] md:w-full bg-white rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl [perspective:1200px]"
       onMouseMove={handleMouse}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -130,20 +130,21 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
       </div>
       
       <div className="p-6">
-        <h3 className="text-xl font-bold mb-1 text-gray-800 line-clamp-1">{hostel.name}</h3>
+        <h3 className="text-xl sm:text-lg font-bold mb-1 text-gray-800 line-clamp-1">{hostel.name}</h3>
       
         
         <div className="flex items-start text-gray-700 mb-4">
           <LocationIcon className="w-5 h-5 mr-2 text-red-500 flex-shrink-0 mt-0.5" />
-          <span className="text-sm line-clamp-2">{`${hostel.address}, ${hostel.city}, ${hostel.state}`}</span>
+          <span className="text-sm sm:text-xs line-clamp-2">{`${hostel.address}, ${hostel.city}, ${hostel.state}`}</span>
         </div> 
         
+
         {amenities.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
             {amenities.map((amenity, index) => (
               <div 
                 key={index}
-                className="flex items-center bg-gray-50 px-3 py-1.5 rounded-full text-xs font-medium text-gray-700 border border-[#902920]  transition-colors"
+                className="flex items-center bg-gray-50 px-3 py-1.5 rounded-full text-xs sm:text-[10px] font-medium text-gray-700 border border-[#902920]  transition-colors"
               >
                 <span className="text-blue-500 mr-1.5">{amenity.icon}</span>
                 {amenity.label}
@@ -154,7 +155,7 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
         
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
           <div>
-            <span className="text-2xl font-bold text-gray-900">₹{hostel.price.toLocaleString()}</span>
+            <span className="text-2xl sm:text-xl font-bold text-gray-900">₹{hostel.price.toLocaleString()}</span>
             <span className="text-gray-600 text-sm ml-1">/month</span>
             <br />
             <span className="text-gray-600 text-sm ml-1">Starting from</span>
