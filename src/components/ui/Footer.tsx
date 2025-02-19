@@ -5,6 +5,7 @@ import FooterBG from "../../../public/icons/FooterBG.png"
 
 const Footer = () => {
   return (
+    // <div className=' absolute w-full bottom-0'>
     <footer className="relative bg-[#8B3131] text-white pt-32 md:pt-40">
       {/* V-shaped slope using two rotated rectangles */}
       <div className="absolute top-0 left-0 right-0 h-32 md:h-40 overflow-hidden">
@@ -117,6 +118,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
+    // </div>
   );
 };
 

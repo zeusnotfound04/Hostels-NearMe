@@ -10,6 +10,10 @@ import { PromiseSection } from "@/components/home/PromiseSection";
 import MissionVisionCards from "@/components/home/VissionCard";
 import {Testimonials} from "@/components/home/Testimonials";
 import { HostelListing } from "@/components/home/HostelListing";
+import HomeText from "@/components/home/HomeText";
+import Footer from "@/components/ui/Footer";  
+
+
 
 export default async function  Home() {
   const session = await getServerSession();
@@ -20,6 +24,7 @@ export default async function  Home() {
      
       <div className="z-10 w-full max-w-6xl items-center justify-between font-sans text-sm ">
           <HostelSearch />
+          <HomeText/>
    
   <HostelListing/>
       <StepBooking/>
@@ -35,6 +40,7 @@ export default async function  Home() {
        
     </div>
     <Link href="/admin"> Open My Admin</Link>
+    
   
     </main>
   );
