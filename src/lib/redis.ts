@@ -13,4 +13,4 @@ export const rateLimit = new RateLimiterRedis({
     keyPrefix: "login_fail_ip",
     points: 5,
     duration: 60,
-})
+});
