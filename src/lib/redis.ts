@@ -6,7 +6,7 @@ const redisClient = new Redis({
     port: 6379,
     enableOfflineQueue: false,
 
-})
+});
 
 export const rateLimit = new RateLimiterRedis({
     storeClient: redisClient,
