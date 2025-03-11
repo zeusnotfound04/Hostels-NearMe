@@ -7,7 +7,7 @@ const redisClient = new Redis({
     enableOfflineQueue: false,
 
 });
-// Rate limit function here .....
+// Rate limit function here
 export const rateLimit = new RateLimiterRedis({
     storeClient: redisClient,
     keyPrefix: "login_fail_ip",
