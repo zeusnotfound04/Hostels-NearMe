@@ -3,12 +3,16 @@ import { useState } from "react";
 import Image from "next/image";
 import logo from "../../public/logo/logo.jpg";
 import { RiAccountCircleFill } from "react-icons/ri";
+import { useSession } from "next-auth/react";
 
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data : session , status} = useSession()
 
+  
   return (
+
     <nav className="w-full px-4 md:px-12 py-4 shadow-md bg-white sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo Section */}
