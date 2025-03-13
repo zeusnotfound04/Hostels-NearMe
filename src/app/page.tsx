@@ -1,47 +1,35 @@
+"use client";
 
-import UserGreetText from "@/components/ui/UserGreetText";
-import Image from "next/image";
-import Link from "next/link";
-import { HostelSearch } from "@/components/home/HostelSearch";
-import { getServerSession } from "next-auth";
-import { CalenderIcon } from "@/components/ui/icon";
+import { useSession } from "next-auth/react";
+import {HostelSearch} from "@/components/home/HostelSearch";
 import { StepBooking } from "@/components/home/StepBooking";
 import { PromiseSection } from "@/components/home/PromiseSection";
 import MissionVisionCards from "@/components/home/VissionCard";
-import {Testimonials} from "@/components/home/Testimonials";
+import { Testimonials } from "@/components/home/Testimonials";
 import { HostelListing } from "@/components/home/HostelListing";
 import HomeText from "@/components/home/HomeText";
-import Footer from "@/components/ui/Footer";  
+import Link from "next/link";
+
+export default function Home() {
+  const { data: session, status } = useSession();
+
+  console.log(session);
+  console.log(status);
 
 
-
-export default async function  Home() {
-  const session = await getServerSession();
- 
-
+  console.log(session?.user.role)
   return (
-    <main className="flex min-h-screen flex-col items-center p-2"> 
-     
-      <div className="z-10 w-full max-w-6xl items-center justify-between font-sans text-sm ">
-          <HostelSearch />
-          <HomeText/>
-   
-  <HostelListing/>
-      <StepBooking/>
-    
-      <PromiseSection/>
-      <Testimonials/>
-      <MissionVisionCards/>
-
-    <div>
+    <main className="flex min-h-screen flex-col items-center p-2">
+      <div className="z-10 w-full max-w-6xl items-center justify-between font-sans text-sm">
+        <HostelSearch />
+        <HomeText />
+        <HostelListing />
+        <StepBooking />
+        <PromiseSection />
+        <Testimonials />
+        <MissionVisionCards />
       </div>
-             <h1>Welcome sir</h1>
-            <pre>{JSON.stringify(session)}</pre>
-       
-    </div>
-    <Link href="/admin"> Open My Admin</Link>
-    
-  
+      <Link href="/admin">Open My Admin</Link>
     </main>
   );
 }
