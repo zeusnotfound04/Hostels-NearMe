@@ -40,17 +40,16 @@ enum BookingStatus {
 
 
 
-
-enum HostelGender {
-  BOYS
-  GIRLS
- 
-}
-
 enum HostelType {
   SINGLE
   SHARED
   DORMITORY
+}
+
+
+enum HostelGender {
+  BOYS
+  GIRLS
 }
 
 model Hostel { 
