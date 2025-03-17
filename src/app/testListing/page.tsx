@@ -1,13 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, Loader2 } from "lucide-react";
 import { GenderIcon, BedIcon, SharingIcon, SortingIcon, NextIcon } from "@/components/ui/icon";
 import Image from "next/image";
 import { HostelCard } from "./HostelCard";
 import { useFetchHostels } from "@/hooks/useFetchHostels";
 import FacilityIcon from "../../../public/icons/Facility.png";
-import { Hostel } from "@prisma/client";
+import { Hostel } from "@/types/index";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const filterOptions = [
   { id: 1, name: "Gender", icon: <GenderIcon className="w-4 h-4" /> },
@@ -23,9 +24,7 @@ export default function Page() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p className="text-gray-500 text-lg">Loading hostels...</p>
-      </div>
+      <LoadingScreen/>
     );
   }
 
@@ -70,9 +69,9 @@ export default function Page() {
         </Button>
       </div>
 
-      {/* Centered text at the bottom */}
-      <div className="text-center mt-10 text-gray-600 text-xl">
-        <p>Made in India. For the World</p>
+
+      <div className="text-center mt-10 font-bold text-gray-600 text-xl">
+        <p>Made in <span className="text-red-900">India</span>. For the <span className="text-red-900">World</span></p>
       </div>
     </div>
   );
