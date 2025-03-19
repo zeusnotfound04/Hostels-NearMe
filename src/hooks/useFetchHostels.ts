@@ -52,7 +52,7 @@ const fetchHostels = async (params: FetchHostelParams): Promise<HostelResponse> 
     }
 };
 
-// 🔹 Custom Hook to Fetch Hostels
+// Todo - Need to add onError 
 export function useFetchHostels(params: FetchHostelParams, limit?: number) {
     const debouncedSearch = useDebounce(params.search || "", 500);
 

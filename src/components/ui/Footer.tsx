@@ -18,13 +18,13 @@ const Footer = () => {
       {/* Buildings on top of sloped area */}
       <div className="absolute top-0 left-0 right-0 container mx-auto px-4">
         <div className="relative">
-          <Image 
-            src=""
+          {/* <Image 
+            src={null}
             alt="City buildings" 
             width={1200} 
             height={150}
             className="w-full h-auto object-contain"
-          />
+          /> */}
         </div>
       </div>
       
