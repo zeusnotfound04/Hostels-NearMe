@@ -112,7 +112,6 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     console.log('Received search params:', Object.fromEntries(searchParams));
 
-
     const page = parseInt(searchParams.get("page") ?? "1");
     const limit = parseInt(searchParams.get("limit") ?? "10");
     const skip = (page - 1) * limit;
@@ -197,26 +196,36 @@ export async function GET(req: NextRequest) {
       }
     });
 
-    console.log('Applied filters:', JSON.stringify(filters, null, 2));
+    // Handle sorting
+    let orderBy: any[] = [
+      { isAvailable: 'desc' }, // Default: Show available hostels first
+      { createdAt: 'desc' }    // Default: Then sort by creation date
+    ];
 
+    // If sortBy and sortOrder are provided, use them as the primary sort
+    const sortBy = searchParams.get("sortBy");
+    const sortOrder = searchParams.get("sortOrder") || 'asc';
     
+    if (sortBy) {
+      // Replace the default sorting with the requested sorting
+      orderBy = [{ [sortBy]: sortOrder.toLowerCase() }];
+      
+      // Still keep isAvailable sorting as a secondary criterion
+      orderBy.push({ isAvailable: 'desc' });
+    }
+
+    console.log('Applied filters:', JSON.stringify(filters, null, 2));
+    console.log('Applied sorting:', JSON.stringify(orderBy, null, 2));
+
     const total = await prisma.hostel.count({
       where: filters,
     });
 
-   
     const hostels = await prisma.hostel.findMany({
       where: filters,
       skip,
       take: limit,
-      orderBy: [
-        {
-          isAvailable: 'desc' // Show available hostels first
-        },
-        {
-          createdAt: 'desc' // Then sort by creation date
-        }
-      ],
+      orderBy,
       select: {
         id: true,
         name: true,
@@ -261,16 +270,14 @@ export async function GET(req: NextRequest) {
 
     console.log(`Found ${hostels.length} hostels out of ${total} total`);
 
-    
+    // Match the response structure expected by the frontend hook
     return NextResponse.json({
       hostels,
       pagination: {
-        total,
-        page,
-        limit,
+        totalItems: total,
+        currentPage: page,
         totalPages: Math.ceil(total / limit),
-      },
-      filters: Object.fromEntries(searchParams), // Include applied filters in response
+      }
     });
 
   } catch (error) {

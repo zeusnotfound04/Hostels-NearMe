@@ -58,7 +58,7 @@ export interface Hostel {
   updatedAt: Date;
 }
 
-export interface EditHostelPageProps {
+export interface ParentHostelPageProps {
   params: {
     hostelId: string;
   };
@@ -75,6 +75,7 @@ export interface HostelFormProps {
   hostelId?: string;
   initialData?: any;
 }
+
 
 export interface BookingDetailsPageProps {
   params: {
@@ -195,4 +196,33 @@ export interface HostelState {
 export interface DeleteDialogState {
   isOpen: boolean;
   hostel: Hostel | null;
+}
+
+
+export interface HostelPageProps{
+  hostelId?: string;
+  hostel : Hostel
+}
+
+
+
+export interface FetchHostelParams {
+  page: number;
+  limit?: number;
+  search?: string;
+  city?: string;
+  gender?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sortBy?: string; 
+  sortOrder?: "asc" | "desc"; 
+}
+
+export interface HostelResponse {
+  hostels: Hostel[];
+  pagination: {
+      totalPages: number;
+      currentPage: number;
+      totalItems: number;
+  };
 }

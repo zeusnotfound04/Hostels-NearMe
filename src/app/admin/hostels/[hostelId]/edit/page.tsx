@@ -1,8 +1,8 @@
 
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import HostelForm from "@/components/hostels/HostelForm";
-import { EditHostelPageProps } from "@/types";
+import HostelForm from "@/components/adminHostels/HostelForm";
+import {   ParentHostelPageProps } from "@/types";
 import  { getHostel } from "@/actions"
  
 
@@ -14,12 +14,15 @@ export const metadata: Metadata = {
 
    
 
-export default async function EditHostelPage({ params }: EditHostelPageProps) {
-  const hostel = await getHostel(params.hostelId);
+export default async function EditHostelPage({ params }: ParentHostelPageProps) {
+  const { hostelId } = await params;
+    
+  const hostel = await getHostel(hostelId);
 
   if (!hostel) {
     notFound();
   }
+
 
   return (
     <div className="container mx-auto py-10">

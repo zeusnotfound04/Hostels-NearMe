@@ -81,7 +81,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-import { SkeletonGrid } from "@/components/hostels/components/skeleton";
+import { SkeletonGrid } from "@/components/adminHostels/components/skeleton";
 import { useFetchHostels } from "@/hooks/useFetchHostels";
 import { useDeleteHostel } from "@/hooks/useDeleteHostel";
 

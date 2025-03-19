@@ -5,9 +5,11 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { LocationIcon, FemaleIcon, AirConditionerIcon, VegetarianMessIcon, WashroomIcon, WifiIcon, CCTVIcon, ElectricityIcon, GymIcon, IndoorGamesIcon, SecurityGuardIcon, ParkingIcon, FoodIcon, ROWaterIcon, MaleIcon } from "@/components/ui/icon";
 import { Hostel } from "@/types";
+import { useRouter } from "next/navigation";
 
 export const HostelCard = ({ hostel }: { hostel: Hostel }) => {
   const [currentImage, setCurrentImage] = useState(0);
+  const router = useRouter();
   
   const cycleImage = (direction: number) => {
     if (!Array.isArray(hostel.images) || hostel.images.length === 0) return;
@@ -136,7 +138,12 @@ export const HostelCard = ({ hostel }: { hostel: Hostel }) => {
                 <p className="font-bold text-xl md:text-2xl text-black">₹{hostel.price}/-</p>
                 <p className="font-light text-xs text-gray-600">Starting From</p>
               </div>
-              <Button className="bg-[#f10000] hover:bg-[#d10000] text-white rounded-md h-10 px-4 shadow-sm transition-colors">
+              <Button 
+                  className="bg-[#f10000] hover:bg-[#d10000] text-white rounded-md h-10 px-4 shadow-sm transition-colors"
+                  onClick={() =>
+                    router.push(`/hostels/${hostel.id}`)
+                  }
+              >
                 <span className="font-bold text-sm">Book Now</span>
               </Button>
             </div>
