@@ -8,7 +8,35 @@
     HelpCircle,
     Timer,
   } from "lucide-react"
-
+import { 
+  AirConditionerIcon, 
+  FemaleIcon, 
+  LocationIcon, 
+  MaleIcon, 
+  ParkingIcon, 
+  VegetarianMessIcon, 
+  WashroomIcon,
+  AlmirahIcon,
+  CCTVIcon,
+  ChairIcon,
+  CoolerIcon,
+  InvertorIcon,
+  CleaningIcon,
+  ElectricityIcon,
+  GeneratorIcon,
+  GeyserIcon,
+  IndoorGamesIcon,
+  PillowIcon,
+  ROWaterIcon,
+  SecurityGuardIcon,
+  TableIcon,
+  WifiIcon,
+  FoodIcon,
+  BedIcon,
+  WaterSupply,
+  GymIcon,
+  WardenIcon
+} from "@/components/ui/icon";
 
 
 
@@ -169,3 +197,31 @@ export const facilityLabels: Record<string, string> = {
       icon: ArrowUp,
     },
   ]
+
+
+
+  export const facilityIcons = [
+    { property: "wiFi", icon: <WifiIcon className="w-6 h-6" />, name: "Free Wi-fi" },
+    { property: "attachedWashroom", icon: <WashroomIcon className="w-6 h-6" />, name: "Attached Washroom" },
+    { property: "airconditioner", icon: <AirConditionerIcon className="w-6 h-6" />, name: "AC Rooms" },
+    { property: "parking", icon: <ParkingIcon className="w-6 h-6" />, name: "Bicycle Parking" },
+    { property: "Almirah", icon: <AlmirahIcon className="w-6 h-6" />, name: "Almirah" },
+    { property: "cctv", icon: <CCTVIcon className="w-6 h-6" />, name: "CCTV" },
+    { property: "chair", icon: <ChairIcon className="w-6 h-6" />, name: "Chair" },
+    { property: "cooler", icon: <CoolerIcon className="w-6 h-6" />, name: "Cooler" },
+    { property: "inverterBackup", icon: <InvertorIcon className="w-6 h-6" />, name: "Inverter Backup" },
+    { property: "biweeklycleaning", icon: <CleaningIcon className="w-6 h-6" />, name: "Biweekly Cleaning" },
+    { property: "allDayElectricity", icon: <ElectricityIcon className="w-6 h-6" />, name: "24/7 Electricity" },
+    { property: "generator", icon: <GeneratorIcon className="w-6 h-6" />, name: "Generator" },
+    { property: "geyser", icon: <GeyserIcon className="w-6 h-6" />, name: "Geyser" },
+    { property: "indoorGames", icon: <IndoorGamesIcon className="w-6 h-6" />, name: "Indoor Games" },
+    { property: "pillow", icon: <PillowIcon className="w-6 h-6" />, name: "Pillow" },
+    { property: "waterByRO", icon: <ROWaterIcon className="w-6 h-6" />, name: "RO Water" },
+    { property: "securityGuard", icon: <SecurityGuardIcon className="w-6 h-6" />, name: "Security Guard" },
+    { property: "table", icon: <TableIcon className="w-6 h-6" />, name: "Table" },
+    { property: "foodIncluded", icon: <FoodIcon className="w-6 h-6" />, name: "Food Included" },
+    { property: "bed", icon: <BedIcon className="w-6 h-6" />, name: "Bed" },
+    { property: "allDayWaterSupply", icon: <WaterSupply className="w-6 h-6" />, name: "24/7 Water Supply" },
+    { property: "gym", icon: <GymIcon className="w-6 h-6" />, name: "Gym" },
+    { property: "allDayWarden", icon: <WardenIcon className="w-6 h-6" />, name: "24/7 Warden" },
+  ];

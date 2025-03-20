@@ -159,7 +159,7 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
             <span className="text-gray-600 text-xs sm:text-sm">Starting from</span>
           </div>
           <a
-            href={`/book/${hostel.id}`}
+            href={`/hostels/${hostel.id}`}
             className="bg-[#F10000] text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-bold hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-sm hover:shadow-md focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
           >
             Book Now

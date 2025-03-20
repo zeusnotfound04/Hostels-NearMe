@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 
 
 const SignupSchema = z.object({
+  name: z.string().min(3, "Username must be at least 3 characters long"),
   username: z.string().min(3, "Username must be at least 3 characters long"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
@@ -19,6 +20,7 @@ const SignupSchema = z.object({
 export default function SignupForm() {
   const router = useRouter();
   const [formData , setFormData]= useState({
+    name : "",
     username: "",
     email: "",  
     password: "",
@@ -47,7 +49,7 @@ export default function SignupForm() {
     try {
       const response = await axios.post("/api/users", formData);
       console.log(response.data);
-      router.push("/"); 
+      router.push("/login"); 
     } catch (error: any) {
       if (error.response && error.response.status === 400) {
         setError("User already exists");
@@ -70,6 +72,20 @@ export default function SignupForm() {
         </p>
 
         <form className="my-8" onSubmit={handleSubmit}>
+
+        <LabelInputContainer className="mb-4">
+            <Label htmlFor="username">Name</Label>
+            <Input
+              id="name"
+              name="name"
+              placeholder="Aryaman Mehrotra"
+              value={formData.name}
+              onChange={handleChange}
+              type="text"
+              required
+            />
+          </LabelInputContainer>
+
           <LabelInputContainer className="mb-4">
             <Label htmlFor="username">Username</Label>
             <Input

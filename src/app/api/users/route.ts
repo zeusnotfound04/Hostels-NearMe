@@ -6,6 +6,7 @@ import { z } from "zod";
 
 
 const userSchema = z.object({
+  name: z.string().min(3, "Username must be at least 3 characters"),
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
     // Validate the request body using Zod
     const parsedBody = userSchema.parse(body);
 
-    const { username, email, password } = parsedBody;
+    const { name, username, email, password } = parsedBody;
     console.log(parsedBody)
 
     // Check if user already exists
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
 
     // Create new user
     const newUser = await createUserWithAccount({
+      name,
       username,
       email,
       password: hashedPassword,

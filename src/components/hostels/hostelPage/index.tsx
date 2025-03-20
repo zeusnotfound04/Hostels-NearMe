@@ -1,66 +1,20 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  AirConditionerIcon, 
+import {  
   FemaleIcon, 
   LocationIcon, 
   MaleIcon, 
-  ParkingIcon, 
   VegetarianMessIcon, 
-  WashroomIcon,
-  AlmirahIcon,
-  CCTVIcon,
-  ChairIcon,
-  CoolerIcon,
-  InvertorIcon,
-  CleaningIcon,
-  ElectricityIcon,
-  GeneratorIcon,
-  GeyserIcon,
-  IndoorGamesIcon,
-  PillowIcon,
-  ROWaterIcon,
-  SecurityGuardIcon,
-  TableIcon,
-  WifiIcon,
-  FoodIcon,
-  BedIcon,
-  WaterSupply,
-  GymIcon,
-  WardenIcon
 } from "@/components/ui/icon";
 import { Separator } from "@/components/ui/separator";
 import { HostelPageProps } from "@/types";
 import Image from "next/image";
 import BookingForm from "./bookingForm";
+import { facilityIcons } from "@/constants/label";
+
+
 
 export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
-  // Dynamic facilities mapping based on hostel properties
-  const facilityIcons = [
-    { property: "wiFi", icon: <WifiIcon className="w-6 h-6" />, name: "Free Wi-fi" },
-    { property: "attachedWashroom", icon: <WashroomIcon className="w-6 h-6" />, name: "Attached Washroom" },
-    { property: "airconditioner", icon: <AirConditionerIcon className="w-6 h-6" />, name: "AC Rooms" },
-    { property: "parking", icon: <ParkingIcon className="w-6 h-6" />, name: "Bicycle Parking" },
-    { property: "Almirah", icon: <AlmirahIcon className="w-6 h-6" />, name: "Almirah" },
-    { property: "cctv", icon: <CCTVIcon className="w-6 h-6" />, name: "CCTV" },
-    { property: "chair", icon: <ChairIcon className="w-6 h-6" />, name: "Chair" },
-    { property: "cooler", icon: <CoolerIcon className="w-6 h-6" />, name: "Cooler" },
-    { property: "inverterBackup", icon: <InvertorIcon className="w-6 h-6" />, name: "Inverter Backup" },
-    { property: "biweeklycleaning", icon: <CleaningIcon className="w-6 h-6" />, name: "Biweekly Cleaning" },
-    { property: "allDayElectricity", icon: <ElectricityIcon className="w-6 h-6" />, name: "24/7 Electricity" },
-    { property: "generator", icon: <GeneratorIcon className="w-6 h-6" />, name: "Generator" },
-    { property: "geyser", icon: <GeyserIcon className="w-6 h-6" />, name: "Geyser" },
-    { property: "indoorGames", icon: <IndoorGamesIcon className="w-6 h-6" />, name: "Indoor Games" },
-    { property: "pillow", icon: <PillowIcon className="w-6 h-6" />, name: "Pillow" },
-    { property: "waterByRO", icon: <ROWaterIcon className="w-6 h-6" />, name: "RO Water" },
-    { property: "securityGuard", icon: <SecurityGuardIcon className="w-6 h-6" />, name: "Security Guard" },
-    { property: "table", icon: <TableIcon className="w-6 h-6" />, name: "Table" },
-    { property: "foodIncluded", icon: <FoodIcon className="w-6 h-6" />, name: "Food Included" },
-    { property: "bed", icon: <BedIcon className="w-6 h-6" />, name: "Bed" },
-    { property: "allDayWaterSupply", icon: <WaterSupply className="w-6 h-6" />, name: "24/7 Water Supply" },
-    { property: "gym", icon: <GymIcon className="w-6 h-6" />, name: "Gym" },
-    { property: "allDayWarden", icon: <WardenIcon className="w-6 h-6" />, name: "24/7 Warden" },
-  ];
 
   // Filter available facilities
   const availableFacilities = facilityIcons.filter(
@@ -165,7 +119,8 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
             gender={hostel.gender}
           />
         </div>
-
+        <hr />
+        <br /> 
         {/* Info Sections */}
         <div className="flex flex-col w-full lg:w-[795px]">
           {/* Facilities Section */}
@@ -190,6 +145,8 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
               ))}
             </div>
           </div>
+          <hr />
+          <br /> 
 
           {/* House Rules Section */}
           <div className="w-full mb-6 md:mb-8">
@@ -209,7 +166,8 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
               </span>
             </div>
           </div>
-
+          <hr />
+          <br /> 
           {/* Location Section */}
           <div className="w-full mb-6 md:mb-8">
             <div className="flex items-center">
@@ -228,6 +186,9 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
               </span>
             </div>
           </div>
+          
+          <hr />
+          <br />  
 
           {/* About Section */}
           <div className="w-full mb-6 md:mb-8">

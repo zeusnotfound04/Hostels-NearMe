@@ -2,14 +2,16 @@ import { prisma } from "@/lib/prisma";
 
 
 interface User {
+  name : string;
     username: string;
     email: string;
     password: string;
 }
 
 
-export async function createUserWithAccount({ username, email, password }: User) {
+export async function createUserWithAccount({ name , username, email, password }: User) {
   console.log({
+    name,
     username,
     email,
     password
@@ -18,6 +20,7 @@ export async function createUserWithAccount({ username, email, password }: User)
   
     const newUser = await prisma.user.create({
         data:{
+          name : name,
           username : username,
           email: email,
           password : password

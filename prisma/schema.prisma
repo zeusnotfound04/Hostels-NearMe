@@ -16,7 +16,8 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  username  String
+  name      String
+  username  String   @unique
   gender    Gender?  
   role      Role     @default(USER)  // Using enum Role for type safety
   createdAt DateTime @default(now())
@@ -121,7 +122,7 @@ model AdminHostel {
 model Booking {
   id               String        @id @default(uuid())
   userId           String
-  username         String?
+  name             String?
   hostelName       String 
   hostelId         String
   status           BookingStatus @default(PENDING)

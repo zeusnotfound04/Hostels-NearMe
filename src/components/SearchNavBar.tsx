@@ -21,6 +21,7 @@ export function SearchNavBar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [showMobileSearch, setShowMobileSearch] = useState(false)
   const { data: session, status } = useSession()
+  console.log("CURRENT SESSION :::"  , session)
   
   useEffect(() => {
     if (status === "authenticated") {

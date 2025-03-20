@@ -2,10 +2,11 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import FooterBG from "../../../public/icons/FooterBG.png"
+import logo from "../../../public/logo/logo.jpg"
 
 const Footer = () => {
   return (
-    // <div className=' absolute w-full bottom-0'>
+
     <footer className="relative bg-[#8B3131] text-white pt-32 md:pt-40">
       {/* V-shaped slope using two rotated rectangles */}
       <div className="absolute top-0 left-0 right-0 h-32 md:h-40 overflow-hidden">
@@ -30,7 +31,7 @@ const Footer = () => {
       
       <div className="container mx-auto px-4 pb-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Column 1 - Follow us */}
+          
           <div>
             <h3 className="text-2xl font-bold mb-6">Follow us</h3>
             <div className="flex space-x-4 mb-8">
@@ -61,7 +62,7 @@ const Footer = () => {
             </div>
             <div className="mb-8">
               <Image 
-                src="/images/logo.png" 
+                src={logo}
                 alt="HostelsNearMe Logo" 
                 width={240} 
                 height={100}
