@@ -106,6 +106,9 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
           {/* Booking Form - Desktop Position (Right Side) */}
           <div className="hidden lg:block flex-shrink-0">
             <BookingForm 
+            
+            hostelId={hostel.id}
+            hostelName={hostel.name}
               price={hostel.price} 
               gender={hostel.gender}
             />
@@ -115,6 +118,8 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
         {/* Booking Form - Mobile Position (Below Image Gallery) */}
         <div className="mb-6 lg:hidden flex justify-center">
           <BookingForm 
+            hostelId={hostel.id}
+            hostelName={hostel.name}
             price={hostel.price} 
             gender={hostel.gender}
           />

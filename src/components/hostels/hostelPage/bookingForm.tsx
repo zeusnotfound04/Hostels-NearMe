@@ -19,19 +19,21 @@ import * as z from "zod"
 
 
 type BookingFormProps = {
+  hostelId : string;
+  hostelName : string;
   price: number;
   gender: "BOYS" | "GIRLS";
 };
 
 const formSchema = z.object({
     name: z.string(),
-    mobile: z.string(),
+    phoneNumber: z.string(),
     address: z.string(),
-    gender: z.string(),
+    userGender: z.string(),
     terms: z.boolean(),
 
 });
-
+import axios from "axios";
 import React, { useState } from 'react';
 // import { Card, CardContent } from '@/components/ui/card';
 // import { Input } from '@/components/ui/input';
@@ -47,22 +49,39 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from '
 
 
 
-export default function BookingForm({ price }: BookingFormProps) {
+export default function BookingForm({ hostelId , hostelName,   price }: BookingFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      mobile: '',
+      phoneNumber: '',
       address: '',
-      gender: undefined,
+      userGender: undefined,
       terms: false
     }
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    // Handle form submission
-  };
+  async function onSubmit(values: z.infer < typeof formSchema > ) {
+    try {
+        const bookingData = { hostelId, hostelName ,  ...values, } 
+        console.log("Booking Data" , bookingData)
+
+        const response = await axios.post("/api/bookings", bookingData);
+
+        
+        if (response.status === 201) {
+          toast.success("Booking created successfully!");
+          console.log("BOOKING CREATED SUCCESSFULLY::::::::::::::")
+          console.log("Booking Response:", response.data);
+        } else {
+          toast.error("Failed to create booking. Please try again.");
+        }
+      
+    } catch (error) {
+      console.error("Form submission error", error);
+      toast.error("Failed to submit the form. Please try again.");
+    }
+  }
 
   return (
     <Card className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
@@ -102,7 +121,7 @@ export default function BookingForm({ price }: BookingFormProps) {
 
             <FormField
               control={form.control}
-              name="mobile"
+              name="phoneNumber"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -152,7 +171,7 @@ export default function BookingForm({ price }: BookingFormProps) {
 
             <FormField
               control={form.control}
-              name="gender"
+              name="userGender"
               render={({ field }) => (
                 <FormItem className="space-y-1">
                   <FormLabel className="text-sm font-medium text-gray-700">Select Gender</FormLabel>
@@ -163,7 +182,7 @@ export default function BookingForm({ price }: BookingFormProps) {
                       className="flex space-x-4"
                     >
                       <div className="flex items-center space-x-2 bg-gray-50 rounded-lg px-4 py-3 border border-gray-200 flex-1 hover:bg-gray-100 transition-all cursor-pointer">
-                        <RadioGroupItem value="male" id="male" />
+                        <RadioGroupItem value="MALE" id="male" />
                         <Label htmlFor="male" className="flex items-center text-sm font-medium cursor-pointer">
                           <svg className="w-4 h-4 mr-2 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <circle cx="12" cy="10" r="7" />
@@ -175,7 +194,7 @@ export default function BookingForm({ price }: BookingFormProps) {
                       </div>
                       
                       <div className="flex items-center space-x-2 bg-gray-50 rounded-lg px-4 py-3 border border-gray-200 flex-1 hover:bg-gray-100 transition-all cursor-pointer">
-                        <RadioGroupItem value="female" id="female" />
+                        <RadioGroupItem value="FEMALE" id="female" />
                         <Label htmlFor="female" className="flex items-center text-sm font-medium cursor-pointer">
                           <svg className="w-4 h-4 mr-2 text-pink-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <circle cx="12" cy="10" r="7" />

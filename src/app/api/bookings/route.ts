@@ -8,7 +8,8 @@ import { z } from "zod";
 const bookingSchema = z.object({
     hostelId : z.string().uuid(),
     hostelName : z.string(),
-    username: z.string(),
+    name: z.string(),
+    terms : z.boolean(),
     phoneNumber: z.string().max(15, "String must contain at most 15 characters").regex(/^\+?[0-9]*$/, "Invalid phone number"),
     userGender : z.enum(["MALE" , "FEMALE"]),
     address : z.string()

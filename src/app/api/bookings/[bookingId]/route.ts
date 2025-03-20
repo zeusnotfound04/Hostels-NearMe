@@ -35,7 +35,7 @@ export async function GET(req: Request, { params }: RouteParams) {
         hostel: true,
         user: {
           select: {
-            username: true,
+            name: true,
             gender: true,
           },
         },
@@ -60,6 +60,7 @@ export async function GET(req: Request, { params }: RouteParams) {
 
     // Map the booking data to the desired format
     const formattedBooking = {
+      terms : booking.terms,
       bookingId: booking.id,
       status: booking.status,
       createdAt: booking.createdAt.toISOString(),
@@ -69,7 +70,7 @@ export async function GET(req: Request, { params }: RouteParams) {
         address: booking.hostel.address,
       },
       user: {
-        name: booking.username,
+        name: booking.name,
         gender: booking.userGender,
         phone: booking.phoneNumber,
         address: booking.address,

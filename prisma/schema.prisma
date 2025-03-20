@@ -128,6 +128,7 @@ model Booking {
   status           BookingStatus @default(PENDING)
   referenceId      String        @unique // Unique booking reference for tracking
   phoneNumber      String
+  terms            Boolean      @default(false)
   userGender       Gender        // User's gender
   address          String        // User's address
   createdAt        DateTime      @default(now())
