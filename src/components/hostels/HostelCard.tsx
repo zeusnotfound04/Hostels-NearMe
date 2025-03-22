@@ -3,18 +3,38 @@ import { Badge } from "@/components/ui/badge";
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { LocationIcon, FemaleIcon, AirConditionerIcon, VegetarianMessIcon, WashroomIcon, WifiIcon, CCTVIcon, ElectricityIcon, GymIcon, IndoorGamesIcon, SecurityGuardIcon, ParkingIcon, FoodIcon, ROWaterIcon, MaleIcon } from "@/components/ui/icon";
+import { 
+  LocationIcon, FemaleIcon, AirConditionerIcon, VegetarianMessIcon, 
+  WashroomIcon, WifiIcon, CCTVIcon, ElectricityIcon, GymIcon, 
+  IndoorGamesIcon, SecurityGuardIcon, ParkingIcon, FoodIcon, 
+  ROWaterIcon, MaleIcon 
+} from "@/components/ui/icon";
 import { Hostel } from "@/types";
 import { useRouter } from "next/navigation";
+import { MoreVertical, Check } from "lucide-react";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import toast from "sonner";
+import { useCompare } from "@/context/compare-context";
 
 export const HostelCard = ({ hostel }: { hostel: Hostel }) => {
   const [currentImage, setCurrentImage] = useState(0);
   const router = useRouter();
+  const { addToCompare, isInCompareList } = useCompare();
+  const isInList = isInCompareList(hostel.id);
   
   const cycleImage = (direction: number) => {
     if (!Array.isArray(hostel.images) || hostel.images.length === 0) return;
     const newIndex = (currentImage + direction + hostel.images.length) % hostel.images.length;
     setCurrentImage(newIndex);
+  };
+
+  const handleAddToCompare = () => {
+    addToCompare(hostel);
   };
 
   const amenities = useMemo(() => [
@@ -96,7 +116,7 @@ export const HostelCard = ({ hostel }: { hostel: Hostel }) => {
           </div>
 
           <div className="flex-1 p-4 md:p-5 relative">
-            <div className="absolute top-4 right-4">
+            <div className="absolute top-4 right-4 flex items-center gap-2">
               <Badge className="bg-[#902920] text-white rounded-full px-4 py-1.5 flex items-center gap-1 shadow-sm">
                 {hostel.gender === "BOYS" ? 
                   <MaleIcon className="w-3.5 h-3.5" /> : 
@@ -106,6 +126,23 @@ export const HostelCard = ({ hostel }: { hostel: Hostel }) => {
                   {hostel.gender === "BOYS" ? "BOYS" : "GIRLS"}
                 </span>
               </Badge>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button 
+                    className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                    aria-label="More options"
+                  >
+                    <MoreVertical className="w-4 h-4 text-gray-600" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={handleAddToCompare} className="flex items-center gap-2">
+                    {isInList && <Check className="w-4 h-4 text-green-500" />}
+                    <span>{isInList ? "Remove from Compare" : "Add to Compare"}</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             <h2 className="font-bold text-xl md:text-2xl text-black mb-2 pr-20">{hostel.name}</h2>
@@ -139,10 +176,8 @@ export const HostelCard = ({ hostel }: { hostel: Hostel }) => {
                 <p className="font-light text-xs text-gray-600">Starting From</p>
               </div>
               <Button 
-                  className="bg-[#f10000] hover:bg-[#d10000] text-white rounded-md h-10 px-4 shadow-sm transition-colors"
-                  onClick={() =>
-                    router.push(`/hostels/${hostel.id}`)
-                  }
+                className="bg-[#f10000] hover:bg-[#d10000] text-white rounded-md h-10 px-4 shadow-sm transition-colors"
+                onClick={() => router.push(`/hostels/${hostel.id}`)}
               >
                 <span className="font-bold text-sm">Book Now</span>
               </Button>
