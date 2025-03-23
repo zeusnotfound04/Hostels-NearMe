@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Footer from "@/components/ui/Footer";
 import { SearchNavBar } from "@/components/SearchNavBar";
 import CompareProviderWrapper from "@/components/providers/CompareProvider";
+import { CompareBar } from "@/components/ui/comparebar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -31,6 +32,7 @@ export default function RootLayout({
               {children}
               <Toaster />
             </Container>
+            <CompareBar/>
             {/* <Footer/> */}
           </ReactQueryProvider>
           </CompareProviderWrapper>

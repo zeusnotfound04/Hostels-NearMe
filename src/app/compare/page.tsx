@@ -1,19 +1,23 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useCompare } from '@/context/compare-context';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft, X, Plus } from 'lucide-react';
 import { Hostel } from '@/types';
-import {
-  LocationIcon, FemaleIcon, AirConditionerIcon, VegetarianMessIcon, 
-  WashroomIcon, WifiIcon, CCTVIcon, ElectricityIcon, GymIcon, 
-  IndoorGamesIcon, SecurityGuardIcon, ParkingIcon, FoodIcon, 
-  ROWaterIcon, MaleIcon 
+import { FemaleIcon, MaleIcon 
 } from '@/components/ui/icon';
+
+const MIN_HOSTELS_FOR_COMPARISON = 2;
+
+const HOSTEL_TYPE_DISPLAY_MAP = {
+  'SINGLE': 'Single',
+  'SHARED': 'Shared',
+  'DORMITORY': 'Dormitory'
+};
 
 export default function ComparePage() {
   const router = useRouter();
@@ -21,37 +25,108 @@ export default function ComparePage() {
   const { compareList, removeFromCompare } = useCompare();
   const [hostels, setHostels] = useState<Hostel[]>([]);
 
+  // Get hostels from URL or use compare list
   useEffect(() => {
-    // Get hostels from URL or use compare list
     const hostelParam = searchParams.get('hostels');
     
     if (hostelParam) {
-      // If hostels are specified in URL, filter the compare list by those IDs
       const hostelIds = hostelParam.split(',');
-      const filteredHostels = compareList.filter(h => hostelIds.includes(h.id));
-      setHostels(filteredHostels);
+      setHostels(compareList.filter(h => hostelIds.includes(h.id)));
     } else {
-      // Otherwise use the current compare list
       setHostels(compareList);
     }
   }, [compareList, searchParams]);
 
-  // Return to previous page
-  const handleBack = () => {
-    router.back();
-  };
+  // Calculate grid columns class based on number of hostels
+  const gridColsClass = useMemo(() => {
+    const gridCols = hostels.length + 1;
+    return `grid-cols-${gridCols > 4 ? 4 : gridCols}`;
+  }, [hostels.length]);
 
-  // Handle removing a hostel from comparison
+  // Navigation handlers
+  const handleBack = () => router.back();
+  
   const handleRemove = (hostelId: string) => {
     removeFromCompare(hostelId);
     
     // If we're removing the last hostel or second-to-last, go back
-    if (hostels.length <= 2) {
+    if (hostels.length <= MIN_HOSTELS_FOR_COMPARISON) {
       router.back();
     }
   };
+  
+  const handleAddMore = () => router.push('/hostels');
+  
+  const navigateToHostelDetails = (hostelId: string) => router.push(`/hostel/${hostelId}`);
 
-  if (hostels.length < 2) {
+  // Function to get hostel type display name
+  const getHostelTypeDisplay = (type: string | undefined): string => {
+    if (!type) return "N/A";
+    return HOSTEL_TYPE_DISPLAY_MAP[type as keyof typeof HOSTEL_TYPE_DISPLAY_MAP] || type;
+  };
+
+  // Memoized amenities function to prevent recalculations on each render
+  const getAmenities = useMemo(() => {
+    return (hostel: Hostel): string[] => {
+      const amenities: string[] = [];
+      
+      // Room amenities
+      if (hostel.bed) amenities.push("Bed");
+      if (hostel.table) amenities.push("Table");
+      if (hostel.chair) amenities.push("Chair");
+      if (hostel.Almirah) amenities.push("Almirah");
+      if (hostel.pillow) amenities.push("Pillow");
+      if (hostel.attachedWashroom) amenities.push("Attached Washroom");
+      if (hostel.airconditioner) amenities.push("Air Conditioner");
+      if (hostel.cooler) amenities.push("Cooler");
+      if (hostel.geyser) amenities.push("Geyser");
+      
+      // Facility amenities
+      if (hostel.wiFi) amenities.push("Wi-Fi");
+      if (hostel.parking) amenities.push("Parking");
+      if (hostel.cctv) amenities.push("CCTV");
+      if (hostel.securityGuard) amenities.push("Security Guard");
+      if (hostel.gym) amenities.push("Gym");
+      if (hostel.indoorGames) amenities.push("Indoor Games");
+      
+      // Utilities
+      if (hostel.waterByRO) amenities.push("RO Water");
+      if (hostel.allDayWaterSupply) amenities.push("24×7 Water Supply");
+      if (hostel.allDayElectricity) amenities.push("24×7 Electricity");
+      if (hostel.inverterBackup) amenities.push("Inverter Backup");
+      if (hostel.generator) amenities.push("Generator");
+      if (hostel.biweeklycleaning) amenities.push("Bi-weekly Cleaning");
+      
+      // Food related
+      if (hostel.foodIncluded) amenities.push("Food Included");
+      if (hostel.vegetarienMess) amenities.push("Vegetarian Mess");
+      if (hostel.isNonVeg) amenities.push("Non-Veg Allowed");
+      
+      // Staff
+      if (hostel.allDayWarden) amenities.push("24×7 Warden");
+      
+      return amenities;
+    };
+  }, []);
+
+  // Get hostel rules based on hostel properties
+  const getHostelRules = useMemo(() => {
+    return (hostel: Hostel): string[] => {
+      const rules: string[] = [];
+      
+      // Add dietary restrictions
+      if (!hostel.isNonVeg) {
+        rules.push("Non-Veg Not Allowed");
+      }
+      
+      // More rules can be added here based on other hostel properties
+      
+      return rules;
+    };
+  }, []);
+
+  // Early return for insufficient hostels
+  if (hostels.length < MIN_HOSTELS_FOR_COMPARISON) {
     return (
       <div className="max-w-5xl mx-auto p-5 pt-10 text-center">
         <h1 className="text-2xl font-bold mb-4">Hostel Comparison</h1>
@@ -64,215 +139,199 @@ export default function ComparePage() {
     );
   }
 
-  // Define all possible amenities for comparison
-  const amenityDefinitions = [
-    { key: 'airconditioner', label: 'Air Conditioner', icon: <AirConditionerIcon width={16} height={16} color="black" /> },
-    { key: 'cooler', label: 'Cooler', icon: <AirConditionerIcon width={16} height={16} color="black" /> },
-    { key: 'isNonVeg', label: 'Non-Veg Allowed', icon: <VegetarianMessIcon width={16} height={16} color="black" /> },
-    { key: 'attachedWashroom', label: 'Attached Washroom', icon: <WashroomIcon width={16} height={16} color="black"/> },
-    { key: 'wiFi', label: 'WiFi', icon: <WifiIcon width={16} height={16} color="black" /> },
-    { key: 'cctv', label: 'CCTV', icon: <CCTVIcon width={16} height={16} color="black" /> },
-    { key: 'inverterBackup', label: 'Inverter Backup', icon: <ElectricityIcon width={16} height={16} color="black" /> },
-    { key: 'generator', label: 'Generator', icon: <ElectricityIcon width={16} height={16} color="black" /> },
-    { key: 'gym', label: 'Gym', icon: <GymIcon width={16} height={16} color="black" /> },
-    { key: 'indoorGames', label: 'Indoor Games', icon: <IndoorGamesIcon width={16} height={16} color="black"/> },
-    { key: 'securityGuard', label: 'Security Guard', icon: <SecurityGuardIcon width={16} height={16} color="black" /> },
-    { key: 'parking', label: 'Parking', icon: <ParkingIcon width={16} height={16} color="black" /> },
-    { key: 'foodIncluded', label: 'Food Included', icon: <FoodIcon width={16} height={16} color="black" /> },
-    { key: 'waterByRO', label: 'RO Water', icon: <ROWaterIcon width={16} height={16} color="black" /> }
-  ];
+  // Render comparison table rows as a reusable component
+  const renderComparisonRow = (
+    label: string, 
+    renderContent: (hostel: Hostel) => React.ReactNode
+  ) => (
+    <div className={`grid grid-cols-${hostels.length + 1} gap-4 items-center border-b border-dashed border-[#912923] py-4`}>
+      <div>
+        <div className="bg-[#912923] text-white rounded-md py-2 px-6 inline-block">
+          <span className="font-bold">{label}</span>
+        </div>
+      </div>
+      {hostels.map((hostel) => (
+        <div key={`${hostel.id}-${label.toLowerCase().replace(/\s+/g, '-')}`} className="text-center">
+          <div className="bg-[#d9d9d9] rounded-md py-2 px-6 inline-block">
+            {renderContent(hostel)}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  // Render list items in a consistent format for both amenities and rules
+  const renderListItems = (items: string[]) => {
+    return items.length > 0 ? (
+      items.map((item, index) => <li key={index}>{item}</li>)
+    ) : (
+      <li>None listed</li>
+    );
+  };
 
   return (
-    <div className="max-w-7xl mx-auto p-5 space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Hostel Comparison</h1>
         <Button variant="outline" onClick={handleBack}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          Back to Listings
         </Button>
       </div>
       
-      <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse">
-          {/* Header */}
-          <thead>
-            <tr>
-              <th className="p-3 bg-gray-50 text-left w-48 font-semibold text-gray-700 border-b"></th>
-              
-              {hostels.map((hostel) => (
-                <th key={hostel.id} className="p-3 bg-gray-50 border-b min-w-64 w-1/4">
-                  <div className="relative">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="absolute -top-1 -right-1 h-7 w-7 p-0 rounded-full hover:bg-gray-200"
-                      onClick={() => handleRemove(hostel.id)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                    
-                    <div className="text-center space-y-2">
-                      <div className="relative h-40 w-full mb-2 overflow-hidden rounded-md">
-                        {Array.isArray(hostel.images) && hostel.images.length > 0 ? (
-                          <Image
-                            src={hostel.images[0]}
-                            alt={hostel.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                            <p className="text-gray-400">No Image</p>
-                          </div>
-                        )}
-                      </div>
-                      
-                      <h3 className="font-bold">{hostel.name}</h3>
-                      
-                      <div className="flex justify-center">
-                        <Badge className="bg-[#902920] text-white rounded-full px-3 py-1 flex items-center gap-1">
-                          {hostel.gender === "BOYS" ? 
-                            <MaleIcon className="w-3.5 h-3.5" /> : 
-                            <FemaleIcon className="w-3.5 h-3.5" />
-                          }
-                          <span className="font-bold text-xs">
-                            {hostel.gender === "BOYS" ? "BOYS" : "GIRLS"}
-                          </span>
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-center text-sm text-gray-600">
-                        <LocationIcon className="w-3.5 h-3.5 mr-1" />
-                        <span>{hostel.city}, {hostel.state}</span>
-                      </div>
-                      
-                      <div className="font-bold text-xl text-[#f10000]">₹{hostel.price}/-</div>
-                      
-                      <Button 
-                        className="bg-[#f10000] hover:bg-[#d10000] text-white w-full"
-                        onClick={() => router.push(`/hostel/${hostel.id}`)}
-                      >
-                        View Details
-                      </Button>
-                    </div>
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          
-          {/* Table Body */}
-          <tbody>
-            {/* Basic Information Section */}
-            <tr>
-              <td colSpan={hostels.length + 1} className="p-3 bg-gray-100 font-bold border-b">
-                Basic Information
-              </td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b font-medium">Address</td>
-              {hostels.map((hostel) => (
-                <td key={`${hostel.id}-address`} className="p-3 border-b text-center">
-                  {hostel.address || "N/A"}
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td className="p-3 border-b font-medium">Type</td>
-              {hostels.map((hostel) => (
-                <td key={`${hostel.id}-type`} className="p-3 border-b text-center">
-                  {hostel.hostelType || "N/A"}
-                </td>
-              ))}
-            </tr>
-          
-            <tr>
-              <td className="p-3 border-b font-medium">Room Type</td>
-              {hostels.map((hostel) => (
-                <td key={`${hostel.id}-roomType`} className="p-3 border-b text-center">
-                  {hostel.hostelType || "N/A"}
-                </td>
-              ))}
-            </tr>
-            
-            {/* Amenities Section */}
-            <tr>
-              <td colSpan={hostels.length + 1} className="p-3 bg-gray-100 font-bold border-b">
-                Amenities
-              </td>
-            </tr>
-            
-            {amenityDefinitions.map((amenity) => (
-              <tr key={amenity.key}>
-                <td className="p-3 border-b font-medium flex items-center gap-2">
-                  {amenity.icon}
-                  {amenity.label}
-                </td>
-                {hostels.map((hostel) => (
-                  <td key={`${hostel.id}-${amenity.key}`} className="p-3 border-b text-center">
-                    {hostel[amenity.key as keyof Hostel] === true ? (
-                      <span className="text-green-600 font-bold">✓</span>
-                    ) : hostel[amenity.key as keyof Hostel] === false ? (
-                      <span className="text-red-500 font-bold">✗</span>
-                    ) : (
-                      <span className="text-gray-400">N/A</span>
-                    )}
-                  </td>
-                ))}
-              </tr>
-            ))}
-            
-            {/* Rules Section
-            <tr>
-              <td colSpan={hostels.length + 1} className="p-3 bg-gray-100 font-bold border-b">
-                Rules and Policies
-              </td>
-            </tr>
-           
+      {/* Hostel Cards */}
+      <div className={`grid grid-cols-1 md:${gridColsClass} gap-6`}>
+        {/* Add Another Hostel Card */}
+        <div className="flex flex-col items-center justify-center cursor-pointer" onClick={handleAddMore}>
+          <div className="border-2 border-dashed border-[#912923] rounded-md p-10 mb-2 flex items-center justify-center h-[150px] w-full">
+            <Plus className="h-10 w-10 text-[#858484]" />
+          </div>
+          <button className="bg-[#d9d9d9] rounded-md px-4 py-2 text-sm">Add another hostel</button>
+        </div>
 
-            <tr>
-              <td className="p-3 border-b font-medium">Notice Period</td>
-              {hostels.map((hostel) => (
-                <td key={`${hostel.id}-notice`} className="p-3 border-b text-center">
-                  {hostel.noticePeriod ? `${hostel.noticePeriod} days` : "N/A"}
-                </td>
-              ))}
-            </tr>
-             */}
-            {/* Contact Section */}
-            {/* <tr>
-              <td colSpan={hostels.length + 1} className="p-3 bg-gray-100 font-bold border-b">
-                Contact Information
-              </td>
-            </tr>
-            <tr>
-              <td className="p-3 border-b font-medium">Owner Name</td>
-              {hostels.map((hostel) => (
-                <td key={`${hostel.id}-owner`} className="p-3 border-b text-center">
-                  {hostel.ownerName || "N/A"}
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td className="p-3 border-b font-medium">Phone Number</td>
-              {hostels.map((hostel) => (
-                <td key={`${hostel.id}-phone`} className="p-3 border-b text-center">
-                  {hostel.phoneNumber || "N/A"}
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td className="p-3 border-b font-medium">Email</td>
-              {hostels.map((hostel) => (
-                <td key={`${hostel.id}-email`} className="p-3 border-b text-center">
-                  {hostel.email || "N/A"}
-                </td>
-              ))}
-            </tr> */}
-          </tbody>
-        </table>
+        {/* Hostel Cards */}
+        {hostels.map((hostel) => (
+          <div key={hostel.id} className="flex flex-col relative">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="absolute -top-1 -right-1 h-7 w-7 p-0 rounded-full hover:bg-gray-200 z-10"
+              onClick={() => handleRemove(hostel.id)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+            <div className="rounded-md overflow-hidden mb-2 w-full h-[150px] relative">
+              {Array.isArray(hostel.images) && hostel.images.length > 0 ? (
+                <Image
+                  src={hostel.images[0]}
+                  alt={hostel.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 300px"
+                  className="object-cover"
+                  priority={true}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                  <p className="text-gray-400">No Image</p>
+                </div>
+              )}
+            </div>
+            <h3 className="text-xl font-bold text-center">{hostel.name}</h3>
+            <div className="flex justify-center mt-2">
+              <Badge className="bg-[#902920] text-white rounded-full px-3 py-1 flex items-center gap-1">
+                {hostel.gender === "BOYS" ? 
+                  <MaleIcon className="w-3.5 h-3.5" /> : 
+                  <FemaleIcon className="w-3.5 h-3.5" />
+                }
+                <span className="font-bold text-xs">
+                  {hostel.gender === "BOYS" ? "BOYS" : "GIRLS"}
+                </span>
+              </Badge>
+            </div>
+          </div>
+        ))}
       </div>
-      
+
+      {/* Comparison Table - New Design */}
+      <div className="mt-8 overflow-x-auto">
+        {/* Price Row */}
+        {renderComparisonRow(
+          "Price", 
+          (hostel) => <span className="font-bold">₹{hostel.price}/-</span>
+        )}
+
+        {/* Address Row */}
+        {renderComparisonRow(
+          "Address", 
+          (hostel) => <span>{hostel.address || "N/A"}</span>
+        )}
+
+        {/* Hostel Type Row */}
+        {renderComparisonRow(
+          "Hostel Type", 
+          (hostel) => <span>{getHostelTypeDisplay(hostel.hostelType)}</span>
+        )}
+
+        {/* Gender Row */}
+        {renderComparisonRow(
+          "Gender", 
+          (hostel) => <span>{hostel.gender === "BOYS" ? "Boys" : "Girls"}</span>
+        )}
+
+        {/* Hostel Rules Row - New Addition */}
+        <div className={`grid grid-cols-${hostels.length + 1} gap-4 items-start border-b border-dashed border-[#912923] py-4`}>
+          <div>
+            <div className="bg-[#912923] text-white rounded-md py-2 px-6 inline-block">
+              <span className="font-bold">Hostel Rules</span>
+            </div>
+          </div>
+          {hostels.map((hostel) => {
+            const rules = getHostelRules(hostel);
+            return (
+              <div key={`${hostel.id}-rules`} className="text-left">
+                <div className="bg-[#d9d9d9] rounded-md py-4 px-6">
+                  <ul className="list-disc pl-4 space-y-2">
+                    {renderListItems(rules)}
+                  </ul>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Amenities Row */}
+        <div className={`grid grid-cols-${hostels.length + 1} gap-4 items-start border-b border-dashed border-[#912923] py-4`}>
+          <div>
+            <div className="bg-[#912923] text-white rounded-md py-2 px-6 inline-block">
+              <span className="font-bold">Amenities</span>
+            </div>
+          </div>
+          {hostels.map((hostel) => {
+            const amenities = getAmenities(hostel);
+            return (
+              <div key={`${hostel.id}-amenities`} className="text-left">
+                <div className="bg-[#d9d9d9] rounded-md py-4 px-6">
+                  <ul className="list-disc pl-4 space-y-2">
+                    {renderListItems(amenities)}
+                  </ul>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Availability Row */}
+        {renderComparisonRow(
+          "Availability", 
+          (hostel) => (
+            <span className={hostel.isAvailable ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+              {hostel.isAvailable ? "Available" : "Not Available"}
+            </span>
+          )
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        {hostels.map((hostel) => (
+          <div key={`${hostel.id}-action`} className="flex justify-center">
+            <Button 
+              className="bg-[#f10000] hover:bg-[#d10000] text-white w-full max-w-xs"
+              onClick={() => navigateToHostelDetails(hostel.id)}
+            >
+              View Details
+            </Button>
+          </div>
+        ))}
+      </div>
+
+      {/* Made in India */}
+      <div className="text-center mt-16 mb-8">
+        <p className="text-lg font-bold">
+          Made in <span className="text-[#912923]">India</span>. For the <span className="text-[#912923]">World</span>
+        </p>
+      </div>
+
       <div className="flex justify-center mt-6">
         <Button variant="outline" onClick={handleBack}>
           Back to Listings

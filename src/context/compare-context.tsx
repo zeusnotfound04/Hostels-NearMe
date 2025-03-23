@@ -19,6 +19,7 @@ export const CompareProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     try {
       const savedList = localStorage.getItem('hostelCompareList');
+      console.log("SAVED LIST :::" , savedList) 
       if (savedList) {
         setCompareList(JSON.parse(savedList));
       }
@@ -30,14 +31,17 @@ export const CompareProvider: React.FC<{ children: React.ReactNode }> = ({ child
   
   useEffect(() => {
     try {
-      localStorage.setItem('hostelCompareList', JSON.stringify(compareList));
+      const hostelCompareList= localStorage.setItem('hostelCompareList', JSON.stringify(compareList));
+      console.log("HOSTEL COMPARE LIST :::",hostelCompareList ) 
+    
     } catch (error) {
       console.error('Error saving compare list to localStorage:', error);
     }
   }, [compareList]);
 
   const addToCompare = (hostel: Hostel) => {
-    console.log("HOSTEL ADDING TO COMPARE LIST" , hostel)
+    // console.log("ADD TP COMPARE IS TRIGRING")
+    // console.log("HOSTEL ADDING TO COMPARE LIST" , hostel)
     // Only add if not already in the list
     if (!isInCompareList(hostel.id)) {
       if (compareList.length >= 4) {
@@ -46,18 +50,21 @@ export const CompareProvider: React.FC<{ children: React.ReactNode }> = ({ child
       }
 
       setCompareList(prev => [...prev, hostel]);
-      console.log("COMPARE LIST", compareList)
+
       toast.success(`${hostel.name} added to compare list`);
     } else {
-      // If already in list, remove it
+
       console.log("REMOVING FROM THE COMPARE LIST" , hostel.name)
       removeFromCompare(hostel.id);
+      console.log("COMPARE LIST", compareList)
     }
+
   };
 
   const removeFromCompare = (hostelId: string) => {
     setCompareList(prev => prev.filter(h => h.id !== hostelId));
     toast.info("Removed from compare list");
+
   };
 
   const clearCompareList = () => {
