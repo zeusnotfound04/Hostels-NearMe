@@ -1,9 +1,9 @@
-import AddhostelForm from "@/components/adminHostels/HostelForm"
+import AddHostelForm from "@/components/adminHostels/HostelForm"
 
 function Page() {
     return (
         <div>
-            <AddhostelForm  /> 
+            <AddHostelForm  /> 
         </div>
     );
 }

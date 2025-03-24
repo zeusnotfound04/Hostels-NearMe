@@ -54,13 +54,14 @@ export async function GET(req: Request, { params  }: RouteParams) {
 export async function PATCH(req: Request, { params }: RouteParams) {
   try {
     const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id || !isAdmin(session.user.role) ) {
+
+    if (!session || !session.user || !session.user.id || !isAdmin(session.user.role)) {
       return NextResponse.json(
-        { error: "Unauthorized access" },
+        { error: "You must be logged in and must be an admin to create a hostel" },
         { status: 401 }
       );
     }
+    
 
     if (!params.hostelId) {
       return NextResponse.json(
@@ -161,12 +162,14 @@ export async function DELETE(req: Request,  { params }: RouteParams) {
 
     const {hostelId} = await params;
     
-    if (!session?.user?.id || !isAdmin(session.user.role)) {
+
+    if (!session || !session.user || !session.user.id || !isAdmin(session.user.role)) {
       return NextResponse.json(
-        { error: "Unauthorized access" },
+        { error: "You must be logged in and must be an admin to create a hostel" },
         { status: 401 }
       );
     }
+    
 
 
 

@@ -9,14 +9,16 @@ import { isAdmin } from "@/utils/user";
 
 export async function POST(req: NextRequest) {
   try {
+
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id || !isAdmin(session.user.role) ) {
+    if (!session || !session.user || !session.user.id || !isAdmin(session.user.role)) {
       return NextResponse.json(
-        { error: "You must be logged in to create a hostel" },
+        { error: "You must be logged in and must be an admin to create a hostel" },
         { status: 401 }
       );
     }
+    
 
     const body = await req.json();
     // console.log("Received Object in the backend" , body) 

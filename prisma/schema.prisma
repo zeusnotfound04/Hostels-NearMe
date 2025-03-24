@@ -185,3 +185,16 @@ enum RequestStatus {
   ACCEPTED
   REJECTED
 }
+
+
+
+model Blogs{
+  id         String    @id @default(uuid())
+  title      String
+  content    String
+  image      String
+  city       String    
+  createdAt  DateTime @default(now())
+
+   @@index([city]) 
+}

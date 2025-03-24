@@ -115,7 +115,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
         values.images.forEach((file: File) => {
           formData.append("files", file);
         });
-  
+        console.log("FORM DATA GOING TO IMAGE UPLOAD" , formData)
         const uploadResponse = await axios.post("/api/imageUpload", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });

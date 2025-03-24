@@ -27,7 +27,7 @@ export default function RootLayout({
           <CompareProviderWrapper>
           <ReactQueryProvider>
             <SearchNavBar/>
-            {/* <Navbar /> */}
+            
             <Container>
               {children}
               <Toaster />

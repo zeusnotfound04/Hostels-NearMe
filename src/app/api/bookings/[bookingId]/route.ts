@@ -50,7 +50,6 @@ export async function GET(req: Request, { params }: RouteParams) {
       );
     }
 
-    // Ensure the user is authorized to view the booking
     if (booking.userId !== session.user.id && !isAdmin(session.user.role)) {
       return NextResponse.json(
         { error: "Forbidden" },
@@ -58,7 +57,6 @@ export async function GET(req: Request, { params }: RouteParams) {
       );
     }
 
-    // Map the booking data to the desired format
     const formattedBooking = {
       terms : booking.terms,
       bookingId: booking.id,
@@ -91,14 +89,15 @@ export async function GET(req: Request, { params }: RouteParams) {
 export async function PATCH(req: Request, { params  }: RouteParams){
 
     try {
-        const session = await getServerSession(authOptions);
+      const session = await getServerSession(authOptions);
 
-        if (!session || !session.user || !isAdmin(session.user.role)) {
-            return NextResponse.json(
-                { error: "Unauthorized access" },
-                { status: 401 }
-            );
-        }
+      if (!session || !session.user || !session.user.id || !isAdmin(session.user.role)) {
+        return NextResponse.json(
+          { error: "You must be logged in and must be an admin to create a hostel" },
+          { status: 401 }
+        );
+      }
+      
 
         const {bookingId} = params
 

@@ -58,31 +58,6 @@ export interface Hostel {
   updatedAt: Date;
 }
 
-export interface ParentHostelPageProps {
-  params: {
-    hostelId: string;
-  };
-}
-
-export interface TestingProps {
-  params: {
-    hostelId: string;
-    hostelName?: string;
-  };
-}
-
-export interface HostelFormProps {
-  hostelId?: string;
-  initialData?: any;
-}
-
-
-export interface BookingDetailsPageProps {
-  params: {
-    bookingId: string;
-  };
-}
-
 export interface Booking {
   id: string;
   status: "PENDING" | "CONFIRMED" | "CANCELLED";
@@ -111,6 +86,48 @@ export interface Booking {
     address?: string;
   };
 }
+
+export interface Blog{
+  id : string ;
+  title : string;
+  content : string;
+  image : string;
+  city: string;
+  createdAt : Date;
+}
+
+
+
+export interface ParentHostelPageProps {
+  params: {
+    hostelId: string;
+  };
+}
+
+export interface TestingProps {
+  params: {
+    hostelId: string;
+    hostelName?: string;
+  };
+}
+
+export interface HostelFormProps {
+  hostelId?: string;
+  initialData?: Hostel;
+}
+
+export interface BlogFormProps{
+  blogId? : string;
+  initialData?: Blog;
+}
+
+
+export interface BookingDetailsPageProps {
+  params: {
+    bookingId: string;
+  };
+}
+
 
 export interface BookingDetails {
   id: string;
