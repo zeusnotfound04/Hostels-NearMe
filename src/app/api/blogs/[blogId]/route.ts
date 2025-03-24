@@ -61,7 +61,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 
     if (!session || !session.user || !session.user.id || !isAdmin(session.user.role)) {
       return NextResponse.json(
-        { error: "You must be logged in and must be an admin to create a hostel" },
+        { error: "You must be logged in and must be an admin to create a Blog" },
         { status: 401 }
       );
     }
@@ -69,7 +69,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 
     if (!params.blogId) {
       return NextResponse.json(
-        { error: "Hostel ID is required" },
+        { error: "Blog ID is required" },
         { status: 400 }
       );
     }
@@ -116,3 +116,57 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 
 
 
+export async function DELETE(req: Request,  { params }: RouteParams) {
+  try {
+
+
+    const session = await getServerSession(authOptions);
+
+    const {blogId} = await params;
+    
+
+    if (!session || !session.user || !session.user.id || !isAdmin(session.user.role)) {
+      return NextResponse.json(
+        { error: "You must be logged in and must be an admin to create a blog" },
+        { status: 401 }
+      );
+    }
+    
+
+
+
+
+    if (!blogId) {
+      return NextResponse.json(
+        { error: "Blog ID is required" },
+        { status: 400 }
+      );
+    }
+
+
+    const deletedBlog = await prisma.blog.delete({
+      where: {
+        id: blogId
+      },
+    });
+
+    return NextResponse.json({
+      message: "Blog deleted successfully",
+      hostel: deletedBlog
+    }, { status: 200 });
+
+  } catch (error) {
+
+    console.error("Error deleting Blog:", error);
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: "Failed to delete Blog", details: error.message },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json(
+      { error: "An unexpected error occurred" },
+      { status: 500 }
+    );
+  }
+}

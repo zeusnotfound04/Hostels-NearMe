@@ -156,7 +156,6 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 
 export async function DELETE(req: Request,  { params }: RouteParams) {
   try {
-    console.log("Inside delete")    
 
     const session = await getServerSession(authOptions);
 
@@ -194,7 +193,6 @@ export async function DELETE(req: Request,  { params }: RouteParams) {
     }, { status: 200 });
 
   } catch (error) {
-    console.log("Chud gye GURU")
     console.error("Error deleting hostel:", error);
     if (error instanceof Error) {
       return NextResponse.json(
