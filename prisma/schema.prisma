@@ -189,12 +189,12 @@ enum RequestStatus {
 
 
 model Blog{
-  id         String    @id @default(uuid())
-  title      String
-  content    String
-  image      String
-  city       String    
-  createdAt  DateTime @default(now())
+  id               String    @id @default(uuid())
+  title            String
+  content          String
+  image            String
+  city             String    
+  createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
    @@index([city]) 
