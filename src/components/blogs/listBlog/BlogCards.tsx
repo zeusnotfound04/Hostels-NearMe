@@ -5,14 +5,16 @@ import { MapPin } from "lucide-react";
 import { BlogListProps } from "@/types";
 
 
-export default function BlogList({ blogs }: BlogListProps) {
+export default function BlogCards({ blogs }: BlogListProps) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {blogs.map(({ id, title, content, city, imageUrl }) => (
+      {blogs.map(({ id, title, content, city, image }) => (
+        
         <Card key={id} className="overflow-hidden border-none shadow-lg">
           <div className="relative w-full h-[250px]">
+           
             <Image
-              src={imageUrl || "/placeholder.svg"}
+              src={image || "/placeholder.svg"}
               alt={title}
               fill
               className="object-cover"
@@ -20,7 +22,7 @@ export default function BlogList({ blogs }: BlogListProps) {
             />
           </div>
 
-          <CardContent className="p-6">
+          <CardContent className="p-6"> 
             <div className="flex items-center mb-3">
               <Badge className="bg-[#8B0000] hover:bg-[#6B0000] text-white">
                 <MapPin className="h-3.5 w-3.5 mr-1" />

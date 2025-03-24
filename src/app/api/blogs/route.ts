@@ -39,7 +39,7 @@ export async function POST(req:NextRequest) {
             const blog = await prisma.blog.create({
                 data: {
                     title : body.title,
-                    content : body.city,
+                    content : body.content,
                     city : body.city,
                     image : body.image,
 

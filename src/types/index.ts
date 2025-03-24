@@ -139,7 +139,7 @@ export interface BlogPost {
   title: string;
   content: string;
   city: string;
-  imageUrl: string;
+  image: string;
 }
 
 export interface BlogListProps {
