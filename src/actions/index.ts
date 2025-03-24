@@ -29,16 +29,25 @@ export async function getHostel(hostelId: string): Promise<Hostel | null> {
   }
 
 
-export const uploadtoS3 = async (file: Buffer, filename: string, contentType: string) => {
-    console.log(filename, "filename");
+  export const uploadtoS3 = async (file: Buffer, filename: string, contentType: string, fileType: string = 'hostel') => {
+    console.log(`Uploading ${filename} as ${fileType} image`);
     const fileBuffer = file;
-    console.log(fileBuffer);
-  
-    const timestampedFilename = `${filename}-${Date.now()}`;
-  
+    
+    
+    const timestampedFilename = `${Date.now()}-${filename.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    
+    const folderMap: Record<string, string> = {
+      hostel: 'hostels',
+      blog: 'blogs',
+      user: 'users',
+      default: 'misc'
+    };
+    
+    const folder = folderMap[fileType] || folderMap.default;
+    
     const params = {
       Bucket: process.env.AWS_S3_BUCKET_NAME,
-      Key: `hostelsImage/${timestampedFilename}`,
+      Key: `images/${folder}/${timestampedFilename}`,
       Body: fileBuffer,
       ContentType: contentType, 
     };
@@ -46,5 +55,5 @@ export const uploadtoS3 = async (file: Buffer, filename: string, contentType: st
     const command = new PutObjectCommand(params);
     await s3Client.send(command);
   
-    return `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/hostelsImage/${timestampedFilename}`;
+    return `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/images/${folder}/${timestampedFilename}`;
   };

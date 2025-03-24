@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { HostelType, HostelGender } from "@prisma/client";
-import { requiredFields } from "@/constants";
+import { hostelRequiredFields } from "@/constants";
 import { isAdmin } from "@/utils/user";
 
 
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     // console.log("Received Object in the backend" , body) 
 
-    const missingFields = requiredFields.filter(field => !body[field]);
+    const missingFields = hostelRequiredFields.filter(field => !body[field]);
     
     if (missingFields.length > 0) {
       return NextResponse.json(

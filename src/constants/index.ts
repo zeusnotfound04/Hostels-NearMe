@@ -47,8 +47,8 @@ export const sharingtypes = [
     ] as const;
 
 
-
-export const requiredFields = [
+// Require fields to create Hostels :::
+export const hostelRequiredFields = [
       'name',
       'about',
       'price',
@@ -59,6 +59,14 @@ export const requiredFields = [
       'address',
       'images'
     ];
+// Require fields to create Blogs :::
+export const blogRequiredFields = [
+  'title',
+  'content',
+  'city',
+  'image',
+];
+
 
 
 

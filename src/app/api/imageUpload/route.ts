@@ -4,9 +4,12 @@ import { uploadtoS3 } from "@/actions";
 export async function POST(req: Request): Promise<Response> {
   try {
     const formData = await req.formData();
+    console.log("FORM DATA IN THE BACKEND FOR FILE UPLOAD ")
     const files = formData.getAll("files") as File[];
+    
 
-    // If no files are present, return an empty array instead of an error
+    const imageType = formData.get("imageType") as string || "hostel";
+    
     if (files.length === 0) {
       return NextResponse.json({ success: true, fileUrls: [] });
     }
@@ -21,14 +24,13 @@ export async function POST(req: Request): Promise<Response> {
         const buffer = Buffer.from(await file.arrayBuffer());
         const fileName = file.name;
 
-        const fileUrl = await uploadtoS3(buffer, fileName, file.type);
+        const fileUrl = await uploadtoS3(buffer, fileName, file.type, imageType);
         uploadedFileUrls.push(fileUrl);
       } catch (fileError) {
         console.error(`Error processing file ${file.name}:`, fileError);
       }
     }
 
-    // Only return an error if files were provided but none were uploaded successfully
     if (uploadedFileUrls.length === 0 && files.length > 0) {
       return NextResponse.json(
         { error: "No files were successfully uploaded." },

@@ -59,20 +59,34 @@ export default function BlogForm({blogId  , initialData  }: BlogFormProps) {
   }, [initialData, form]);
  
   async function onSubmit(values: FormValues) {
-    if (!session?.user) {
-      toast({
-        variant: "destructive",
-        description: "Please log in to create a Blog",
-      });
-      router.push("/login");
-      return;
-    }
-    console.log("Form Values In the Client side ::::" , values)
+    // if (!session?.user) {
+    //   toast({
+    //     variant: "destructive",
+    //     description: "Please log in to create a Blog",
+    //   });
+    //   router.push("/login");
+    //   return;
+    // }
+    // console.log("Form Values In the Client side ::::" , values)
   
     setLoading(true);
   
-    // try {
+    try {
         let imageUrl: string = values.existingImage || "";
+
+        if (values.image) {
+            const formData = new FormData();
+            formData.append('imageType', "blog");
+            formData.append("blogImage", values.image)
+            console.log("IMAGE FORM DATA ::::" , formData)
+            const uploadResponse = await axios.post("/api/imageUpload", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            console.log("UPLOAD RESPONSE!!", uploadResponse )
+
+        }
+
     //   if (isEditMode) {
     //     await axios.patch(`/api/blogs/${blogId}`, values);
     //     toast({
@@ -87,15 +101,15 @@ export default function BlogForm({blogId  , initialData  }: BlogFormProps) {
     //     });
     //   }
     //   router.push("/admin/blogs");
-    // } catch (error) {
-    //   console.error("Error creating/updating blog:", error);
-    //   toast({
-    //     variant: "destructive",
-    //     description: "Error creating/updating blogs. Please try again.",
-    //   });
-    // } finally {
-    //   setLoading(false);
-    // }
+    } catch (error) {
+      console.error("Error creating/updating blog:", error);
+      toast({
+        variant: "destructive",
+        description: "Error creating/updating blogs. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
   return (
     <Form {...form}>

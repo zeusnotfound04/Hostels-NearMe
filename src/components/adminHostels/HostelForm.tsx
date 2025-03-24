@@ -112,6 +112,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
   
       if (values.images && values.images.length > 0) {
         const formData = new FormData();
+        formData.append('imageType', "hostel");
         values.images.forEach((file: File) => {
           formData.append("files", file);
         });
