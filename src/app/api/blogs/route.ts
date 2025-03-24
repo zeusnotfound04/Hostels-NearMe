@@ -1,6 +1,7 @@
 import { blogRequiredFields } from "@/constants";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { blogData } from "@/types";
 import { isAdmin } from "@/utils/user";
 import { getServerSession } from "next-auth";
 import { NextResponse, type NextRequest } from "next/server";
@@ -22,11 +23,11 @@ export async function POST(req:NextRequest) {
               );
             }
 
-            const body = await req.json();
+            const body: blogData = await req.json();
 
-            console.log("Blog data in the backend !" , body)
+            console.log("Blog data in the backend !" , body)    
 
-            const missingFields  = blogRequiredFields.filter(field => !body[field]);
+            const missingFields  = blogRequiredFields.filter((field  ) => !body[field as keyof blogData]);
 
             if (missingFields.length > 0) {
                     return NextResponse.json(
@@ -35,10 +36,34 @@ export async function POST(req:NextRequest) {
                     )
             }
 
+            const blog = await prisma.blog.create({
+                data: {
+                    title : body.title,
+                    content : body.city,
+                    city : body.city,
+                    image : body.image,
 
+                    createdAt : new Date(),
+                    updatedAt : new Date()
+                    
+                }
+            })
+
+             return NextResponse.json(
+                  { message: "Hostel Created Successfully", blog },
+                  { status: 201 }
+                );
+            
             
         
     } catch (error) {
-        
+        console.error("Error creating hostel:", error);
+    return NextResponse.json(
+      { 
+        error: "Failed to create hostel",
+        details: error instanceof Error ? error.message : "Unknown error"
+      },
+      { status: 500 }
+    );
     }
 }

@@ -4,12 +4,13 @@ import { uploadtoS3 } from "@/actions";
 export async function POST(req: Request): Promise<Response> {
   try {
     const formData = await req.formData();
-    console.log("FORM DATA IN THE BACKEND FOR FILE UPLOAD ")
+    console.log("FORM DATA IN THE BACKEND FOR FILE UPLOAD " , formData)
     const files = formData.getAll("files") as File[];
     
 
     const imageType = formData.get("imageType") as string || "hostel";
     
+    console.log("FILE LENGTH" , files )
     if (files.length === 0) {
       return NextResponse.json({ success: true, fileUrls: [] });
     }
@@ -25,6 +26,7 @@ export async function POST(req: Request): Promise<Response> {
         const fileName = file.name;
 
         const fileUrl = await uploadtoS3(buffer, fileName, file.type, imageType);
+        console.log("FILE URL FROM THE BACKEND:::::" , fileUrl)
         uploadedFileUrls.push(fileUrl);
       } catch (fileError) {
         console.error(`Error processing file ${file.name}:`, fileError);

@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     
 
     const body = await req.json();
-    // console.log("Received Object in the backend" , body) 
+   
 
     const missingFields = hostelRequiredFields.filter(field => !body[field]);
     

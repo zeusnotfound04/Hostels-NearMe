@@ -59,15 +59,14 @@ export default function BlogForm({blogId  , initialData  }: BlogFormProps) {
   }, [initialData, form]);
  
   async function onSubmit(values: FormValues) {
-    // if (!session?.user) {
-    //   toast({
-    //     variant: "destructive",
-    //     description: "Please log in to create a Blog",
-    //   });
-    //   router.push("/login");
-    //   return;
-    // }
-    // console.log("Form Values In the Client side ::::" , values)
+        if (!session?.user) {
+        toast({
+            variant: "destructive",
+            description: "Please log in to create a Blog",
+        });
+        router.push("/login");
+        return;
+        }
   
     setLoading(true);
   
@@ -77,29 +76,33 @@ export default function BlogForm({blogId  , initialData  }: BlogFormProps) {
         if (values.image) {
             const formData = new FormData();
             formData.append('imageType', "blog");
-            formData.append("blogImage", values.image)
+            formData.append("files", values.image)
             console.log("IMAGE FORM DATA ::::" , formData)
             const uploadResponse = await axios.post("/api/imageUpload", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-
-            console.log("UPLOAD RESPONSE!!", uploadResponse )
-
+            imageUrl = uploadResponse.data.fileUrls[0] 
+        }
+        const blogData = {
+            title : values.title,
+            content : values.content,
+            city : values.city,
+            image:  imageUrl
         }
 
-    //   if (isEditMode) {
-    //     await axios.patch(`/api/blogs/${blogId}`, values);
-    //     toast({
-    //       variant: "success",
-    //       description: "Hostel Updated Successfully! 🎉🎉",
-    //     });
-    //   } else {
-    //     await axios.post("/api/blogs", values);
-    //     toast({
-    //       variant: "success",
-    //       description: "Blog Created Successfully! 🎉🎉",
-    //     });
-    //   }
+      if (isEditMode) {
+        await axios.patch(`/api/blogs/${blogId}`, blogData);
+        toast({
+          variant: "success",
+          description: "Hostel Updated Successfully! 🎉🎉",
+        });
+      } else {
+        await axios.post("/api/blogs", blogData);
+        toast({
+          variant: "success",
+          description: "Blog Created Successfully! 🎉🎉",
+        });
+      }
     //   router.push("/admin/blogs");
     } catch (error) {
       console.error("Error creating/updating blog:", error);
@@ -165,9 +168,6 @@ export default function BlogForm({blogId  , initialData  }: BlogFormProps) {
 
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 space-x-4">
-
-
-              
                         <FormField
                           control={form.control}
                           name="city"
@@ -280,12 +280,12 @@ export default function BlogForm({blogId  , initialData  }: BlogFormProps) {
             ) : isEditMode ? (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                Update Hostel
+                Update Blog
               </>
             ) : (
               <>
                 <PencilIcon className="mr-2 h-4 w-4" />
-                Create Hostel
+                Create Blog
               </>
             )}
           </Button>

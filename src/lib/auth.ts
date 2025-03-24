@@ -110,7 +110,7 @@ export const authOptions: NextAuthOptions = {
         token.username = user.username;
         token.role = (user as any).role;
       }
-      console.log(token);
+      
       return token;
     },
     async session({ session, token }) {
@@ -121,7 +121,7 @@ export const authOptions: NextAuthOptions = {
         username: token.username,
         role : token.role as string,
       };
-      console.log(session);
+      
       return session;
     },
   },

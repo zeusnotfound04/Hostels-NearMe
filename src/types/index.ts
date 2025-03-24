@@ -94,9 +94,16 @@ export interface Blog{
   image : string;
   city: string;
   createdAt : Date;
+  updatedAt : Date; 
 }
 
+export interface blogData{
+  title: string;
+  content : string;
+  city : string;
+  image : string;
 
+}
 
 export interface ParentHostelPageProps {
   params: {
