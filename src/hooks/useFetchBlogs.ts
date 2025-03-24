@@ -15,7 +15,7 @@ export const queryClient = new QueryClient({
   }
 });
 
-const fetchBlogs = async (city?: string): Promise<Blog[]> => {
+const fetchBlogs = async (city?: string): Promise<Blog[] > => {
   try {
     console.log("Fetching blogs...");
     const { data } = await axios.get('/api/blogs', {
@@ -34,7 +34,7 @@ const fetchBlogs = async (city?: string): Promise<Blog[]> => {
 };
 
 export const useBlogSearch = (city?: string) => {
-  return useQuery<Blog[], Error>({
+  return useQuery<Blog[] , Error>({
     queryKey: ['blogs', city || "all"],  
     queryFn: () => fetchBlogs(city),
     enabled: true,  

@@ -1,8 +1,9 @@
 "use client"
 import { useBlogSearch } from "@/hooks/useFetchBlogs";
 import { useEffect } from "react";
-import BlogCards from "@/components/blogs/listBlog/BlogCards";
+import BlogCards from "@/components/blogs/allBlogs/BlogCards";
 import { Loader2 } from "lucide-react";
+import { Blog } from "@/types";
 
 
 
@@ -27,7 +28,7 @@ export default function BlogList(){
         Latest Blogs
       </h1>
 
-        <BlogCards blogs={blogs} />
+        <BlogCards blogs={blogs as Blog[]} />
      
     </div>
 

@@ -143,7 +143,7 @@ export interface BlogPost {
 }
 
 export interface BlogListProps {
-  blogs: BlogPost[];
+  blogs: Blog[];
 }
 
 
