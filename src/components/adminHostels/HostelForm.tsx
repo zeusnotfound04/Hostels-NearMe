@@ -63,9 +63,9 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',  // Initialize with empty string
+      name: '',  
       about: '',
-      price: 0,  // Keep as string to handle input
+      price: 0,  
       gender: '', 
       state: '',
       city: '',

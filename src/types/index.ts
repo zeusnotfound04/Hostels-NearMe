@@ -111,6 +111,12 @@ export interface ParentHostelPageProps {
   };
 }
 
+export interface ParentBlogPageProps {
+  params: {
+    blogId: string;
+  };
+}
+
 export interface TestingProps {
   params: {
     hostelId: string;
@@ -125,8 +131,21 @@ export interface HostelFormProps {
 
 export interface BlogFormProps{
   blogId? : string;
-  initialData?: Blog;
+  initialData?: Blog | unknown;
 }
+
+export interface BlogPost {
+  id: number;
+  title: string;
+  content: string;
+  city: string;
+  imageUrl: string;
+}
+
+export interface BlogListProps {
+  blogs: BlogPost[];
+}
+
 
 
 export interface BookingDetailsPageProps {

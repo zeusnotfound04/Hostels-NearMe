@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/prisma"
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import s3Client from "@/lib/awsS3";
-import { Hostel } from "@/types";
+import { Blog, Hostel } from "@/types";
 
 
 export async function getHostel(hostelId: string): Promise<Hostel | null> {
@@ -28,6 +28,28 @@ export async function getHostel(hostelId: string): Promise<Hostel | null> {
     }
   }
 
+  export async function getBlog(blogId: string): Promise<Blog | null> {
+    try {
+      const blog = await prisma.blog.findUnique({
+        where: {
+          id: blogId,
+        },
+      
+      });
+  
+      if (!blog) {
+        return null;
+      }
+  
+      return {
+        ...blog,
+        
+      };
+    } catch (error) {
+      console.error("Error fetching hostel:", error);
+      return null;
+    }
+  }
 
   export const uploadtoS3 = async (file: Buffer, filename: string, contentType: string, fileType: string = 'hostel') => {
     console.log(`Uploading ${filename} as ${fileType} image`);
