@@ -67,3 +67,34 @@ export async function POST(req:NextRequest) {
     );
     }
 }
+
+
+export async function GET(request: NextRequest) {
+    try {
+  
+      const { searchParams } = new URL(request.url);
+      const cityQuery = searchParams.get('city') || '';
+  
+      const blogs = await prisma.blog.findMany({
+        where: {
+          ...(cityQuery ? { 
+            city: { 
+              contains: cityQuery, 
+              mode: 'insensitive' 
+            } 
+          } : {})
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
+  
+      return NextResponse.json(blogs);
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch blogs' }, 
+        { status: 500 }
+      );
+    }
+  }
