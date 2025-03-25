@@ -131,7 +131,7 @@ export interface HostelFormProps {
 
 export interface BlogFormProps{
   blogId? : string;
-  initialData?: Blog | unknown;
+  initialData?: Blog ;
 }
 
 export interface BlogPost {

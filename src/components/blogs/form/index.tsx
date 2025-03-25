@@ -42,74 +42,87 @@ export default function BlogForm({blogId  , initialData  }: BlogFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      content: '',  
-      city: '',
-      image : undefined,
-      existingImage: "",
-
+      title: initialData?.title || '',
+      content: initialData?.content || '',  
+      city: initialData?.city || '',
+      image: undefined,
+      existingImage: initialData?.image || "",
     },
   });
-  useEffect(() => {
-    if (initialData) {
-     
-      form.reset(initialData);
-    }
-  }, [initialData, form]);
  
   async function onSubmit(values: FormValues) {
-        if (!session?.user) {
-        toast({
-            variant: "destructive",
-            description: "Please log in to create a Blog",
-        });
-        router.push("/login");
-        return;
-        }
+    console.log("Form Submission Values:", values);
+    
+    if (!session?.user) {
+      toast({
+        variant: "destructive",
+        description: "Please log in to create a Blog",
+      });
+      router.push("/login");
+      return;
+    }
   
     setLoading(true);
   
     try {
-        let imageUrl: string = values.existingImage || "";
+      let imageUrl: string = values.existingImage || "";
 
+      if (values.image) {
+        const formData = new FormData();
+        formData.append('imageType', "blog");
+        formData.append("files", values.image);
+        
+        const uploadResponse = await axios.post("/api/imageUpload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        
+        imageUrl = uploadResponse.data.fileUrls[0];
+      }
 
-        if (values.image) {
-            const formData = new FormData();
-            formData.append('imageType', "blog");
-            formData.append("files", values.image)
-            const uploadResponse = await axios.post("/api/imageUpload", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-            imageUrl = uploadResponse.data.fileUrls[0] 
-        }
-        const blogData = {
-            title : values.title,
-            content : values.content,
-            city : values.city,
-            image:  imageUrl
-        }
+      const blogData = {
+        title: values.title,
+        content: values.content,
+        city: values.city,
+        image: imageUrl
+      };
 
-      if (isEditMode) {
-        console.log("GOING TO UPDATE THE EXISTING BLOG")
-        await axios.patch(`/api/blogs/${blogId}`, blogData);
+      console.log("Blog Data to Submit:", blogData);
+
+      if (isEditMode && blogId) {
+        console.log(`Updating blog with ID: ${blogId}`);
+        const response = await axios.patch(`/api/blogs/${blogId}`, blogData);
+        console.log("Update Response:", response.data);
+        
         toast({
           variant: "success",
-          description: "Hostel Updated Successfully! 🎉🎉",
+          description: "Blog Updated Successfully! 🎉🎉",
         });
       } else {
-        await axios.post("/api/blogs", blogData);
+        const response = await axios.post("/api/blogs", blogData);
+        console.log("Create Response:", response.data);
+        
         toast({
           variant: "success",
           description: "Blog Created Successfully! 🎉🎉",
         });
       }
-    //   router.push("/admin/blogs");
+
+      router.push("/admin/blogs");
     } catch (error) {
-      console.error("Error creating/updating blog:", error);
-      toast({
-        variant: "destructive",
-        description: "Error creating/updating blogs. Please try again.",
-      });
+      console.error("Full Error Object:", error);
+      
+      if (axios.isAxiosError(error)) {
+        console.error("Axios Error Response:", error.response?.data);
+        toast({
+          variant: "destructive",
+          description: error.response?.data?.message || "Error creating/updating blog. Please try again.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          description: "An unexpected error occurred. Please try again.",
+        });
+      }
     } finally {
       setLoading(false);
     }

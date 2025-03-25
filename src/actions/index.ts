@@ -28,7 +28,7 @@ export async function getHostel(hostelId: string): Promise<Hostel | null> {
     }
   }
 
-  export async function getBlog(blogId: string): Promise<Blog | null> {
+  export async function getBlog(blogId: string): Promise<Blog | null > {
     try {
       const blog = await prisma.blog.findUnique({
         where: {
