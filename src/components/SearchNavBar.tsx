@@ -115,16 +115,17 @@ export function SearchNavBar() {
         </div>
 
         <div className="hidden flex-1 items-center justify-center px-8 md:flex lg:px-16">
-          <HostelSearchBar  
-            positionStyle="w-full max-w-3xl bg-gray-50 hover:bg-gray-100 focus-within:bg-white
-                          rounded-full px-6 py-3 h-14 flex items-center gap-2 
-                          justify-between shadow-sm hover:shadow transition-all
-                          border border-gray-200"
-            buttonStyle="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700
-                        text-white font-medium flex-shrink-0 px-6 py-2 rounded-full
-                        flex items-center justify-center shadow-md hover:shadow-lg
-                        transition-all transform hover:scale-105"
-          />
+        <HostelSearchBar  
+  positionStyle="w-full max-w-4xl bg-white hover:bg-white focus-within:bg-white
+                rounded-full px-6 py-3 h-14 flex items-center gap-2 
+                justify-between shadow-sm hover:shadow transition-all
+                border border-gray-200"
+  buttonStyle="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700
+              text-white font-medium flex-shrink-0 px-6 py-2 rounded-full
+              flex items-center justify-center shadow-md hover:shadow-lg
+              transition-all transform hover:scale-105"
+/>
+
         </div>
 
         <div className="flex items-center gap-1 md:gap-2">

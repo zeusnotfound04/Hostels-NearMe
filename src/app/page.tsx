@@ -3,7 +3,6 @@
 import { useSession } from "next-auth/react";
 import {HostelSearch} from "@/components/home/HostelSearch";
 import { StepBooking } from "@/components/home/StepBooking";
-import { PromiseSection } from "@/components/home/PromiseSection";
 import MissionVisionCards from "@/components/home/VissionCard";
 import { Testimonials } from "@/components/home/Testimonials";
 import { HostelListing } from "@/components/home/HostelListing";
@@ -25,7 +24,6 @@ export default function Home() {
         <HomeText />
         <HostelListing />
         <StepBooking />
-        <PromiseSection />
         <Testimonials />
         <MissionVisionCards />
       </div>

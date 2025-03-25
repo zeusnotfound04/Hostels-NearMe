@@ -33,7 +33,6 @@ const filterOptions = [
   { id: 5, name: "Sort", icon: <SortingIcon className="w-4 h-4" /> },
 ];
 
-// Facility options based on the schema
 const facilityOptions = [
   { id: "attachedWashroom", label: "Attached Washroom" },
   { id: "cctv", label: "CCTV" },
@@ -55,7 +54,6 @@ const facilityOptions = [
   { id: "airconditioner", label: "Air Conditioner" },
 ];
 
-// Sorting options
 const sortingOptions = [
   { id: "price_asc", label: "Price: Low to High" },
   { id: "price_desc", label: "Price: High to Low" },

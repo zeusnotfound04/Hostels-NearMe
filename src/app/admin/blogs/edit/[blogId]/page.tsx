@@ -4,9 +4,7 @@ import { ParentBlogPageProps } from "@/types";
 
 
 export default async function Page({ params }: ParentBlogPageProps) {
-      const { blogId } = await params;
-        
-      const blog  = await getBlog(blogId);
+    const blog = await getBlog(params.blogId);
     
 
     return (

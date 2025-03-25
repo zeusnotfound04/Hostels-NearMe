@@ -30,7 +30,7 @@ export function HostelListing() {
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white max-h-screen">
       <div className="container mx-auto px-4 py-6 sm:py-8 md:py-12">
         <div className="text-left mb-6 sm:mb-8 md:mb-12">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4 text-black">

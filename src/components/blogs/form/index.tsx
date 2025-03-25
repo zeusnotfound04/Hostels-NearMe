@@ -26,7 +26,7 @@ const formSchema = z.object({
   title: z.string(),
   content: z.string(),
   city: z.string(),
-  image : z.string(z.instanceof(File)).max(1),
+  image : z.instanceof(File).optional(),
   existingImage : z.string()
 })
 
@@ -45,7 +45,7 @@ export default function BlogForm({blogId  , initialData  }: BlogFormProps) {
       title: '',
       content: '',  
       city: '',
-      image : '',
+      image : undefined,
       existingImage: "",
 
     },
@@ -72,11 +72,11 @@ export default function BlogForm({blogId  , initialData  }: BlogFormProps) {
     try {
         let imageUrl: string = values.existingImage || "";
 
+
         if (values.image) {
             const formData = new FormData();
             formData.append('imageType', "blog");
             formData.append("files", values.image)
-            console.log("IMAGE FORM DATA ::::" , formData)
             const uploadResponse = await axios.post("/api/imageUpload", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
@@ -90,6 +90,7 @@ export default function BlogForm({blogId  , initialData  }: BlogFormProps) {
         }
 
       if (isEditMode) {
+        console.log("GOING TO UPDATE THE EXISTING BLOG")
         await axios.patch(`/api/blogs/${blogId}`, blogData);
         toast({
           variant: "success",

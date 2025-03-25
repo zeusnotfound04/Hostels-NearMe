@@ -98,7 +98,6 @@ const calculatePredictiveInsights = (data: AdminInsights) => {
 const AdminInsightsDashboard: React.FC = () => {
   const fetchInsights = async (): Promise<AdminInsights> => {
     const { data } = await axios.get('/api/insights');
-    console.log("DATA IN THE CLIENT COMPONENT" , data)
     return data;
   };
 
@@ -158,7 +157,7 @@ const AdminInsightsDashboard: React.FC = () => {
     );
   }
 
-  // Prepare data for charts
+  
   const bookingData = [
     { name: 'Confirmed', value: data?.confirmedBookings || 0 },
     { name: 'Cancelled', value: data?.cancelledBookings || 0 }
@@ -177,7 +176,7 @@ const AdminInsightsDashboard: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="space-y-6 p-6 bg-gray-50"
+      className="space-y-6 p-6 bg-white"
     >
       <motion.div 
         initial={{ y: -50, opacity: 0 }}
