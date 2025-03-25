@@ -1,12 +1,10 @@
+import MainBlogs from "@/components/blogs/main";
 
 
 
 export default function Page(){
-
-
+    
     return (
-        <div>
-            Zeus Here Niggga!
-        </div>
+        <MainBlogs/>
     )
 }

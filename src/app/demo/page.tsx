@@ -1,182 +1,102 @@
-import React from "react";
-import Image from "next/image";
-import { ChevronDown, Menu, Search, User } from "lucide-react";
-import { LocationIcon } from "@/components/ui/icon";
+"use client"
+import { LeftDoodle1, LeftDoodle2, LeftDoodle3, LeftDoodle4, RightDoodle1, RightDoodle2, RightDoodle3, RightDoodle4 } from '@/components/ui/icon';
+import React, { useState } from 'react';
 
-
-function Page(){
-    return    <div className="min-h-screen bg-white">
-
-
-    {/* Main Content */}
-    <main className="max-w-7xl mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Add Another Hostel */}
-        <div className="flex flex-col items-center justify-center">
-          <div className="border-2 border-dashed border-[#912923] rounded-md p-10 mb-2 flex items-center justify-center">
-            <span className="text-4xl text-[#858484]">+</span>
-          </div>
-          <button className="bg-[#d9d9d9] rounded-md px-4 py-2 text-sm">Add another hostel</button>
-        </div>
-
-        {/* Namo Residency */}
-        <div className="flex flex-col">
-          <div className="rounded-md overflow-hidden mb-2">
-            <Image
-              src="/placeholder.svg?height=150&width=300"
-              alt="Namo Residency"
-              width={300}
-              height={150}
-              className="w-full h-[150px] object-cover"
-            />
-          </div>
-          <h3 className="text-xl font-bold text-center">Namo Residency</h3>
-        </div>
-
-        {/* Ganesh Residency */}
-        <div className="flex flex-col">
-          <div className="rounded-md overflow-hidden mb-2">
-            <Image
-              src="/placeholder.svg?height=150&width=300"
-              alt="Ganesh Residency"
-              width={300}
-              height={150}
-              className="w-full h-[150px] object-cover"
-            />
-          </div>
-          <h3 className="text-xl font-bold text-center">Ganesh Residency</h3>
-        </div>
-      </div>
-
-      {/* Comparison Table */}
-      <div className="mt-8">
-        {/* Price Row */}
-        <div className="grid grid-cols-3 gap-4 items-center border-t border-b border-dashed border-[#912923] py-4">
-          <div>
-            <div className="bg-[#912923] text-white rounded-md py-2 px-6 inline-block">
-              <span className="font-bold">Price</span>
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="bg-[#d9d9d9] rounded-md py-2 px-6 inline-block">
-              <span className="font-bold">₹10,500/-</span>
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="bg-[#d9d9d9] rounded-md py-2 px-6 inline-block">
-              <span className="font-bold">₹7,500/-</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Hostel Type Row */}
-        <div className="grid grid-cols-3 gap-4 items-center border-b border-dashed border-[#912923] py-4">
-          <div>
-            <div className="bg-[#912923] text-white rounded-md py-2 px-6 inline-block">
-              <span className="font-bold">Hostel Type</span>
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="bg-[#d9d9d9] rounded-md py-2 px-6 inline-block">
-              <span>Single</span>
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="bg-[#d9d9d9] rounded-md py-2 px-6 inline-block">
-              <span>Shared</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Amenities Row */}
-        <div className="grid grid-cols-3 gap-4 items-start border-b border-dashed border-[#912923] py-4">
-          <div>
-            <div className="bg-[#912923] text-white rounded-md py-2 px-6 inline-block">
-              <span className="font-bold">Amenities</span>
-            </div>
-          </div>
-          <div className="text-left">
-            <div className="bg-[#d9d9d9] rounded-md py-4 px-6">
-              <ul className="list-disc pl-4 space-y-2">
-                <li>Wi-Fi</li>
-                <li>Indoor Games</li>
-                <li>Food Included</li>
-                <li>CCTV</li>
-                <li>Parking</li>
-              </ul>
-            </div>
-          </div>
-          <div className="text-left">
-            <div className="bg-[#d9d9d9] rounded-md py-4 px-6">
-              <ul className="list-disc pl-4 space-y-2">
-                <li>RO Water</li>
-                <li>Cooler</li>
-                <li>Security Guard</li>
-                <li>CCTV</li>
-                <li>Parking</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Hostel Rules Row */}
-        <div className="grid grid-cols-3 gap-4 items-start border-b border-dashed border-[#912923] py-4">
-          <div>
-            <div className="bg-[#912923] text-white rounded-md py-2 px-6 inline-block">
-              <span className="font-bold">Hostel Rules</span>
-            </div>
-          </div>
-          <div className="text-left">
-            <div className="bg-[#d9d9d9] rounded-md py-4 px-6">
-              <ul className="list-disc pl-4 space-y-2">
-                <li>No smoking</li>
-                <li>No Loud Music</li>
-              </ul>
-            </div>
-          </div>
-          <div className="text-left">
-            <div className="bg-[#d9d9d9] rounded-md py-4 px-6">
-              <ul className="list-disc pl-4 space-y-2">
-                <li>Resident respect</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Hostel Type (Boys) Row */}
-        <div className="grid grid-cols-3 gap-4 items-center border-b border-dashed border-[#912923] py-4">
-          <div>
-            <div className="bg-[#912923] text-white rounded-md py-2 px-6 inline-block">
-              <span className="font-bold">Hostel Type</span>
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="bg-[#d9d9d9] rounded-md py-2 px-6 inline-block">
-              <span>Boys</span>
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="bg-[#d9d9d9] rounded-md py-2 px-6 inline-block">
-              <span>Boys</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Made in India */}
-      <div className="text-center mt-16 mb-8">
-        <p className="text-lg font-bold">
-          Made in <span className="text-[#912923]">India</span>. For the <span className="text-[#912923]">World</span>
-        </p>
-      </div>
-
-     
-    </main>
-
-  </div>
-
-
+interface LocationData {
+  title: string;
+  description: string;
+  imageUrl: string;
 }
 
+const CityExplorer: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState('');
 
-export default Page;
+  const locations: LocationData[] = [
+    {
+      title: 'Anandi Water Park',
+      description: 'When we thought of getting in this sector, we asked ourselves, who exactly is it we are going to help or solve problems for as we will be connecting 2 parties together, we knew that we will be bringing the Hostel Owners and Students under one roof. When we glanced into this unorganized sector more thoroughly we realized we will be helping the Students but with that we won\'t be leaving the Hostel Owners. That moment we decided to find a broader approach to get the Hostel Owners more benefits if they are bringing their business online. We need our numbers again (with more focus on the local and geographical area) to be their support and then we started seeing both the parties on Two sides of a same coin and decided to be more than just and fair with them.',
+      imageUrl: '/anandi-water-park.jpg'
+    },
+    {
+      title: 'Janeshwar Mishra Park',
+      description: 'When we thought of getting in this sector, we asked ourselves, who exactly is it we are going to help or solve problems for as we will be connecting 2 parties together, we knew that we will be helping the students by saving their time and their resources and so on. But, when we glanced into this unorganized sector more thoroughly we realized we will be helping the Students but with that we won\'t be leaving the Hostel Owners. That moment we decided to find a broader approach to get the Hostel Owners more benefits if they are bringing their business online. We need our numbers again (with more focus on the local and geographical area) to be their support and then we started seeing both the parties on Two sides of a same coin and decided to be more than just and fair with them.',
+      imageUrl: '/janeshwar-mishra-park.jpg'
+    },
+    {
+      title: 'Aminabad',
+      description: 'When we thought of getting in this sector, we asked ourselves, who exactly is it we are going to help or solve problems for as we will be connecting 2 parties together, we knew that we will be helping the Hostel Owners and Students under one roof. When we glanced into this unorganized Sector more thoroughly we realized we will be helping the Students but with that we won\'t be leaving the Hostel Owners. That moment we decided to find a broader approach to get the Hostel Owners more benefits if they are bringing their business online. We need our numbers again (with more focus on the local and geographical area) to be their support and then we started seeing both the parties on Two sides of a some coin and decided to be more than just and fair with them.',
+      imageUrl: '/aminabad.jpg'
+    }
+  ];
+
+  return (
+    <div className="relative min-h-screen bg-white font-sans">
+      {/* Fixed Vector Borders - Only visible on desktop */}
+      <div className="hidden md:block fixed inset-0 pointer-events-none z-10">
+        <div className="absolute top-20 left-0 w-full h-full">
+          <LeftDoodle1 props="absolute top-0 left-0" />
+          <LeftDoodle2 props="absolute top-1/4 left-0 " />
+          <LeftDoodle3 props="absolute top-1/2 left-0 " />
+          <LeftDoodle4 props="absolute bottom-20 left-0 " />
+
+          <RightDoodle1  props="absolute top-0 right-0 rotate-0" />
+          <RightDoodle2 props="absolute top-1/4 right-0 rotate-135"/>
+          <RightDoodle3 props="absolute top-1/2 right-0 rotate-225" />
+          <RightDoodle4 props="absolute bottom-20 right-0 rotate-315" />
+        </div>
+      </div>
+
+      <div className="relative z-20 max-w-5xl mx-auto px-4 py-8">
+        <h1 className="text-2xl md:text-4xl font-bold text-center mb-8">
+          Explore Your City, Find Your Perfect Stay
+        </h1>
+
+        <div className="max-w-md mx-auto mb-8">
+          <input 
+            type="text" 
+            placeholder="Lucknow" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-2 border-2 border-red-500 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-red-300"
+          />
+        </div>
+
+        <div className="space-y-8">
+          {locations.map((location, index) => (
+            <div 
+              key={index} 
+              className="bg-white border-2 rounded-lg overflow-hidden shadow-lg flex flex-col md:flex-row"
+            >
+              <div className="w-full md:w-1/2 p-4">
+                <h2 className="text-xl md:text-2xl font-bold text-blue-600 mb-4">{location.title}</h2>
+                <p className="text-gray-700 line-clamp-6">{location.description}</p>
+              </div>
+              <div className="w-full md:w-1/2">
+                <img 
+                  src={location.imageUrl} 
+                  alt={location.title} 
+                  className="w-full h-48 md:h-full object-cover border-8 border-[#8B0000]"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex justify-center mt-8 space-x-4">
+          <button className="bg-red-500 text-white px-4 py-2 rounded">
+            Previous
+          </button>
+          <button className="bg-red-500 text-white px-4 py-2 rounded">
+            Next
+          </button>
+        </div>
+      </div>
+
+      <div className="text-center mt-8 text-gray-600">
+        Made in India. For the World
+      </div>
+    </div>
+  );
+};
+
+export default CityExplorer;

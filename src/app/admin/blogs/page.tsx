@@ -1,4 +1,4 @@
-import BlogList from "@/components/blogs/allBlogs";
+import BlogList from "@/components/blogs/blogList";
 
 
 

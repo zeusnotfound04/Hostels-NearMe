@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import s3Client from "@/lib/awsS3";
 import { Blog, Hostel } from "@/types";
+import axios from "axios";
 
 
 export async function getHostel(hostelId: string): Promise<Hostel | null> {
@@ -50,6 +51,18 @@ export async function getHostel(hostelId: string): Promise<Hostel | null> {
       return null;
     }
   }
+
+
+  export const deleteBlog = async (id: string): Promise<void> => {
+    try {
+        await axios.delete(`/api/blogs/${id}`);
+    } catch (error) {
+        console.error('Error deleting blog:', error);
+        throw error;
+    }
+};
+
+
 
   export const uploadtoS3 = async (file: Buffer, filename: string, contentType: string, fileType: string = 'hostel') => {
     console.log(`Uploading ${filename} as ${fileType} image`);

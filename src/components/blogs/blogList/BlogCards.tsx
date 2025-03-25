@@ -1,18 +1,26 @@
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin } from "lucide-react";
+import { MapPin, Trash } from "lucide-react";
 import { BlogListProps } from "@/types";
+import { useState } from "react";
 
-
-export default function BlogCards({ blogs }: BlogListProps) {
+export default function BlogCards({ blogs, onDeleteBlog }: BlogListProps & { onDeleteBlog: (id: string) => void }) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {blogs.map(({ id, title, content, city, image }) => (
-        
-        <Card key={id} className="overflow-hidden border-none shadow-lg">
+        <Card key={id} className="overflow-hidden border-none shadow-lg relative">
+          <div className="absolute top-2 right-2 z-10">
+            <button 
+              onClick={() => onDeleteBlog(id)}
+              className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors"
+              aria-label="Delete blog"
+            >
+              <Trash className="h-5 w-5" />
+            </button>
+          </div>
+          
           <div className="relative w-full h-[250px]">
-           
             <Image
               src={image || "/placeholder.svg"}
               alt={title}
