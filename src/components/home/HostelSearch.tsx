@@ -1,5 +1,4 @@
-import { MapPin, Building2, User2, Send } from 'lucide-react'; 
-import { CalenderIcon } from "@/components/ui/icon";
+
 import IconsPNG from "../../../public/icons/icons.png";
 import Image from "next/image";
 import HostelSearchBar from '@/components/ui/HostelSearchBar';

@@ -169,7 +169,7 @@ const BookingEditForm: React.FC<BookingEditFormProps> = ({ booking }) => {
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* User Information */}
+        
         <AnimatedSection title="Guest Information" delay={0.1}>
           <div className="space-y-4">
             <InfoItem icon={User} label="Guest Name" value={booking.username as string} accent={true} />
@@ -180,7 +180,7 @@ const BookingEditForm: React.FC<BookingEditFormProps> = ({ booking }) => {
           </div>
         </AnimatedSection>
 
-        {/* Hostel Information */}
+       
         <AnimatedSection title="Hostel Details" delay={0.2}>
           <div className="space-y-4">
             <InfoItem icon={Home} label="Hostel Type" value={booking.hostel.hostelType as string} accent={true} />
@@ -190,7 +190,7 @@ const BookingEditForm: React.FC<BookingEditFormProps> = ({ booking }) => {
           </div>
         </AnimatedSection>
 
-        {/* Amenities Grid */}
+     
         <AnimatedSection title="Hostel Amenities" delay={0.3}>
           <div className="grid grid-cols-2 gap-4">
             <AmenityItem name="Air Conditioner" value={booking.hostel.airconditioner as boolean} />

@@ -118,12 +118,11 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") ?? "10");
     const skip = (page - 1) * limit;
 
-    // Initialize base filters
     const filters: any = {
       isAvailable: searchParams.get("isAvailable") === "true",
     };
 
-    // Handle search (combined name and city search)
+    
     if (searchParams.get("search")) {
       const searchTerm = searchParams.get("search");
       filters.OR = [
@@ -142,17 +141,15 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    // Hostel type filter
     if (searchParams.get("hostelType")) {
       filters.hostelType = searchParams.get("hostelType") as HostelType;
     }
 
-    // Gender filter
     if (searchParams.get("gender")) {
       filters.gender = searchParams.get("gender") as HostelGender;
     }
 
-    // City filter (exact match)
+  
     if (searchParams.get("city") && !searchParams.get("search")) {
       filters.city = {
         contains: searchParams.get("city"),
@@ -160,7 +157,6 @@ export async function GET(req: NextRequest) {
       };
     }
 
-    // State filter
     if (searchParams.get("state")) {
       filters.state = {
         contains: searchParams.get("state"),
@@ -168,7 +164,6 @@ export async function GET(req: NextRequest) {
       };
     }
 
-    // Price range filter
     if (searchParams.get("minPrice") || searchParams.get("maxPrice")) {
       filters.price = {};
       
@@ -181,7 +176,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Boolean amenities filters
+   
     const booleanFields = [
       "isNonVeg", "Almirah", "attachedWashroom", "cctv", "chair",
       "cooler", "inverterBackup", "parking", "biweeklycleaning",
@@ -198,21 +193,19 @@ export async function GET(req: NextRequest) {
       }
     });
 
-    // Handle sorting
     let orderBy: any[] = [
-      { isAvailable: 'desc' }, // Default: Show available hostels first
-      { createdAt: 'desc' }    // Default: Then sort by creation date
+      { isAvailable: 'desc' }, 
+      { createdAt: 'desc' }   
     ];
 
-    // If sortBy and sortOrder are provided, use them as the primary sort
     const sortBy = searchParams.get("sortBy");
     const sortOrder = searchParams.get("sortOrder") || 'asc';
     
     if (sortBy) {
-      // Replace the default sorting with the requested sorting
+     
       orderBy = [{ [sortBy]: sortOrder.toLowerCase() }];
       
-      // Still keep isAvailable sorting as a secondary criterion
+      
       orderBy.push({ isAvailable: 'desc' });
     }
 
@@ -272,7 +265,6 @@ export async function GET(req: NextRequest) {
 
     console.log(`Found ${hostels.length} hostels out of ${total} total`);
 
-    // Match the response structure expected by the frontend hook
     return NextResponse.json({
       hostels,
       pagination: {

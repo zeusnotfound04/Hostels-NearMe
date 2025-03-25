@@ -19,13 +19,13 @@ export async function POST(req: NextRequest) {
     const body: UserRequestBody = await req.json();
     console.log(body)
 
-    // Validate the request body using Zod
+   
     const parsedBody = userSchema.parse(body);
 
     const { name, username, email, password } = parsedBody;
     console.log(parsedBody)
 
-    // Check if user already exists
+   
     console.log(email)
     const existingUser = await getUserbyEmail(email);
     if (existingUser) {
@@ -40,11 +40,9 @@ export async function POST(req: NextRequest) {
     }
 
 
-    // Hash the password
     const hashedPassword = await hash(password, 10);
     console.log("Hashed Password", hashedPassword)
 
-    // Create new user
     const newUser = await createUserWithAccount({
       name,
       username,
@@ -65,7 +63,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
-      // Handle Zod validation errors
+ 
       return NextResponse.json(
         {
           message: "Validation error",

@@ -5,14 +5,14 @@ import IconsBG from "../../../public/icons/IconsBG.png";
 import Book from "../../../public/UI/book.png";
 import View from "../../../public/UI/view.png";
 import Compare from "../../../public/UI/compare.png";
-import { Stepper, Step } from '@/components/ui/stepper'; // Assuming Stepper is in the same directory
+import { Stepper, Step } from '@/components/ui/stepper'; 
 
 export function StepBooking() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768); // 768px is typical mobile breakpoint
+      setIsMobile(window.innerWidth < 768); 
     };
 
     checkIfMobile();
@@ -70,7 +70,6 @@ export function StepBooking() {
     </Stepper>
   );
 
-  // Desktop Content (Your original layout)
   const DesktopContent = () => (
     <div className="overflow-x-auto w-full">
       <div className="bg-[#7C2121] rounded-xl p-10 flex gap-6 w-full max-w-6xl relative overflow-hidden">

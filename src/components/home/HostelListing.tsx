@@ -41,7 +41,6 @@ export function HostelListing() {
           </p>
         </div>
 
-        {/* Mobile Horizontal Scroll */}
         <div className="md:hidden overflow-x-auto -mx-4 pb-6">
           <div className="flex px-4 gap-6 snap-x snap-mandatory scrollbar-hide">
             {hostels.map((hostel: Hostel) => (
@@ -55,7 +54,6 @@ export function HostelListing() {
           </div>
         </div>
 
-        {/* Desktop Grid Layout */}
         <div className="hidden md:grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
           {hostels.map((hostel) => (
             <HostelCard key={hostel.id} hostel={hostel} />
