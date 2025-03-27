@@ -1,19 +1,17 @@
-import { Blog } from "@/types";
+import {  BlogCardProps } from "@/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
 
-interface BlogCardProps{
-    blog : Blog
-}
 
-export default function BlogCard( {blog} : BlogCardProps)   {
+export default function BlogCard( {blog , key} : BlogCardProps)   {
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (
         <div 
             className="bg-white border-2 rounded-lg overflow-hidden shadow-lg flex flex-col md:flex-row"
+            key={key}
         >
             <div className="w-full md:w-1/2 p-4 flex flex-col">
                 <h2 className="text-xl md:text-2xl font-bold text-blue-600 mb-4">{blog.title}</h2>

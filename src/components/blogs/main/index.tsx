@@ -101,11 +101,10 @@ export default function MainBlogs() {
                     </div>
                 )}
 
-                <div className="space-y-8">
-                    {!isLoading && blogs!.map((blog: Blog, index: number) => (
-                        <BlogCard blog={blog} />
-                    ))}
-                </div>
+{!isLoading && blogs?.map((blog: Blog) => (
+    <BlogCard key={blog.id} blog={blog} />
+))}
+
 
                 <div className="flex justify-center mt-8 space-x-4">
                     <button className="bg-red-500 text-white px-4 py-2 rounded">

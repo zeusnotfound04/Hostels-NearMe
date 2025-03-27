@@ -145,6 +145,10 @@ export interface BlogPost {
 export interface BlogListProps {
   blogs: Blog[];
 }
+export interface BlogCardProps{
+    blog : Blog
+    key : string
+}
 
 
 
