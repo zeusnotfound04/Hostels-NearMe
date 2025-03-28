@@ -85,33 +85,33 @@ import { SkeletonGrid } from "@/components/adminHostels/components/skeleton";
 import { useFetchHostels } from "@/hooks/useFetchHostels";
 import { useDeleteHostel } from "@/hooks/useDeleteHostel";
 
-const amenityIcons: Record<string, JSX.Element> = {
-  bed: <BedIcon width={18} height={18} />,
-  pillow: <PillowIcon width={18} height={18} />,
-  table: <TableIcon width={18} height={18} />,
-  chair: <ChairIcon width={18} height={18} />,
-  Almirah: <AlmirahIcon width={18} height={18} />,
-  attachedWashroom: <WashroomIcon width={18} height={18} />,
-  parking: <ParkingIcon width={18} height={18} />,
-  gym: <GymIcon width={18} height={18} />,
-  indoorGames: <IndoorGamesIcon width={18} height={18} />,
-  biweeklycleaning: <CleaningIcon width={18} height={18} />,
-  securityGuard: <SecurityGuardIcon width={18} height={18} />,
-  allDayWarden: <Shield className="h-4 w-4" />,
-  wiFi: <WifiIcon width={18} height={18} />,
-  airconditioner: <AirConditionerIcon width={18} height={18} />,
-  cooler: <CoolerIcon width={18} height={18} />,
-  geyser: <GeyserIcon width={18} height={18} />,
-  allDayElectricity: <ElectricityIcon width={18} height={18} />,
-  inverterBackup: <InvertorIcon width={18} height={18} />,
-  generator: <GeneratorIcon width={18} height={18} />,
-  waterByRO: <ROWaterIcon width={18} height={18} />,
-  allDayWaterSupply: <WaterSupply width={18} height={18} />,
-  foodIncluded: <FoodIcon width={18} height={18} />,
-  vegetarienMess: <VegetarianMessIcon width={18} height={18} />,
-  isNonVeg: <Utensils className="h-4 w-4" />,
-  cctv: <CCTVIcon width={18} height={18} />,
-};
+  const amenityIcons: Record<string, React.ReactNode> = {
+    bed: <BedIcon width={18} height={18} />,
+    pillow: <PillowIcon width={18} height={18} />,
+    table: <TableIcon width={18} height={18} />,
+    chair: <ChairIcon width={18} height={18} />,
+    Almirah: <AlmirahIcon width={18} height={18} />,
+    attachedWashroom: <WashroomIcon width={18} height={18} />,
+    parking: <ParkingIcon width={18} height={18} />,
+    gym: <GymIcon width={18} height={18} />,
+    indoorGames: <IndoorGamesIcon width={18} height={18} />,
+    biweeklycleaning: <CleaningIcon width={18} height={18} />,
+    securityGuard: <SecurityGuardIcon width={18} height={18} />,
+    allDayWarden: <Shield className="h-4 w-4" />,
+    wiFi: <WifiIcon width={18} height={18} />,
+    airconditioner: <AirConditionerIcon width={18} height={18} />,
+    cooler: <CoolerIcon width={18} height={18} />,
+    geyser: <GeyserIcon width={18} height={18} />,
+    allDayElectricity: <ElectricityIcon width={18} height={18} />,
+    inverterBackup: <InvertorIcon width={18} height={18} />,
+    generator: <GeneratorIcon width={18} height={18} />,
+    waterByRO: <ROWaterIcon width={18} height={18} />,
+    allDayWaterSupply: <WaterSupply width={18} height={18} />,
+    foodIncluded: <FoodIcon width={18} height={18} />,
+    vegetarienMess: <VegetarianMessIcon width={18} height={18} />,
+    isNonVeg: <Utensils className="h-4 w-4" />,
+    cctv: <CCTVIcon width={18} height={18} />,
+  };
 
 export default function HostelManagement() {
   const router = useRouter();
@@ -129,7 +129,13 @@ export default function HostelManagement() {
   const [selectedHostel, setSelectedHostel] = useState<Hostel | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { data, isLoading, isError, error, isFetching } = useFetchHostels({
+  const { 
+    data, 
+    isLoading: isFetchingHostels, 
+    isError: isHostelError, 
+    error: hostelError, 
+    isFetching 
+  } = useFetchHostels({
     page: currentPage,
     search: searchTerm,
     city: selectedCity,
@@ -138,7 +144,13 @@ export default function HostelManagement() {
     maxPrice: maxPrice ? Number(maxPrice) : undefined,
   });
 
-  const deleteHostelMutation = useDeleteHostel();
+  const { 
+    mutate: deleteHostel, 
+    isPending: isDeleting, 
+    isError: isDeleteError, 
+    error: deleteError 
+  } = useDeleteHostel();
+
 
   const handlePriceRangeChange = (value: string) => {
     setPriceRange(value);
@@ -157,7 +169,7 @@ export default function HostelManagement() {
   };
 
   const handleDelete = (hostelId: string) => {
-    deleteHostelMutation.mutate(hostelId, {
+    deleteHostel(hostelId, {
       onSuccess: () => {
         toast({
           title: "Success",
@@ -174,7 +186,7 @@ export default function HostelManagement() {
       },
     });
   };
-
+  
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -193,7 +205,7 @@ export default function HostelManagement() {
     setCurrentPage(1);
   };
 
-  if (isLoading && !isFetching) {
+  if (isFetchingHostels && !isFetching) {
     return (
       <div className="container mx-auto p-4 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -205,13 +217,13 @@ export default function HostelManagement() {
     );
   }
 
-  if (isError) {
+  if (isHostelError) {
     return (
       <div className="flex items-center justify-center h-64 text-destructive">
         <AlertCircle className="h-8 w-8" />
         <div className="ml-2">
           <h3 className="font-semibold">Error loading hostels</h3>
-          <p>{error?.message || "An unexpected error occurred"}</p>
+          <p>{hostelError?.message || "An unexpected error occurred"}</p>
         </div>
       </div>
     );
@@ -433,7 +445,7 @@ export default function HostelManagement() {
       </div>
 
       {/* Empty State */}
-      {hostels.length === 0 && !isLoading && (
+      {hostels.length === 0 && !isFetchingHostels && (
         <div className="text-center py-12">
           <h3 className="text-xl font-semibold mb-2">No hostels found</h3>
           <p className="text-gray-600 mb-4">
@@ -458,9 +470,9 @@ export default function HostelManagement() {
             <AlertDialogAction
               className="bg-red-500 hover:bg-red-600"
               onClick={() => selectedHostel && handleDelete(selectedHostel.id)}
-              disabled={deleteHostelMutation.isLoading}
+              disabled={isDeleting}
             >
-              {deleteHostelMutation.isLoading ? (
+              {isDeleting ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
               ) : null}
               Delete

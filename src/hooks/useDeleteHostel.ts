@@ -21,7 +21,7 @@ export function useDeleteHostel() {
   return useMutation<DeleteResponse, Error, string, MutationContext>({
     mutationFn: deleteHostel,
 
-    // Optimistic Update with proper context typing
+    
     onMutate: async (hostelId) => {
       await queryClient.cancelQueries({ queryKey: ['hostels'] });
 
@@ -37,7 +37,6 @@ export function useDeleteHostel() {
     onError: (error, hostelId, context) => {
       console.error('Error deleting hostel:', error);
       
-      // Ensure context is properly typed
       if (context?.previousHostels) {
         queryClient.setQueryData(['hostels'], context.previousHostels);
       }
