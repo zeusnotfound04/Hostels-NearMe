@@ -83,7 +83,7 @@ export const blogRequiredFields = [
 
 
     
-   export const Coaching = [
+    export const Coaching = [
       {
         value: "allen",
         label: "ALLEN CAREER OF COACHING",

@@ -41,12 +41,17 @@ const formSchema = z.object({
 
 
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from '@/components/ui/form';
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 
 
 export default function BookingForm({ hostelId, hostelName, price }: BookingFormProps) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {data : session , status } = useSession()
+  const router = useRouter();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,6 +66,10 @@ export default function BookingForm({ hostelId, hostelName, price }: BookingForm
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      if (!session?.user) {
+        router.push("/login");
+        return;
+      }
       setIsSubmitting(true);
       const bookingData = { hostelId, hostelName, ...values }
       console.log("Booking Data", bookingData)
@@ -68,12 +77,12 @@ export default function BookingForm({ hostelId, hostelName, price }: BookingForm
       const response = await axios.post("/api/bookings", bookingData);
       
       if (response.status === 201) {
-        // Show the success animation instead of toast
+        
         setShowSuccess(true);
         console.log("BOOKING CREATED SUCCESSFULLY::::::::::::::")
         console.log("Booking Response:", response.data);
         
-        // Reset form after some delay
+        
         setTimeout(() => {
           form.reset();
           setShowSuccess(false);

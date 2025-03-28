@@ -31,6 +31,7 @@ const filterOptions = [
   { id: 3, name: "Facility type", icon: <Image src={FacilityIcon} width={16} height={16} alt="Facility" /> },
   { id: 4, name: "Sharing type", icon: <SharingIcon className="w-4 h-4" /> },
   { id: 5, name: "Sort", icon: <SortingIcon className="w-4 h-4" /> },
+  { id: 6, name: "Nearby Coaching", icon: <SharingIcon className="w-4 h-4" /> },
 ];
 
 const facilityOptions = [
@@ -54,6 +55,14 @@ const facilityOptions = [
   { id: "airconditioner", label: "Air Conditioner" },
 ];
 
+const coachingOptions = [
+  { id: "ALLEN CAREER OF COACHING", label: "ALLEN CAREER OF COACHING" },
+  { id: "Physics Wallah", label: "Physics Wallah" },
+  { id: "Akash", label: "Akash" },
+  { id: "Lakshay", label: "Lakshay" },
+  { id: "Impact", label: "Impact" },
+];
+
 const sortingOptions = [
   { id: "price_asc", label: "Price: Low to High" },
   { id: "price_desc", label: "Price: High to Low" },
@@ -63,6 +72,7 @@ const sortingOptions = [
 export default function HostelListing() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  console.log("HELLO THIS SHITT IS HAPPENING")
 
   const [openDialog, setOpenDialog] = useState<number | null>(null);
   
@@ -73,6 +83,7 @@ export default function HostelListing() {
     sharingType: "",
     sort: "",
     priceRange: [0, 50000] as [number, number],
+    nearByCoaching: "",
   });
 
   const [queryParams, setQueryParams] = useState<{
@@ -85,6 +96,7 @@ export default function HostelListing() {
     maxPrice?: number | undefined;
     sortBy?: string | undefined;
     sortOrder?: 'asc' | 'desc' | undefined;
+    nearByCoaching?: string | undefined;
   }>({
     page: 1,
     search: "",
@@ -95,6 +107,7 @@ export default function HostelListing() {
     maxPrice: undefined,
     sortBy: undefined,
     sortOrder: undefined,
+    nearByCoaching: undefined,
   });
 
   useEffect(() => {
@@ -108,6 +121,7 @@ export default function HostelListing() {
       maxPrice: searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : undefined,
       sortBy: searchParams.get("sortBy") || undefined,
       sortOrder: (searchParams.get("sortOrder") as 'asc' | 'desc' | null) || undefined,
+      nearByCoaching: searchParams.get("nearByCoaching") || undefined,
     };
 
     setQueryParams(newQueryParams);
@@ -165,6 +179,12 @@ export default function HostelListing() {
       url.searchParams.set("gender", filters.gender);
     } else {
       url.searchParams.delete("gender");
+    }
+
+    if (filters.nearByCoaching) {
+      url.searchParams.set("nearByCoaching", filters.nearByCoaching);
+    } else {
+      url.searchParams.delete("nearByCoaching");
     }
     
     if (filters.hostelType) {
@@ -403,6 +423,32 @@ export default function HostelListing() {
         </DialogContent>
       </Dialog>
       
+      <Dialog open={openDialog === 6} onOpenChange={() => handleCloseDialog()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Filter by Nearby Coaching</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <RadioGroup 
+              value={filters.nearByCoaching} 
+              onValueChange={(value) => setFilters({...filters, nearByCoaching: value})}
+              className="flex flex-col gap-2"
+            >
+              {coachingOptions.map((coaching) => (
+                <div key={coaching.id} className="flex items-center space-x-2">
+                  <RadioGroupItem value={coaching.id} id={`coaching-${coaching.id}`} />
+                  <Label htmlFor={`coaching-${coaching.id}`}>{coaching.label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleApplyFilters} className="bg-[#902920]">Apply</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <div className="space-y-6">
         {hostels.length > 0 ? (
           hostels.map((hostel: Hostel) => <HostelCard key={hostel.id} hostel={hostel} />)
