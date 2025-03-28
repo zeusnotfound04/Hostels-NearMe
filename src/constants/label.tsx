@@ -219,7 +219,7 @@ export const facilityLabels: Record<string, string> = {
     { property: "waterByRO", icon: <ROWaterIcon className="w-6 h-6" />, name: "RO Water" },
     { property: "securityGuard", icon: <SecurityGuardIcon className="w-6 h-6" />, name: "Security Guard" },
     { property: "table", icon: <TableIcon className="w-6 h-6" />, name: "Table" },
-    { property: "foodIncluded", icon: <FoodIcon className="w-6 h-6" />, name: "Food Included" },
+    { property: "foodIncluded", icon: <FoodIcon height={24} width={24} className="w-6 h-6" />, name: "Food Included" },
     { property: "bed", icon: <BedIcon className="w-6 h-6" />, name: "Bed" },
     { property: "allDayWaterSupply", icon: <WaterSupply className="w-6 h-6" />, name: "24/7 Water Supply" },
     { property: "gym", icon: <GymIcon className="w-6 h-6" />, name: "Gym" },

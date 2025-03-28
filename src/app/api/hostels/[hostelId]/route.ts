@@ -170,10 +170,6 @@ export async function DELETE(req: Request,  { params }: RouteParams) {
       );
     }
     
-
-
-
-
     if (!hostelId) {
       return NextResponse.json(
         { error: "Hostel ID is required" },

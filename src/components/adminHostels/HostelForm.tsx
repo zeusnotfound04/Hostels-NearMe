@@ -128,7 +128,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
         imageUrls = [...imageUrls, ...uploadResponse.data.fileUrls];
       }
   
-      // Create base hostel data
+      
       const baseHostelData = {
         name: values.name,
         about: values.about,
@@ -138,6 +138,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
         city: values.city,
         hostelType: values.hostelType,
         address: values.address,
+        nearByCoaching : values.nearByCoaching,
         images: imageUrls,
       };
   
@@ -155,7 +156,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
       
       
   
-      // Combine all data
+
       const hostelData = {
         ...baseHostelData,
         ...facilities,
@@ -281,7 +282,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
               name="nearByCoaching"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Frameworks</FormLabel>
+                  <FormLabel>Add the Near by Coaching</FormLabel>
                   <FormControl>
                     <MultiSelect
                       options={Coaching}

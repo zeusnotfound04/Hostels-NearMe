@@ -4,7 +4,7 @@ import { useFetchHostels } from "@/hooks/useFetchHostels";
 import { Hostel } from "@/types";
 
 export function HostelListing() {
-  const { data, isLoading, error } = useFetchHostels({ page: 1 }, 7);
+  const { data, isLoading, error } = useFetchHostels({ page: 1 }, 3);
   console.log("Fetching of the Hostel :::::::" , data?.hostels)
   const hostels = data?.hostels || [];
 
