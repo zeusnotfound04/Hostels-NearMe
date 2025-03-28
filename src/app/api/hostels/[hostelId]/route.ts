@@ -102,6 +102,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
         ...(body.address !== undefined && { address: body.address }),
         ...(body.about !== undefined && { about: body.about }),
         ...(body.images !== undefined && { images: body.images }),
+        ...(body.nearByCoaching !== undefined && { images: body.nearByCoaching }),
         ...(body.gender !== undefined && { gender: body.gender }),
         ...(body.isAvailable !== undefined && { isAvailable: body.isAvailable }),
         ...(body.isNonVeg !== undefined && { isNonVeg: body.isNonVeg }),

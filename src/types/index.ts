@@ -28,6 +28,7 @@ export interface Hostel {
   address: string;
   about: string;
   images: string[];
+  nearByCoaching : string[];
   isAvailable: boolean;
   isNonVeg: boolean;
   Almirah: boolean;
@@ -258,6 +259,7 @@ export interface FetchHostelParams {
   limit?: number;
   search?: string;
   city?: string;
+  nearByCoaching? : string;
   gender?: string;
   minPrice?: number;
   maxPrice?: number;

@@ -64,7 +64,7 @@ model Hostel {
   about             String     
   images            String[]        
   gender            HostelGender
-  nearByCoaching    String[]?
+  nearByCoaching    String[]
   isAvailable       Boolean         @default(true)
   isNonVeg          Boolean         @default(false)
   Almirah           Boolean         @default(false)
@@ -173,7 +173,7 @@ model ListHostelRequest {
   city             String   // City where the hostel is located
   address          String   // Address of the hostel
   message          String   // Additional details or message from the owner
-  status           RequestStatus @default(PENDING) // Status of the request
+  status           RequestStatus @default(PENDING) // Status of the request 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 

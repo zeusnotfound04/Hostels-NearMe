@@ -2,23 +2,9 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { FetchHostelParams, Hostel, HostelResponse } from "@/types";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import useDebounce from "./useDebounce";
 
-
-
-const useDebounce = (value: string, delay = 500) => {
-    const [debouncedValue, setDebouncedValue] = useState(value);
-    
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedValue(value);
-        }, delay);
-        
-        return () => clearTimeout(handler);
-    }, [value, delay]);
-
-    return debouncedValue;
-};
-
+// Keep the existing useDebounce hook
 
 const fetchHostels = async (params: FetchHostelParams): Promise<HostelResponse> => {
     const urlParams = new URLSearchParams({
@@ -26,11 +12,13 @@ const fetchHostels = async (params: FetchHostelParams): Promise<HostelResponse> 
         isAvailable: "true"
     });
 
+    // Existing filters
     if (params.limit) urlParams.append("limit", params.limit.toString());
     if (params.gender && params.gender !== "all") urlParams.append("gender", params.gender);
     if (params.search?.trim()) urlParams.append("search", params.search.trim());
     if (params.city?.trim()) urlParams.append("city", params.city.trim());
 
+    // Price filters
     if (!isNaN(Number(params.minPrice)) && Number(params.minPrice) >= 0) {
         urlParams.append("minPrice", params.minPrice!.toString());
     }
@@ -39,6 +27,11 @@ const fetchHostels = async (params: FetchHostelParams): Promise<HostelResponse> 
         urlParams.append("maxPrice", params.maxPrice!.toString());
     }
 
+    if (params.nearByCoaching?.trim()) {
+        urlParams.append("nearByCoaching", params.nearByCoaching.trim());
+    }
+
+    // Sorting
     if (params.sortBy) urlParams.append("sortBy", params.sortBy);
     if (params.sortOrder) urlParams.append("sortOrder", params.sortOrder);
 
@@ -52,13 +45,26 @@ const fetchHostels = async (params: FetchHostelParams): Promise<HostelResponse> 
     }
 };
 
-// Todo - Need to add onError 
 export function useFetchHostels(params: FetchHostelParams, limit?: number) {
     const debouncedSearch = useDebounce(params.search || "", 500);
+    const debouncedNearByCoaching = useDebounce(params.nearByCoaching || "", 500);
 
     return useQuery<HostelResponse, Error>({
-        queryKey: ['hostels', { ...params, search: debouncedSearch }, limit],
-        queryFn: () => fetchHostels({ ...params, search: debouncedSearch, limit }),
+        queryKey: [
+            'hostels', 
+            { 
+                ...params, 
+                search: debouncedSearch,
+                nearByCoaching: debouncedNearByCoaching 
+            }, 
+            limit
+        ],
+        queryFn: () => fetchHostels({ 
+            ...params, 
+            search: debouncedSearch,
+            nearByCoaching: debouncedNearByCoaching,
+            limit 
+        }),
         placeholderData: keepPreviousData,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -66,6 +72,5 @@ export function useFetchHostels(params: FetchHostelParams, limit?: number) {
         staleTime: 5 * 60 * 1000,
         gcTime: 30 * 60 * 1000,
         retry: 3, 
-  
     });
 }

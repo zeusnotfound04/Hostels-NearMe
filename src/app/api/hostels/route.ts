@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { HostelType, HostelGender } from "@prisma/client";
 import { hostelRequiredFields } from "@/constants";
 import { isAdmin } from "@/utils/user";
+import { updateActiveHostelsCount } from "@/utils/hostels";
 
 
 export async function POST(req: NextRequest) {
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
         hostelType: body.hostelType as HostelType,
         address: body.address,
         images: body.images,
+        nearByCoaching : body.nearByCoaching,
         isAvailable: body.isAvailable ?? true,
         isNonVeg: body.isNonVeg ?? false,
         Almirah: body.Almirah ?? false,
@@ -90,7 +92,7 @@ export async function POST(req: NextRequest) {
     });
 
 
-    // await updateActiveHostelsCount();
+    await updateActiveHostelsCount();
     return NextResponse.json(
       { message: "Hostel Created Successfully", hostel },
       { status: 201 }
@@ -149,6 +151,12 @@ export async function GET(req: NextRequest) {
       filters.gender = searchParams.get("gender") as HostelGender;
     }
 
+    if (searchParams.get("nearByCoaching")) {
+      const coachingTerm = searchParams.get("nearByCoaching");
+      filters.nearByCoaching = {
+        has: coachingTerm
+      };
+    }
   
     if (searchParams.get("city") && !searchParams.get("search")) {
       filters.city = {
@@ -232,6 +240,7 @@ export async function GET(req: NextRequest) {
         address: true,
         about: true,
         images: true,
+        nearByCoaching : true,
         isAvailable: true,
         isNonVeg: true,
         Almirah: true,
