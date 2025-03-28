@@ -36,8 +36,6 @@ export function HostelSearch() {
               text-sm sm:text-base hover:bg-red-700 transition-colors'
 
                       />
-        
-
 
         
       </div>
