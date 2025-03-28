@@ -84,3 +84,26 @@ export const blogRequiredFields = [
 
 
     
+   export const Coaching = [
+      {
+        value: "allen",
+        label: "ALLEN CAREER OF COACHING",
+      },
+      {
+        value: "PW",
+        label: "Physics Wallah",
+
+      },
+      {
+        value: "akash",
+        label: "Akash",
+      },
+      {
+        value: "lakshay",
+        label: "Lakshay",
+      },
+      {
+        value: "impact",
+        label: "Impact",
+      },
+    ];    

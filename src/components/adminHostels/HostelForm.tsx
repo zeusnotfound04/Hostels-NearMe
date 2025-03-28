@@ -14,14 +14,18 @@ import {Popover,PopoverContent,PopoverTrigger,} from "@/components/ui/popover";
 import { Save,  Check, ChevronsUpDown, PencilIcon } from "lucide-react";
 import { facilityLabels , houseRulesLabels } from "@/constants/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { cities , hostelGenders , states , sharingtypes } from "@/constants";
+import { cities , hostelGenders , states , sharingtypes, Coaching } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { HostelFormProps } from "@/types";
+import { MultiSelect } from "@/components/ui/multi-select";
 
 
+type AdditionalFormFields = {
+  [key: string]: boolean;
+};
 
 
 const formSchema = z.object({
@@ -36,10 +40,10 @@ const formSchema = z.object({
   city: z.string(),
   hostelType: z.string(),
   address: z.string(),
-  // Make images completely optional and allow empty arrays
   images: z.array(z.instanceof(File)).max(4).optional().default([]),
-  // Add existing images field
+  nearByCoaching: z.array(z.string()).optional().default([]),
   existingImages: z.array(z.string()).optional().default([]),
+  // Use the spread operator with a type assertion to include dynamic boolean fields
   ...Object.keys(facilityLabels).reduce((acc, key) => {
     acc[key] = z.boolean();
     return acc;
@@ -60,25 +64,26 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
   const { toast } = useToast();
 
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',  
+      name: '',
       about: '',
-      price: 0,  
-      gender: '', 
+      price: 0,
+      gender: '',
       state: '',
       city: '',
       hostelType: '',
       address: '',
+      nearByCoaching: [],
       ...Object.keys(facilityLabels).reduce((acc, key) => {
         acc[key] = false;
         return acc;
-      }, {} as Record<string, boolean>),
+      }, {} as AdditionalFormFields),
       ...Object.keys(houseRulesLabels).reduce((acc, key) => {
         acc[key] = false;
         return acc;
-      }, {} as Record<string, boolean>),
+      }, {} as AdditionalFormFields),
       images: [],
       existingImages: [],
     },
@@ -87,7 +92,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
     if (initialData) {
       const formattedData = {
         ...initialData,
-        price: initialData.price.toString(),
+        price: Number(initialData.price), 
         images: [],
         existingImages: initialData.images || [],
       };
@@ -104,9 +109,9 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
       router.push("/login");
       return;
     }
-  
+    
     setLoading(true);
-  
+    console.log("Hostel Data  ::::" , values)
     try {
       let imageUrls: string[] = [...(values.existingImages || [])];
   
@@ -138,15 +143,17 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
   
       // Add facilities
       const facilities = Object.keys(facilityLabels).reduce((acc, key) => {
-        acc[key] = Boolean(values[key as keyof typeof facilityLabels]);
+        acc[key] = Boolean((values as Record<string, unknown>)[key]);
         return acc;
       }, {} as Record<string, boolean>);
-  
-      // Add house rules
+      
       const houseRules = Object.keys(houseRulesLabels).reduce((acc, key) => {
-        acc[key] = Boolean(values[key as keyof typeof houseRulesLabels]);
+        acc[key] = Boolean((values as Record<string, unknown>)[key]);
         return acc;
       }, {} as Record<string, boolean>);
+      
+      
+      
   
       // Combine all data
       const hostelData = {
@@ -154,7 +161,8 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
         ...facilities,
         ...houseRules
       };
-  
+      
+
       if (isEditMode) {
         await axios.patch(`/api/hostels/${hostelId}`, hostelData);
         toast({
@@ -268,7 +276,32 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
                           )}
                         />
 
-                   
+<FormField
+              control={form.control}
+              name="nearByCoaching"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Frameworks</FormLabel>
+                  <FormControl>
+                    <MultiSelect
+                      options={Coaching}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      placeholder="Select options"
+                      variant="inverted"
+                      animation={2}
+                      maxCount={3}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Choose the frameworks you are interested in.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+
                   </div>
 
               <div className="flex-1 flex flex-col gap-6">

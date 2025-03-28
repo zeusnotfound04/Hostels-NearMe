@@ -64,6 +64,7 @@ model Hostel {
   about             String     
   images            String[]        
   gender            HostelGender
+  nearByCoaching    String[]?
   isAvailable       Boolean         @default(true)
   isNonVeg          Boolean         @default(false)
   Almirah           Boolean         @default(false)
