@@ -6,7 +6,7 @@ import { FemaleIcon, LocationIcon, MaleIcon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/aceinput";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner"
-import { Check, Phone, User } from "lucide-react";
+import { AlertCircle, Check, Phone, User } from "lucide-react";
 import {
   useForm
 } from "react-hook-form"
@@ -15,10 +15,14 @@ import {
 } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import axios from "axios";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { motion, AnimatePresence } from "framer-motion";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from '@/components/ui/form';
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 
 
@@ -28,6 +32,12 @@ type BookingFormProps = {
   price: number;
   gender: "BOYS" | "GIRLS";
 };
+
+type ExistingBooking = {
+  id: string;
+  status: string;
+  referenceId: string;
+}
 
 const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -40,15 +50,14 @@ const formSchema = z.object({
 });
 
 
-import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from '@/components/ui/form';
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 
 
 export default function BookingForm({ hostelId, hostelName, price }: BookingFormProps) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [existingBooking, setExistingBooking] = useState<ExistingBooking | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const {data : session , status } = useSession()
   const router = useRouter();
@@ -64,6 +73,31 @@ export default function BookingForm({ hostelId, hostelName, price }: BookingForm
     }
   });
 
+  useEffect(() => {
+    const checkExistingBooking = async () => {
+      if (status === "loading") return;
+      
+      if (!session?.user) {
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        const response = await axios.get(`/api/bookings/check?hostelId=${hostelId}`);
+        if (!response.data.canBook && response.data.booking) {
+          setExistingBooking(response.data.booking);
+        }
+      } catch (error) {
+        console.error("Error checking existing booking:", error);
+        toast.error("Failed to check booking status");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkExistingBooking();
+  }, [hostelId, session, status]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       if (!session?.user) {
@@ -71,6 +105,13 @@ export default function BookingForm({ hostelId, hostelName, price }: BookingForm
         return;
       }
       setIsSubmitting(true);
+      const checkResponse = await axios.get(`/api/bookings/check?hostelId=${hostelId}`);
+      if (!checkResponse.data.canBook) {
+        setExistingBooking(checkResponse.data.booking);
+        toast.error("You already have an active booking for this hostel");
+        setIsSubmitting(false);
+        return;
+      }
       const bookingData = { hostelId, hostelName, ...values }
       console.log("Booking Data", bookingData)
 
@@ -97,6 +138,59 @@ export default function BookingForm({ hostelId, hostelName, price }: BookingForm
       setIsSubmitting(false);
     }
   }
+
+  const goToBookingDetails = () => {
+    if (existingBooking) {
+      router.push(`/bookings/${existingBooking.id}`);
+    }
+  };
+
+
+  if (isLoading) {
+    return (
+      <Card className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
+        <CardContent className="p-6 flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Checking booking status...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (existingBooking) {
+    return (
+      <Card className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-amber-500 to-amber-600 p-6">
+          <CardTitle className="font-black text-white text-2xl flex items-center">
+            <AlertCircle className="mr-2 h-6 w-6" />
+            <span>Already Booked</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <Alert className="mb-4 bg-amber-50 border-amber-200">
+            <AlertCircle className="h-4 w-4 text-amber-600" />
+            <AlertTitle className="text-amber-800 font-medium">Booking Already Exists</AlertTitle>
+            <AlertDescription className="text-amber-700">
+              You have already booked this hostel. Your booking reference is {existingBooking.referenceId} and the 
+              current status is <span className="font-medium">{existingBooking.status}</span>.
+            </AlertDescription>
+          </Alert>
+          <p className="text-gray-600 mb-6 text-center">
+            To view or manage your existing booking, please click the button below.
+          </p>
+          <Button 
+            onClick={goToBookingDetails}
+            className="w-full bg-amber-600 hover:bg-amber-700 rounded-lg h-12 transition-all shadow-lg shadow-amber-600/30"
+          >
+            <span className="font-bold text-white">View Booking Details</span>
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
 
   return (
     <div className="relative w-full max-w-md">
