@@ -1,3 +1,4 @@
+import { hasDuplicateBooking } from "@/actions/bookings/checkBooking";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
@@ -33,6 +34,13 @@ export async function POST(req:Request) {
         console.log(body)
         const validateData = bookingSchema.parse(body)
         console.log(validateData)
+
+        const isDuplicate = await hasDuplicateBooking(userId, validateData.hostelId);
+        if (isDuplicate) {
+            return NextResponse.json({ 
+                error: "You already have an active booking for this hostel" 
+            }, { status: 400 });
+        }
 
             
         const referenceId = `BOOK-${Date.now()}-${Math.random().toString(36).substring(2 , 8).toUpperCase()}`
