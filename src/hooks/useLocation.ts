@@ -1,35 +1,40 @@
+import { useCallback, useEffect, useState } from "react";
 import { State, City } from "country-state-city";
 
+interface StateType {
+    name: string;
+    isoCode: string;
+  }
+  
+  interface CityType {
+    name: string;
+  }
+
 const useLocation = () => {
-    const getStateByCode = (stateCode: string) => {
-        const state = State.getAllStates().find(
-            (state) =>
-                state.countryCode === "IN" && state.isoCode === stateCode
-        );
+  const [states, setStates] = useState<StateType[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-        if (!state) return null;
+  useEffect(() => {
+    try {
+      const indianStates = State.getStatesOfCountry("IN").map((state) => ({
+        name: state.name,
+        isoCode: state.isoCode,
+      }));
+      setStates(indianStates);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching location data:", error);
+      setLoading(false);
+    }
+  }, []);
 
-        return state;
-    };
+  // ✅ Memoized getCities function
+  const getCities = useCallback((stateCode: string): CityType[] => {
+    if (!stateCode) return [];
+    return City.getCitiesOfState("IN", stateCode).map((city) => ({
+      name: city.name,
+    }));
+  }, []);
 
-    const getCountryStates = () => {
-        return State.getAllStates().filter(
-            (state) => state.countryCode === "IN"
-        );
-    };
-
-    const getStateCities = (stateCode: string) => {
-        return City.getAllCities().filter(
-            (city) => city.countryCode === "IN" && city.stateCode === stateCode
-        );
-    };
-
-    return {
-        getStateByCode,
-        getCountryStates,
-        getStateCities
-    };
+  return { states, getCities, loading };
 };
-
-
-export default useLocation;

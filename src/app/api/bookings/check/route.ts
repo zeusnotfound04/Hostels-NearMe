@@ -18,7 +18,6 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: "Hostel ID is required" }, { status: 400 });
         }
 
-        // Find existing booking
         const existingBooking = await prisma.booking.findFirst({
             where: {
                 userId: userId,

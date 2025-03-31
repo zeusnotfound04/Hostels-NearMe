@@ -2,7 +2,7 @@ import { hasDuplicateBooking } from "@/actions/bookings/checkBooking";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 
@@ -19,7 +19,7 @@ const bookingSchema = z.object({
 
 
 
-export async function POST(req:Request) {
+export async function POST(req:NextRequest) {
 
     try {
         const session = await getServerSession(authOptions);
@@ -74,9 +74,7 @@ export async function GET(req:Request) {
         if (!session?.user){
             return NextResponse.json({ error : "Unauthorized"} , { status : 401})
         }
-
-
-
+        
         const user = session.user;
         console.log("USER" , user)
         const role = user.role; 
