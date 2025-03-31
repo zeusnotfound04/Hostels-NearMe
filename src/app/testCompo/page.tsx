@@ -1,50 +1,20 @@
 "use client"
-import { HostelListing } from "@/components/home/HostelListing";
-import ListRequestForm from "@/components/ListHostelRequest/RequestForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@radix-ui/react-select";
-import { useEffect, useState, useCallback } from "react"; // ✅ Added useCallback
+import { useEffect, useState} from "react"; 
 import { Label } from "recharts";
-import { State, City } from "country-state-city"; // ✅ Import runtime modules
+import { useLocation } from "@/hooks/useLocation";
 
-// Define types for state and city
+
 interface StateType {
-  name: string;
-  isoCode: string;
-}
+    name: string;
+    isoCode: string;
+  }
+  
+  interface CityType {
+    name: string;
+  }
 
-interface CityType {
-  name: string;
-}
-
-const useLocation = () => {
-  const [states, setStates] = useState<StateType[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    try {
-      const indianStates = State.getStatesOfCountry("IN").map((state) => ({
-        name: state.name,
-        isoCode: state.isoCode,
-      }));
-      setStates(indianStates);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching location data:", error);
-      setLoading(false);
-    }
-  }, []);
-
-  // ✅ Memoized getCities function
-  const getCities = useCallback((stateCode: string): CityType[] => {
-    if (!stateCode) return [];
-    return City.getCitiesOfState("IN", stateCode).map((city) => ({
-      name: city.name,
-    }));
-  }, []);
-
-  return { states, getCities, loading };
-};
 
 export default function Page() {
   const [selectedState, setSelectedState] = useState<string>("");
@@ -52,7 +22,7 @@ export default function Page() {
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [availableCities, setAvailableCities] = useState<CityType[]>([]);
 
-  const { states, getCities, loading } = useLocationData();
+  const { states, getCities, loading } = useLocation();
 
   // Update cities when state changes
   useEffect(() => {

@@ -5,14 +5,30 @@ import { motion, useInView, useAnimation } from "framer-motion"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Loader2, Save, Upload, User, Sparkles, CheckCircle2 } from "lucide-react"
+import { Loader2, Save, Upload, User, Sparkles, CheckCircle2, ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/hooks/use-toast"
+import { useLocation } from "@/hooks/useLocation"
+import { genderOptions } from "@/constants"
+
+
+
+
+
+interface StateType {
+  name: string;
+  isoCode: string;
+}
+
+interface CityType {
+  name: string;
+}
 
 const profileFormSchema = z.object({
   username: z
@@ -31,9 +47,9 @@ const profileFormSchema = z.object({
     .max(50, {
       message: "Name must not be longer than 50 characters.",
     }),
-  bio: z.string().max(160).optional(),
-  website: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal("")),
-  location: z.string().max(30).optional(),
+  gender: z.string().min(1, { message: "Please select a gender" }),
+  city: z.string().min(1, { message: "Please select a city" }),
+  state: z.string().min(1, { message: "Please select a state" }),
 })
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
@@ -95,14 +111,45 @@ export default function ProfilePage() {
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false)
   const formRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
+   const [selectedState, setSelectedState] = useState<string>("");
+    const [selectedStateCode, setSelectedStateCode] = useState<string>("");
+    const [selectedCity, setSelectedCity] = useState<string>("");
+    const [availableCities, setAvailableCities] = useState<CityType[]>([]);
+
+
+  const { states, getCities, loading } = useLocation();
+
+  useEffect(() => {
+    if (selectedStateCode) {
+      const cities = getCities(selectedStateCode); 
+      setAvailableCities(cities);
+    } else {
+      setAvailableCities([]);
+    }
+    setSelectedCity("");
+  }, [selectedStateCode, getCities]);  // ✅ No infinite loop due to memoization
+
+  const handleStateChange = (value: string) => {
+    const selectedStateObj = states.find((state) => state.name === value);
+    setSelectedState(value);
+    setSelectedStateCode(selectedStateObj ? selectedStateObj.isoCode : "");
+  };
+
+  const handleCityChange = (value: string) => {
+    setSelectedCity(value);
+  };
+
+
+
+
 
   // Default values for the form
   const defaultValues: Partial<ProfileFormValues> = {
     username: "johndoe",
     name: "John Doe",
-    bio: "I'm a software developer based in San Francisco.",
-    website: "https://example.com",
-    location: "San Francisco, CA",
+    gender: "Prefer not to say",
+    city: "San Francisco",
+    state: "California",
   }
 
   const form = useForm<ProfileFormValues>({
@@ -218,7 +265,7 @@ export default function ProfilePage() {
           >
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 sm:space-y-8 relative">
-              <AnimatedFormField index={0}>
+                <AnimatedFormField index={0}>
                   <FormField
                     control={form.control}
                     name="name"
@@ -238,8 +285,6 @@ export default function ProfilePage() {
                     )}
                   />
                 </AnimatedFormField>
-
-
 
                 <AnimatedFormField index={1}>
                   <FormField
@@ -264,13 +309,100 @@ export default function ProfilePage() {
                   />
                 </AnimatedFormField>
 
+                {/* New Gender Select Field */}
+                <AnimatedFormField index={2}>
+                  <FormField
+                    control={form.control}
+                    name="gender"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#902920] font-semibold">Gender</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="border-[#902920]/20 focus:border-[#902920] transition-all duration-300 shadow-sm focus:shadow-md focus:shadow-[#902920]/10">
+                              <SelectValue placeholder="Select your gender" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {genderOptions.map((option) => (
+                              <SelectItem key={option} value={option}>
+                                {option}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription className="text-xs sm:text-sm">How you identify yourself.</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </AnimatedFormField>
+
+                <AnimatedFormField index={3}>
+                  <FormField
+                    control={form.control}
+                    name="state"
+                    disabled={loading}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#902920] font-semibold">State</FormLabel>
+                        <Select 
+                          onValueChange={handleStateChange} 
+                          value={selectedState}>
+                            
+                          <FormControl>
+                            <SelectTrigger className="border-[#902920]/20 focus:border-[#902920] transition-all duration-300 shadow-sm focus:shadow-md focus:shadow-[#902920]/10">
+                              <SelectValue placeholder="Select your state" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                          {states.map((state) => (
+                    <SelectItem key={state.isoCode} value={state.name}>
+                      {state.name}
+                    </SelectItem>
+                  ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription className="text-xs sm:text-sm">The state you're currently living in.</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </AnimatedFormField>
 
 
+                {/* New City Select Field */}
+                <AnimatedFormField index={4}>
+                  <FormField
+                    control={form.control}
+                    name="city"
+                    disabled={!selectedState || loading}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#902920] font-semibold">City</FormLabel>
+                        <Select onValueChange={handleCityChange} defaultValue={selectedCity}>
+                          <FormControl>
+                            <SelectTrigger className="border-[#902920]/20 focus:border-[#902920] transition-all duration-300 shadow-sm focus:shadow-md focus:shadow-[#902920]/10">
+                              <SelectValue placeholder="Select your city" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                          {availableCities.map((city) => (
+                    <SelectItem key={city.name} value={city.name}>
+                      {city.name}
+                    </SelectItem>
+                  ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription className="text-xs sm:text-sm">The city you're currently living in.</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </AnimatedFormField>
 
-
- 
-
-
+                {/* New State Select Field */}
+                
                 <AnimatedFormField index={5}>
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="relative">
                     <Button
@@ -375,8 +507,6 @@ export default function ProfilePage() {
                       >
                         <Upload className="mr-2 h-4 w-4" />
                         {isUploading ? "Uploading..." : "Upload New Avatar"}
-
-                        
                       </Button>
                     </motion.div>
                   </label>

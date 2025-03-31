@@ -18,7 +18,9 @@ model User {
   password  String
   name      String
   username  String   @unique
-  gender    Gender?  
+  gender    Gender?
+  city      String?
+  state     String?  
   role      Role     @default(USER)  // Using enum Role for type safety
   createdAt DateTime @default(now())
   bookings  Booking[]

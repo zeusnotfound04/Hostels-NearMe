@@ -10,7 +10,7 @@ interface StateType {
     name: string;
   }
 
-const useLocation = () => {
+export const useLocation = () => {
   const [states, setStates] = useState<StateType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -28,7 +28,6 @@ const useLocation = () => {
     }
   }, []);
 
-  // ✅ Memoized getCities function
   const getCities = useCallback((stateCode: string): CityType[] => {
     if (!stateCode) return [];
     return City.getCitiesOfState("IN", stateCode).map((city) => ({

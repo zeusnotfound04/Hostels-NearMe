@@ -81,7 +81,7 @@ export const blogRequiredFields = [
     }
     
 
-
+export const genderOptions= ["MALE" , "FEMALE"]
     
     export const Coaching = [
       {
