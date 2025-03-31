@@ -21,10 +21,6 @@ import { genderOptions } from "@/constants"
 
 
 
-interface StateType {
-  name: string;
-  isoCode: string;
-}
 
 interface CityType {
   name: string;

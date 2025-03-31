@@ -25,7 +25,8 @@ model User {
   createdAt DateTime @default(now())
   bookings  Booking[]
 
-  @@index([email]) // Index on email for faster querying
+  @@index([email]) 
+  @@index([username])
 }
 
 enum Role {
