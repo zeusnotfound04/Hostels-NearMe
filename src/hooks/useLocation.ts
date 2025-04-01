@@ -34,6 +34,7 @@ export const useLocation = () => {
       name: city.name,
     }));
   }, []);
+  
 
   return { states, getCities, loading };
 };
