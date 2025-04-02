@@ -1,16 +1,8 @@
-"use client"
-import ListRequestForm from '@/components/ListHostelRequest/RequestForm';
+import HostelPromoCard from "@/components/promo";
 
-import React from 'react';
-
-
-
-const CityExplorer: React.FC = () => {
-
+export default function Page(){
 
   return (
-      <ListRequestForm/>
-  );
-};
-
-export default CityExplorer;
+    <HostelPromoCard/>
+  )
+}

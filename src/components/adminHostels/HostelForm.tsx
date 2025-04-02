@@ -43,7 +43,6 @@ const formSchema = z.object({
   images: z.array(z.instanceof(File)).max(4).optional().default([]),
   nearByCoaching: z.array(z.string()).optional().default([]),
   existingImages: z.array(z.string()).optional().default([]),
-  // Use the spread operator with a type assertion to include dynamic boolean fields
   ...Object.keys(facilityLabels).reduce((acc, key) => {
     acc[key] = z.boolean();
     return acc;

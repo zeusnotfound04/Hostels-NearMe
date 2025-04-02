@@ -17,7 +17,8 @@ import { genderOptions } from "@/constants"
 import { profileFormSchema } from "./schema"
 import { Particles } from "./Particles"
 import { AnimatedFormField } from "./Fields"
-import { State, City } from "country-state-city"
+import { State, City, IState } from "country-state-city"
+import axios from "axios"
 
 interface CityType {
   name: string;
@@ -47,11 +48,12 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const formRef = useRef<HTMLDivElement>(null)
-  const [selectedState, setSelectedState] = useState<string>("")
+  const [selectedStateName, setSelectedStateName] = useState<string>("")
   const [formInitialized, setFormInitialized] = useState(false)
   const [states, setStates] = useState<any[]>([])
   const [cities, setCities] = useState<any[]>([])
   const [profile, setProfile] = useState<any>(null)
+  const [stateCode, setStateCode] = useState<string>("");
 
   useEffect(() => {
     const indiaStates = State.getStatesOfCountry("IN");
@@ -59,13 +61,13 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
   }, []);
 
   useEffect(() => {
-    if (selectedState) {
-      const stateCities = City.getCitiesOfState("IN", selectedState);
+    if (stateCode) {
+      const stateCities = City.getCitiesOfState("IN", stateCode);
       setCities(stateCities);
     } else {
       setCities([]);
     }
-  }, [selectedState]);
+  }, [stateCode]);
 
   console.log("INITIAL DATA ::::", initialProfile)
 
@@ -85,6 +87,21 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
 
   useEffect(() => {
     if (initialProfile && "name" in initialProfile) {
+      
+      let stateIsoCode = "";
+      if (initialProfile.state) {
+        
+        const stateObj = states.find(s => s.name === initialProfile.state);
+        if (stateObj) {
+          stateIsoCode = stateObj.isoCode;
+          setStateCode(stateIsoCode);
+        } else {
+          
+          setStateCode(initialProfile.state);
+        }
+        setSelectedStateName(initialProfile.state);
+      }
+
       form.reset({
         name: initialProfile.name || "",
         username: initialProfile.username || "",
@@ -92,19 +109,27 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
         city: initialProfile.city || "",
         state: initialProfile.state || "",
       });
-
-      if (initialProfile.state) {
-        setSelectedState(initialProfile.state);
-      }
   
       setFormInitialized(true);
     }
-  }, [initialProfile, form]);
+  }, [initialProfile, form, states]);
   
   async function onSubmit(data: ProfileFormValues) {
     try {
       setIsUpdating(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      
+
+      const formData = {
+        ...data,
+        state: selectedStateName, 
+      }
+
+      console.log("FORM DATA :::::::" , formData)
+      
+
+      const response = await axios.patch("/api/profile" , formData)
+      console.log("RESPONSE FORM THE BACKEND :::+++" , response.data)
       
       setIsUpdating(false);
       setShowSuccessAnimation(true);
@@ -155,13 +180,17 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
     }
   }
 
-
-  const handleStateChange = (stateCode: string) => {
-    setSelectedState(stateCode);
-    form.setValue("state", stateCode);
-    form.setValue("city", "");
+  const handleStateChange = (stateIsoCode: string) => {
+    setStateCode(stateIsoCode); 
+    const stateObj = State.getStateByCodeAndCountry(stateIsoCode, "IN");
+    const stateName = stateObj?.name || "";
+    setSelectedStateName(stateName); 
+    
+    
+    form.setValue("state", stateName);
+    form.setValue("city", ""); 
   };
-
+  
   return (
     <div className="flex justify-center items-center min-h-screen w-full px-4 py-8 sm:py-10 ">
       <div className="w-full max-w-4xl relative overflow-x-hidden bg-white/80 backdrop-blur-sm shadow-xl rounded-xl p-4 sm:p-6 md:p-8">
@@ -287,7 +316,8 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
                         <FormLabel className="text-[#902920] font-semibold">State</FormLabel>
                         <Select 
                           onValueChange={handleStateChange}
-                          value={field.value || ""}
+                          // Use state code for selection trigger, but we're storing the name in field.value
+                          value={stateCode}
                         >
                           <FormControl>
                             <SelectTrigger className="border-[#902920]/20 focus:border-[#902920] transition-all duration-300 shadow-sm focus:shadow-md focus:shadow-[#902920]/10">
@@ -320,11 +350,11 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
                         <Select 
                           onValueChange={field.onChange} 
                           value={field.value || ""}
-                          disabled={!selectedState}
+                          disabled={!stateCode}
                         >
                           <FormControl>
                             <SelectTrigger className="border-[#902920]/20 focus:border-[#902920] transition-all duration-300 shadow-sm focus:shadow-md focus:shadow-[#902920]/10">
-                              <SelectValue placeholder={selectedState ? "Select your city" : "Select a state first"} />
+                              <SelectValue placeholder={stateCode ? "Select your city" : "Select a state first"} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
