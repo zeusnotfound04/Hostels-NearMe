@@ -1,122 +1,489 @@
-"use client"
+"use client";
 
-import React, { useState, useRef, useEffect } from "react"
-import { motion, useAnimation } from "framer-motion"
-import { Loader2 } from "lucide-react"
-import { Separator } from "@/components/ui/separator"
-import { useProfile } from "@/hooks/useProfile"
-import ProfileForm from "./ProfileForm"
-import AvatarUploader from "./AvatarUploader"
-import Particles from "./Particles"
+import { Button } from "@/components/ui/button";
+import { ChevronDownIcon } from "lucide-react";
+import { GenderIcon, BedIcon, SharingIcon, SortingIcon, NextIcon } from "@/components/ui/icon";
+import Image from "next/image";
+import { HostelCard } from "@/components/hostels/HostelCard";
+import { useFetchHostels } from "@/hooks/useFetchHostels";
+import FacilityIcon from "../../../public/icons/Facility.png";
+import { Hostel } from "@/types/index";
+import LoadingScreen from "@/components/LoadingScreen";
+import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Checkbox,
+} from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 
-export default function ProfilePage() {
-  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false)
-  const formRef = useRef<HTMLDivElement>(null)
-  const controls = useAnimation()
+
+const filterOptions = [
+  { id: 1, name: "Gender", icon: <GenderIcon className="w-4 h-4" /> },
+  { id: 2, name: "Accommodation type", icon: <BedIcon className="w-4 h-4" /> },
+  { id: 3, name: "Facility type", icon: <Image src={FacilityIcon} width={16} height={16} alt="Facility" /> },
+  { id: 4, name: "Sharing type", icon: <SharingIcon className="w-4 h-4" /> },
+  { id: 5, name: "Sort", icon: <SortingIcon className="w-4 h-4" /> },
+  { id: 6, name: "Nearby Coaching", icon: <SharingIcon className="w-4 h-4" /> },
+];
+
+const facilityOptions = [
+  { id: "attachedWashroom", label: "Attached Washroom" },
+  { id: "cctv", label: "CCTV" },
+  { id: "wifi", label: "WiFi" },
+  { id: "cooler", label: "Cooler" },
+  { id: "inverterBackup", label: "Inverter Backup" },
+  { id: "parking", label: "Parking" },
+  { id: "biweeklycleaning", label: "Bi-weekly Cleaning" },
+  { id: "allDayElectricity", label: "24/7 Electricity" },
+  { id: "geyser", label: "Geyser" },
+  { id: "indoorGames", label: "Indoor Games" },
+  { id: "waterByRO", label: "RO Water" },
+  { id: "securityGuard", label: "Security Guard" },
+  { id: "foodIncluded", label: "Food Included" },
+  { id: "vegetarienMess", label: "Vegetarian Mess" },
+  { id: "allDayWaterSupply", label: "24/7 Water Supply" },
+  { id: "gym", label: "Gym" },
+  { id: "allDayWarden", label: "24/7 Warden" },
+  { id: "airconditioner", label: "Air Conditioner" },
+];
+
+const coachingOptions = [
+  { id: "ALLEN CAREER OF COACHING", label: "ALLEN CAREER OF COACHING" },
+  { id: "Physics Wallah", label: "Physics Wallah" },
+  { id: "Akash", label: "Akash" },
+  { id: "Lakshay", label: "Lakshay" },
+  { id: "Impact", label: "Impact" },
+];
+
+const sortingOptions = [
+  { id: "price_asc", label: "Price: Low to High" },
+  { id: "price_desc", label: "Price: High to Low" },
+  { id: "newest", label: "Newest First" },
+];
+
+export default function HostelListing() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const [openDialog, setOpenDialog] = useState<number | null>(null);
   
-  const { 
-    profile, 
-    isLoading: isLoadingProfile, 
-  } = useProfile()
+  const [filters, setFilters] = useState({
+    gender: "",
+    hostelType: "",
+    facilities: [] as string[],
+    sharingType: "",
+    sort: "",
+    priceRange: [0, 50000] as [number, number],
+    nearByCoaching: "",
+  });
+
+  const [queryParams, setQueryParams] = useState<{
+    page: number;
+    search: string;
+    city: string;
+    gender: string;
+    hostelType: string;
+    minPrice?: number | undefined;  
+    maxPrice?: number | undefined;
+    sortBy?: string | undefined;
+    sortOrder?: 'asc' | 'desc' | undefined;
+    nearByCoaching?: string | undefined;
+  }>({
+    page: 1,
+    search: "",
+    city: "",
+    gender: "",
+    hostelType: "",
+    minPrice: undefined,
+    maxPrice: undefined,
+    sortBy: undefined,
+    sortOrder: undefined,
+    nearByCoaching: undefined,
+  });
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (formRef.current) {
-        const rect = formRef.current.getBoundingClientRect()
-        const isVisible = rect.top < window.innerHeight && rect.bottom >= 0
-        if (isVisible) {
-          controls.start({ opacity: 1, y: 0 })
-        }
-      }
+    const newQueryParams = {
+      page: parseInt(searchParams.get("page") || "1"),
+      search: searchParams.get("search") || "",
+      city: searchParams.get("city") || "",
+      gender: searchParams.get("gender") || "",
+      hostelType: searchParams.get("hostelType") || "",
+      minPrice: searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : undefined,
+      maxPrice: searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : undefined,
+      sortBy: searchParams.get("sortBy") || undefined,
+      sortOrder: (searchParams.get("sortOrder") as 'asc' | 'desc' | null) || undefined,
+      nearByCoaching: searchParams.get("nearByCoaching") || undefined,
+    };
+
+    setQueryParams(newQueryParams);
+
+    const sortBy = searchParams.get("sortBy");
+    const sortOrder = searchParams.get("sortOrder");
+    let sortValue = "";
+    if (sortBy && sortOrder) {
+        sortValue = `${sortBy}_${sortOrder}`;
+    }
+    
+    setFilters(prev => ({
+      ...prev,
+      gender: searchParams.get("gender") || "",
+      hostelType: searchParams.get("hostelType") || "",
+      priceRange: [
+          searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : 0,
+          searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : 50000
+      ],
+      sort: sortValue,
+    }));
+    console.log(filters)
+    console.log(queryParams)
+
+  }, [searchParams]);
+
+  const { data, isLoading, error } = useFetchHostels(queryParams);
+
+  const hostels = data?.hostels || [];
+  const totalPages = data?.pagination?.totalPages || 1;
+  const currentPage = queryParams.page;
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages) return;
+
+    const url = new URL(window.location.href);
+    url.searchParams.set("page", newPage.toString());
+    router.push(url.pathname + url.search);
+  };
+
+  const handleOpenDialog = (filterId: number) => {
+    setOpenDialog(filterId);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(null);
+  };
+
+  const handleApplyFilters = () => {
+    const url = new URL(window.location.href);
+    
+    url.searchParams.set("page", "1");
+
+    if (filters.gender) {
+      url.searchParams.set("gender", filters.gender);
+    } else {
+      url.searchParams.delete("gender");
     }
 
-    // Initial check
-    handleScroll()
+    if (filters.nearByCoaching) {
+      url.searchParams.set("nearByCoaching", filters.nearByCoaching);
+    } else {
+      url.searchParams.delete("nearByCoaching");
+    }
     
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [controls])
+    if (filters.hostelType) {
+      url.searchParams.set("hostelType", filters.hostelType);
+    } else {
+      url.searchParams.delete("hostelType");
+    }
+    
+    url.searchParams.set("minPrice", filters.priceRange[0].toString());
+    url.searchParams.set("maxPrice", filters.priceRange[1].toString());
+    
+    if (filters.sort) {
+      // Parse the combined sort parameter
+      const [sortBy, sortOrder] = filters.sort.split('_');
+      url.searchParams.set("sortBy", sortBy);
+      url.searchParams.set("sortOrder", sortOrder);
+    } else {
+      url.searchParams.delete("sortBy");
+      url.searchParams.delete("sortOrder");
+    }
+    
+    // Apply facility filters
+    // This would require backend support for filtering by facilities
+    
+    // Close dialog before navigation
+    handleCloseDialog();
+    
+    // Navigate to the new URL
+    router.push(url.pathname + url.search);
+  };
 
-  // Show loading state while profile is being fetched
-  if (isLoadingProfile) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-[#902920]" />
-      </div>
-    )
+  if (isLoading) {
+    return <LoadingScreen />;
   }
 
-  const handleSuccess = () => {
-    setShowSuccessAnimation(true)
-    setTimeout(() => {
-      setShowSuccessAnimation(false)
-    }, 2000)
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-500 text-lg">Error loading hostels.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen w-full px-4 py-8 sm:py-10">
-      <div className="w-full max-w-4xl relative overflow-x-hidden bg-white/80 backdrop-blur-sm shadow-xl rounded-xl p-4 sm:p-6 md:p-8">
-        {/* Background decorative elements */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#902920] to-transparent opacity-10 rounded-full blur-3xl -z-10 animate-pulse" />
-        <div
-          className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-[#902920] to-transparent opacity-10 rounded-full blur-3xl -z-10"
-          style={{ animationDuration: "8s" }}
-        />
-
-        <Particles count={6} />
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 0.6,
-            type: "spring",
-            bounce: 0.3,
-          }}
-          className="relative text-center sm:text-left"
-        >
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#902920]">Profile</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">Manage your profile information and how others see you.</p>
-        </motion.div>
-
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          style={{ originX: 0 }}
-        >
-          <Separator className="my-4 sm:my-6 bg-gradient-to-r from-[#902920] to-transparent" />
-        </motion.div>
-
-        <div className="grid gap-8 grid-cols-1 lg:grid-cols-[1fr_250px]">
-          <motion.div
-            ref={formRef}
-            initial={{ opacity: 0, y: 50 }}
-            animate={controls}
-            transition={{ duration: 0.8, type: "spring" }}
+    <div className="px-4 mt-2 md:px-6 max-w-6xl mx-auto">
+      
+      <div className="flex gap-2 mb-6 justify-center overflow-x-auto">
+        {filterOptions.map((filter) => (
+          <Button
+            key={filter.id}
+            variant="outline"
+            className="min-w-[120px] h-10 sm:h-8 bg-[#cecece] rounded-full border border-[#902920] flex items-center gap-1 px-4 sm:px-3 text-sm transition duration-150 ease-in-out hover:bg-[#d3d3d3]"
+            onClick={() => handleOpenDialog(filter.id)}
           >
-            <ProfileForm 
-              profile={profile} 
-              onSuccess={handleSuccess} 
-              showSuccessAnimation={showSuccessAnimation} 
-            />
-          </motion.div>
+            <span className="mr-1">{filter.icon}</span>
+            <span className="font-normal text-black text-xs md:text-sm">{filter.name}</span>
+            <ChevronDownIcon className="w-3 h-3 ml-1" />
+          </Button>
+        ))}
+      </div>
+      
+      {/* Gender Filter Dialog */}
+      <Dialog open={openDialog === 1} onOpenChange={() => handleCloseDialog()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Filter by Gender</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <RadioGroup 
+              value={filters.gender} 
+              onValueChange={(value) => setFilters({...filters, gender: value})}
+              className="flex flex-col gap-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="BOYS" id="boys" />
+                <Label htmlFor="boys">Boys Hostel</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="GIRLS" id="girls" />
+                <Label htmlFor="girls">Girls Hostel</Label>
+              </div>
+            </RadioGroup>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleApplyFilters} className="bg-[#902920]">Apply</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Accommodation Type Dialog */}
+      <Dialog open={openDialog === 2} onOpenChange={() => handleCloseDialog()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Filter by Accommodation Type</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <RadioGroup 
+              value={filters.hostelType} 
+              onValueChange={(value) => setFilters({...filters, hostelType: value})}
+              className="flex flex-col gap-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="SINGLE" id="single" />
+                <Label htmlFor="single">Single Room</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="SHARED" id="shared" />
+                <Label htmlFor="shared">Shared Room</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="DORMITORY" id="dormitory" />
+                <Label htmlFor="dormitory">Dormitory</Label>
+              </div>
+            </RadioGroup>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleApplyFilters} className="bg-[#902920]">Apply</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Facility Type Dialog */}
+      <Dialog open={openDialog === 3} onOpenChange={() => handleCloseDialog()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Filter by Facilities</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 max-h-[60vh] overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {facilityOptions.map((facility) => (
+                <div key={facility.id} className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={facility.id} 
+                    checked={filters.facilities.includes(facility.id)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setFilters({
+                          ...filters, 
+                          facilities: [...filters.facilities, facility.id]
+                        });
+                      } else {
+                        setFilters({
+                          ...filters, 
+                          facilities: filters.facilities.filter(id => id !== facility.id)
+                        });
+                      }
+                    }}
+                  />
+                  <Label htmlFor={facility.id}>{facility.label}</Label>
+                </div>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleApplyFilters} className="bg-[#902920]">Apply</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Sharing Type Dialog - Maps to hostelType */}
+      <Dialog open={openDialog === 4} onOpenChange={() => handleCloseDialog()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Filter by Sharing Type</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <RadioGroup 
+              value={filters.hostelType} 
+              onValueChange={(value) => setFilters({...filters, hostelType: value})}
+              className="flex flex-col gap-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="SINGLE" id="sharing-single" />
+                <Label htmlFor="sharing-single">Single Occupancy</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="SHARED" id="sharing-shared" />
+                <Label htmlFor="sharing-shared">Double Sharing</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="DORMITORY" id="sharing-dormitory" />
+                <Label htmlFor="sharing-dormitory">Multiple Sharing</Label>
+              </div>
+            </RadioGroup>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleApplyFilters} className="bg-[#902920]">Apply</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Sort Dialog */}
+      <Dialog open={openDialog === 5} onOpenChange={() => handleCloseDialog()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Sort Hostels</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <RadioGroup 
+              value={filters.sort} 
+              onValueChange={(value) => setFilters({...filters, sort: value})}
+              className="flex flex-col gap-2"
+            >
+              {sortingOptions.map((option) => (
+                <div key={option.id} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option.id} id={option.id} />
+                  <Label htmlFor={option.id}>{option.label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+          <div className="py-4">
+            <h3 className="mb-4 font-medium">Price Range</h3>
+            <div className="px-2">
+              <Slider
+                defaultValue={filters.priceRange}
+                max={50000}
+                step={1000}
+                value={filters.priceRange}
+                onValueChange={(value) => setFilters({...filters, priceRange: value as [number, number]})}
+              />
+              <div className="flex justify-between mt-2 text-sm text-gray-500">
+                <span>₹{filters.priceRange[0]}</span>
+                <span>₹{filters.priceRange[1]}</span>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleApplyFilters} className="bg-[#902920]">Apply</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={openDialog === 6} onOpenChange={() => handleCloseDialog()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Filter by Nearby Coaching</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <RadioGroup 
+              value={filters.nearByCoaching} 
+              onValueChange={(value) => setFilters({...filters, nearByCoaching: value})}
+              className="flex flex-col gap-2"
+            >
+              {coachingOptions.map((coaching) => (
+                <div key={coaching.id} className="flex items-center space-x-2">
+                  <RadioGroupItem value={coaching.id} id={`coaching-${coaching.id}`} />
+                  <Label htmlFor={`coaching-${coaching.id}`}>{coaching.label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleApplyFilters} className="bg-[#902920]">Apply</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <div className="space-y-6">
+        {hostels.length > 0 ? (
+          hostels.map((hostel: Hostel) => <HostelCard key={hostel.id} hostel={hostel} />)
+        ) : (
+          <div className="text-center text-gray-600">No hostels found.</div>
+        )}
+      </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{
-              duration: 0.8,
-              delay: 0.6,
-              type: "spring",
-              stiffness: 100,
-            }}
-            className="order-first lg:order-last mb-6 lg:mb-0"
-          >
-            <AvatarUploader profile={profile} />
-          </motion.div>
-        </div>
+      <div className="flex justify-center mt-8 gap-4">
+        <Button
+          className="w-[50px] h-[50px] bg-[#902920] text-white rounded-[10px] p-0"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage <= 1}
+        >
+          <span className="font-black text-[25px]">{currentPage - 1}</span>
+        </Button>
+
+        <Button className="w-[50px] h-[50px] bg-[#902920] text-white rounded-[10px] p-0" disabled>
+          <span className="font-black text-[25px]">{currentPage}</span>
+        </Button>
+
+        <Button
+          className="w-[50px] h-[50px] bg-[#902920] text-white rounded-[10px] p-0"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage >= totalPages}
+        >
+          <NextIcon className="w-7 h-[18px]" />
+        </Button>
+      </div>
+
+
+      <div className="text-center mt-10 font-bold text-gray-600 text-xl">
+        <p>
+          Made in <span className="text-red-900">India</span>. For the <span className="text-red-900">World</span>
+        </p>
       </div>
     </div>
-  )
+  );
 }

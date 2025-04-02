@@ -24,6 +24,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import ScrollReveal from "../ui/animations/scrollReveal";
 
 const filterOptions = [
   { id: 1, name: "Gender", icon: <GenderIcon className="w-4 h-4" /> },
@@ -72,7 +73,6 @@ const sortingOptions = [
 export default function HostelListing() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  console.log("HELLO THIS SHITT IS HAPPENING")
 
   const [openDialog, setOpenDialog] = useState<number | null>(null);
   
@@ -448,7 +448,7 @@ export default function HostelListing() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
+  
       <div className="space-y-6">
         {hostels.length > 0 ? (
           hostels.map((hostel: Hostel) => <HostelCard key={hostel.id} hostel={hostel} />)
