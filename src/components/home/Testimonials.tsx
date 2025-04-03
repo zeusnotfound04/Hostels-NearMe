@@ -1,56 +1,207 @@
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
+import { motion } from "framer-motion"
+import { useInView } from "react-intersection-observer"
 import ArrowL1 from "../../../public/icons/ArrowL1.svg" 
 import BigArrow from "../../../public/icons/BigArrow.svg"
 import ArrowL2 from "../../../public/icons/ArrowL2.svg"
-import ArrowR1 from "../../../public/icons/ArrowLB.svg" // You'll need this file
-import ArrowR2 from "../../../public/icons/ArrowRB.svg" // You'll need this file
+import ArrowR1 from "../../../public/icons/ArrowLB.svg"
+import ArrowR2 from "../../../public/icons/ArrowRB.svg"
 
 export function Testimonials() {
+  // Animation variants for different elements
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const titleVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.8,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const arrowVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { 
+        duration: 1.2,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  // Use intersection observer hooks for triggering animations
+  const [containerRef, containerInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
+  const [titleRef, titleInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.5
+  });
+
   return (
-    <div className="container mx-auto px-4 py-16 relative">
+    <motion.div 
+      className="container mx-auto px-4 py-16 relative"
+      ref={containerRef}
+      variants={containerVariants}
+      initial="hidden"
+      animate={containerInView ? "visible" : "hidden"}
+    >
+      {/* Left side arrows with floating animation */}
+      <motion.div
+        variants={arrowVariants}
+        animate={containerInView ? 
+          { x: [0, -10, 0], transition: { repeat: Infinity, duration: 4, ease: "easeInOut" }} : 
+          {}
+        }
+      >
+        <Image src={ArrowL1} alt="Arrow 1" width={150} height={150} className="absolute -left-[10rem] top-[5rem] hidden md:block" />
+      </motion.div>
       
-      <Image src={ArrowL1} alt="Arrow 1" width={150} height={150} className="absolute -left-[10rem] top-[5rem] hidden md:block" />
-      <Image src={ArrowL2} alt="Arrow 2" width={150} height={150} className="absolute rotate-180 -left-[10rem]  top-[35rem] hidden md:block" />
+      <motion.div
+        variants={arrowVariants}
+        animate={containerInView ? 
+          { x: [0, 10, 0], transition: { repeat: Infinity, duration: 5, ease: "easeInOut", delay: 0.5 }} : 
+          {}
+        }
+      >
+        <Image src={ArrowL2} alt="Arrow 2" width={150} height={150} className="absolute rotate-180 -left-[10rem] top-[35rem] hidden md:block" />
+      </motion.div>
       
-    
-      <Image src={BigArrow} alt="Big Arrow" width={90} height={90} className="absolute left-[12rem]  -translate-x-1/2 top-[7rem] hidden md:block" />
+      {/* Center big arrow with bounce effect */}
+      <motion.div
+        variants={arrowVariants}
+        animate={containerInView ? 
+          { y: [0, -15, 0], transition: { repeat: Infinity, duration: 3, ease: "easeInOut" }} : 
+          {}
+        }
+      >
+        <Image src={BigArrow} alt="Big Arrow" width={90} height={90} className="absolute left-[12rem] -translate-x-1/2 top-[7rem] hidden md:block" />
+      </motion.div>
       
+      {/* Right side arrows with floating animation */}
+      <motion.div
+        variants={arrowVariants}
+        animate={containerInView ? 
+          { x: [0, 10, 0], transition: { repeat: Infinity, duration: 4.5, ease: "easeInOut" }} : 
+          {}
+        }
+      >
+        <Image src={ArrowR1} alt="Arrow 3" width={150} height={150} className="absolute rotate-180 -right-[10rem] top-[1rem] hidden md:block" />
+      </motion.div>
+      
+      <motion.div
+        variants={arrowVariants}
+        animate={containerInView ? 
+          { x: [0, -10, 0], transition: { repeat: Infinity, duration: 5.5, ease: "easeInOut", delay: 0.7 }} : 
+          {}
+        }
+      >
+        <Image src={ArrowR2} alt="Arrow 4" width={150} height={150} className="absolute -right-[10rem] top-[35rem] hidden md:block" />
+      </motion.div>
 
-      <Image src={ArrowR1} alt="Arrow 3" width={150} height={150} className="absolute rotate-180 -right-[10rem] top-[1rem] hidden md:block" />
-      <Image src={ArrowR2} alt="Arrow 4" width={150} height={150} className="absolute -right-[10rem] top-[35rem] hidden md:block" />
+      {/* Heading section with fade in and slide up animation */}
+      <motion.div 
+        className="text-center mb-12"
+        ref={titleRef}
+        variants={titleVariants}
+      >
+        <motion.h2 
+          className="text-4xl md:text-5xl font-bold mb-2"
+          variants={titleVariants}
+        >
+          Don't Just Take Our Word for It
+        </motion.h2>
+        <motion.p 
+          className="text-3xl md:text-4xl"
+          variants={titleVariants}
+          transition={{ delay: 0.2 }}
+        >
+          Hear It From Our Students
+        </motion.p>
+      </motion.div>
 
-      <div className="text-center mb-12">
-        <h2 className="text-4xl md:text-5xl font-bold mb-2">Don't Just Take Our Word for It</h2>
-        <p className="text-3xl md:text-4xl">Hear It From Our Students</p>
-      </div>
-
+      {/* Testimonial cards with staggered animation */}
       <div className="grid md:grid-cols-3 gap-6">
         {testimonials.map((testimonial, index) => (
-          <Card key={index} className="bg-gray-100">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="relative w-[60px] h-[60px] rounded-full overflow-hidden">
-                  <Image 
-                    src="/placeholder.svg"
-                    alt={testimonial.name} 
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">{testimonial.name}</h3>
-                  <p className="text-gray-600">{testimonial.location}</p>
-                </div>
-              </div>
-              <p className="text-gray-700 leading-relaxed">
-                {testimonial.text}
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div 
+            key={index}
+            variants={cardVariants}
+            custom={index}
+            whileHover={{ 
+              y: -10, 
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
+              transition: { duration: 0.3 }
+            }}
+          >
+            <Card className="bg-gray-100 h-full">
+              <CardContent className="p-6">
+                <motion.div 
+                  className="flex items-center gap-3 mb-4"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={containerInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
+                >
+                  <motion.div 
+                    className="relative w-[60px] h-[60px] rounded-full overflow-hidden"
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Image 
+                      src="/placeholder.svg"
+                      alt={testimonial.name} 
+                      fill
+                      className="object-cover"
+                    />
+                  </motion.div>
+                  <div>
+                    <h3 className="font-bold text-lg">{testimonial.name}</h3>
+                    <p className="text-gray-600">{testimonial.location}</p>
+                  </div>
+                </motion.div>
+                <motion.p 
+                  className="text-gray-700 leading-relaxed"
+                  initial={{ opacity: 0 }}
+                  animate={containerInView ? { opacity: 1 } : {}}
+                  transition={{ delay: 0.4 + index * 0.1, duration: 0.7 }}
+                >
+                  {testimonial.text}
+                </motion.p>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
