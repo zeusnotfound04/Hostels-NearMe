@@ -101,11 +101,11 @@ export function Testimonials() {
       <motion.div
         variants={arrowVariants}
         animate={containerInView ? 
-          { y: [0, -15, 0], transition: { repeat: Infinity, duration: 3, ease: "easeInOut" }} : 
+          { y: [0, -20, 0], transition: { repeat: Infinity, duration: 3, ease: "easeInOut" }} : 
           {}
         }
       >
-        <Image src={BigArrow} alt="Big Arrow" width={90} height={90} className="absolute left-[12rem] -translate-x-1/2 top-[7rem] hidden md:block" />
+        <Image src={BigArrow} alt="Big Arrow" width={90} height={90} className="absolute left-[12rem] -translate-x-1/2 top-[5rem] hidden md:block" />
       </motion.div>
       
       {/* Right side arrows with floating animation */}
