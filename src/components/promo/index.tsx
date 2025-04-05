@@ -155,7 +155,7 @@ const letterVariant = {
         
         {/* Header */}
         <motion.div 
-          className="p-10 pb-2 flex justify-between items-center"
+          className="p-10    flex justify-between items-center"
           style={{ 
             background: colors.gradient
           }}
@@ -185,15 +185,15 @@ const letterVariant = {
             transition={{ delay: 0.6, duration: 0.5 }}
           >
             <motion.div 
-              className="h-3 w-3 rounded-full bg-white opacity-60"
+              className="h-5 w-5 rounded-full bg-white opacity-60"
               whileHover={{ scale: 1.2 }}
             ></motion.div>
             <motion.div 
-              className="h-3 w-3 rounded-full bg-white"
+              className="h-5 w-5 rounded-full bg-white"
               whileHover={{ scale: 1.2 }}
             ></motion.div>
             <motion.div 
-              className="h-3 w-3 rounded-full bg-white opacity-60"
+              className="h-5 w-5 rounded-full bg-white opacity-60"
               whileHover={{ scale: 1.2 }}
             ></motion.div>
           </motion.div>
