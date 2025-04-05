@@ -5,7 +5,8 @@ import { Clock, Filter } from 'lucide-react';
 import BlurText from '../ui/blurtext';
 import { Cover } from '../ui/cover';
 import Stack from '../ui/stack';
-import RotatingText from '../ui/roatingtext';
+import {RotatingText} from '../ui/roatingtext';
+import GradientText from '../ui/animations/GradientText';
 
 const images = [
   { id: 1, img: "https://content.jdmagicbox.com/comp/ghaziabad/w4/011pxx11.xx11.191217190807.e5w4/catalogue/rpn-boy-s-hostel-dasna-ghaziabad-hostels-adyayiouqi.jpg" },
@@ -22,7 +23,8 @@ const HostelPromoCard = () => {
     secondary: '#d68e84',
     dark: '#5a1a14',
     accent: '#ffb74d',
-    gradient: 'linear-gradient(135deg, #902920 0%, #c0392b 100%)'
+    gradient:"linear-gradient(135deg, #902920 0%, #c0392b 40%, #ff6f61 100%)"
+
   };
 
   // Animation variants
@@ -93,6 +95,22 @@ const HostelPromoCard = () => {
       }
     }
   };
+  const textContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const letterVariant = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+};
+
 
   return (
     <div className="w-full h-screen flex items-center justify-center bg-gray-100 p-8">
@@ -137,7 +155,7 @@ const HostelPromoCard = () => {
         
         {/* Header */}
         <motion.div 
-          className="p-8 pb-6 flex justify-between items-center"
+          className="p-10 pb-2 flex justify-between items-center"
           style={{ 
             background: colors.gradient
           }}
@@ -145,8 +163,8 @@ const HostelPromoCard = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
-          <motion.h2 
-            className="text-3xl font-bold text-white flex items-center"
+          <motion.div
+            className="text-3xl font-bold text-white  flex items-center"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
@@ -158,7 +176,7 @@ const HostelPromoCard = () => {
               direction="top"
               className="text-4xl mb-8"
             />
-          </motion.h2>
+          </motion.div>
           
           <motion.div 
             className="flex space-x-2"
@@ -189,14 +207,14 @@ const HostelPromoCard = () => {
               initial="hidden"
               animate="visible"
               variants={containerVariants}
-              className="h-full flex flex-col justify-center"
+              className="h-full  flex flex-col justify-center"
             >
               <motion.div 
                 className="mb-6"
                 variants={filterItemVariants}
                 custom={0}
               >
-                <h3 className="text-2xl text-gray-700 font-medium mb-1">
+                <h3 className="text-4xl text-center mr-16  text-gray-700 font-bold mb-1">
                   We guarantee
                 </h3>
                 <div className="flex items-center">
@@ -209,7 +227,7 @@ const HostelPromoCard = () => {
                       style={{ backgroundColor: `${colors.primary}15` }}
                     >
                       <Clock 
-                        size={42} 
+                        size={30} 
                         color={colors.primary} 
                         strokeWidth={2}
                       />
@@ -265,13 +283,16 @@ const HostelPromoCard = () => {
                 </motion.span>
               </motion.div>
               
-              <motion.p 
-                className="text-gray-600 text-lg text-center mb-8"
-                variants={filterItemVariants}
-                custom={4}
-              >
-                Search, filter, and book your perfect stay faster than ever
-              </motion.p>
+              <GradientText
+  colors={[ "#902920", "#F7C59F  ", "#2A324B ", "#E1D89F ", "#6A0572 "]}
+  animationSpeed={3}
+  showBorder={false}
+  className=" text-2xl text-center  mb-8"
+>
+Search, filter, and book your perfect stay faster than ever
+</GradientText>
+
+              
 
               {/* Merged "Extensive Filter Options" section */}
               <motion.div 
@@ -304,22 +325,19 @@ const HostelPromoCard = () => {
                 </div>
                
               </motion.div>
+            
             </motion.div>
+            
        {/* Search by and Rotating Text in the same line */}
-<div className="flex items-center space-x-3 mt-4">
+<div className="flex items-center space-x-3 mr-10 mt-4">
   <span className="text-xl sm:text-2xl font-bold text-gray-800">Search by</span>
   <RotatingText
-    texts={['Gender', 'Accommodation type', 'Facility type', 'Sharing type', 'Sort', 'Nearby Coaching']}
-    mainClassName="px-3 sm:px-4 md:px-5 bg-[#902920] text-white font-bold text-xl sm:text-2xl overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-lg"
-    staggerFrom={"last"}
-    initial={{ y: "100%" }}
-    animate={{ y: 0 }}
-    exit={{ y: "-120%" }}
-    staggerDuration={0.025}
-    splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
-    transition={{ type: "spring", damping: 30, stiffness: 400 }}
-    rotationInterval={2000}
-  />
+        texts={['Gender', 'Accommodation type', 'Facility type', 'Sharing type', 'Sort', 'Nearby Coaching']}
+        mainClassName="text-2xl  font-bold text-primary "
+        animationClassName="text-accent "
+        rotationInterval={3000}
+        auto={true}
+      />
 </div>
 
           </div>
@@ -330,11 +348,11 @@ const HostelPromoCard = () => {
               randomRotation={true}
               sensitivity={180}
               sendToBackOnClick={false}
-              cardDimensions={{ width: 300, height: 300 }}
+              cardDimensions={{ width: 450, height: 300 }}
               cardsData={images}
             />
             {/* Add your text below the stack images */}
-            <h1 className="mt-4 text-2xl text-gray-700 font-bold text-center">
+            <h1 className="mt-4 text-2xl text-gray-700 font-extrabold text-center">
               Find your ideal hostel
             </h1>
           </div>
