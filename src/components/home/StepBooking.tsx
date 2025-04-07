@@ -102,7 +102,7 @@ export function StepBooking() {
           <div className="bg-white rounded-lg p-4 w-full h-[20rem] flex flex-col justify-between relative overflow-hidden pb-12">
             <h1 className="text-[#7C2121] font-bold absolute top-4 left-6 text-xl">COMPARE</h1>
             <div className="flex items-center justify-center w-full h-full">
-              <Image src={Compare} alt="Step 2" width={1100} height={1100} className="mt-14 max-h-64 object-contain" />
+              <Image src={Compare} alt="Step 2" width={1400} height={1400} className="mt-10 max-h-64 object-contain" />
             </div>
           </div>
         </div>
