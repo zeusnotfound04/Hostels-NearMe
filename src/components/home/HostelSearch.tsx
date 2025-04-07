@@ -35,7 +35,7 @@ export function HostelSearch() {
               rounded-full flex items-center justify-center 
               text-sm sm:text-base hover:bg-red-700 transition-colors'
 
-                animatePlaceholder={true}      
+              AnimatePlaceholder={true}      
 
                     />
 

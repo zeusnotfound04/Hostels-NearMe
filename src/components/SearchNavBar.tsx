@@ -124,7 +124,7 @@ export function SearchNavBar() {
               text-white font-medium flex-shrink-0 px-6 py-2 rounded-full
               flex items-center justify-center shadow-md hover:shadow-lg
               transition-all transform hover:scale-105"
-              animatePlaceholder={false}
+              AnimatePlaceholder={false}
 
 />
 
