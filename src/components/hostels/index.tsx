@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ChevronDownIcon } from "lucide-react";
-import { GenderIcon, BedIcon, SharingIcon, SortingIcon, NextIcon } from "@/components/ui/icon";
+import { GenderIcon, BedIcon, SharingIcon, SortingIcon, NextIcon, NearByIcon } from "@/components/ui/icon";
 import Image from "next/image";
 import { HostelCard } from "./HostelCard";
 import { useFetchHostels } from "@/hooks/useFetchHostels";
@@ -28,11 +28,11 @@ import ScrollReveal from "../ui/animations/scrollReveal";
 
 const filterOptions = [
   { id: 1, name: "Gender", icon: <GenderIcon className="w-4 h-4" /> },
-  { id: 2, name: "Accommodation type", icon: <BedIcon className="w-4 h-4" /> },
+  { id: 2, name: "Accommodation type", icon: <BedIcon color="#000000" className="w-4 h-4" /> },
   { id: 3, name: "Facility type", icon: <Image src={FacilityIcon} width={16} height={16} alt="Facility" /> },
   { id: 4, name: "Sharing type", icon: <SharingIcon className="w-4 h-4" /> },
   { id: 5, name: "Sort", icon: <SortingIcon className="w-4 h-4" /> },
-  { id: 6, name: "Nearby Coaching", icon: <SharingIcon className="w-4 h-4" /> },
+  { id: 6, name: "Nearby Coaching", icon: <NearByIcon color="#000000" className="w-4 h-4" /> },
 ];
 
 const facilityOptions = [

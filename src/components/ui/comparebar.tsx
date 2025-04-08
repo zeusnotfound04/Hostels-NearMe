@@ -14,7 +14,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Badge } from '@/components/ui/badge';
-import { MaleIcon, FemaleIcon } from '@/components/ui/icon';
+import { MaleIcon, FemaleIcon, HostelIcon } from '@/components/ui/icon';
 import {toast} from 'sonner'
 
 export const CompareBar = () => {
@@ -173,7 +173,7 @@ export const CompareBar = () => {
     {open ? (
       <ArrowLeft className="h-6 w-6" />
     ) : (
-      <ShoppingBasket className="h-6 w-6" />
+      <HostelIcon color='#ffff' className="h-6 w-6" />
     )}
     <Badge className="absolute -top-2 -right-2 bg-white text-black border-white border-red-500 text-xs h-5 min-w-5 flex items-center justify-center">
       {compareList.length}
