@@ -5,9 +5,13 @@ import { DataTable } from "@/components/bookings/components/data-table";
 import { useBookings } from "@/hooks/useBookings";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import AdminLoadingScreen from "../loading/AdminLoader";
 
 export default function ManagingBooking() {
   const { data: bookings, isLoading, error } = useBookings();
+  if (isLoading) {
+    return <AdminLoadingScreen />;
+  }
 
   return (
     <div className="flex min-h-screen flex-col space-y-6">

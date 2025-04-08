@@ -186,7 +186,7 @@ const BookingEditForm: React.FC<BookingEditFormProps> = ({ booking }) => {
             <InfoItem icon={Home} label="Hostel Type" value={booking.hostel.hostelType as string} accent={true} />
             <InfoItem icon={Users} label="Gender Type" value={booking.hostel.gender as string} />
             <InfoItem icon={MapPin} label="Address" value={`${booking.hostel.address}, ${booking.hostel.city}, ${booking.hostel.state}`} accent={true} />
-            <InfoItem icon={IndianRupee} label="Monthly Rent" value={`₹${booking.hostel.price.toLocaleString()}` } accent={true} />
+            <InfoItem icon={IndianRupee} label="Monthly Rent" value={`₹${booking.hostel.price?.toLocaleString()}` } accent={true} />
           </div>
         </AnimatedSection>
 

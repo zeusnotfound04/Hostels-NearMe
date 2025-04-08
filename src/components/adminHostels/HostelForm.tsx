@@ -21,6 +21,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { HostelFormProps } from "@/types";
 import { MultiSelect } from "@/components/ui/multi-select";
+import AdminLoadingScreen from "../loading/AdminLoader";
 
 
 type AdditionalFormFields = {
@@ -186,6 +187,9 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
     } finally {
       setLoading(false);
     }
+  }
+  if (loading) {
+    return <AdminLoadingScreen/>
   }
   return (
     <Form {...form}>

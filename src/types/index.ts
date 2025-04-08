@@ -191,7 +191,7 @@ export interface BookingDetails {
     wiFi?: boolean;
     hostelType?: string;
     gender?: string;
-    price: string;
+    price?: string;
     city?: string;
     state?: string;
   };

@@ -5,6 +5,7 @@ import BlogCards from "@/components/blogs/blogList/BlogCards";
 import { Loader2 } from "lucide-react";
 import { Blog } from "@/types";
 import { deleteBlog } from "@/actions"; 
+import AdminLoadingScreen from "@/components/loading/AdminLoader";
 
 export default function BlogList() {
     const { data: initialBlogs, isLoading, isError, error } = useBlogSearch();
@@ -37,9 +38,7 @@ export default function BlogList() {
     };
 
     if (isLoading) return (
-        <div className="flex justify-center items-center h-screen">
-            <Loader2 className="animate-spin h-10 w-10 text-[#8B0000]" />
-        </div>
+        <AdminLoadingScreen/>
     );
 
     if (isError) return (

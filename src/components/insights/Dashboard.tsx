@@ -44,6 +44,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import AdminLoadingScreen from '../loading/AdminLoader';
 
 // Type definition for AdminInsights
 type AdminInsights = {
@@ -127,16 +128,8 @@ const AdminInsightsDashboard: React.FC = () => {
   );
 
   if (isLoading) {
-    return (
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex items-center justify-center min-h-[400px]"
-      >
-        <RefreshCcw className="w-12 h-12 animate-spin text-blue-500" />
-      </motion.div>
-    );
+    return <AdminLoadingScreen />;
+    
   }
 
   if (isError) {
