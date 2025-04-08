@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, ChevronRight, ArrowLeft, ShoppingBasket, Info } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -20,20 +20,34 @@ import {toast} from 'sonner'
 export const CompareBar = () => {
   const { compareList, removeFromCompare, clearCompareList } = useCompare();
   const router = useRouter();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   // Update sidebar visibility when compare list changes
-  React.useEffect(() => {
-    // Show sidebar when first item is added
-    if (compareList.length > 0 && !open) {
+  useEffect(() => {
+    // Show sidebar when first item is added and the sidebar is not manually closed
+    if (compareList.length > 0 && !open && !localStorage.getItem('compareBarManuallyClosed')) {
       setOpen(true);
     }
     
     // Hide sidebar when list becomes empty
     if (compareList.length === 0 && open) {
       setOpen(false);
+      localStorage.removeItem('compareBarManuallyClosed');
     }
   }, [compareList.length, open]);
+
+  // Handle manual toggle
+  const handleToggle = () => {
+    const newState = !open;
+    setOpen(newState);
+    
+    // Store the manual state in localStorage
+    if (!newState && compareList.length > 0) {
+      localStorage.setItem('compareBarManuallyClosed', 'true');
+    } else {
+      localStorage.removeItem('compareBarManuallyClosed');
+    }
+  };
 
   const handleCompare = () => {
     if (compareList.length < 2) {
@@ -71,7 +85,7 @@ export const CompareBar = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setOpen(false)}
+              onClick={handleToggle}
               aria-label="Close compare panel"
             >
               <X className="h-4 w-4" />
@@ -153,7 +167,7 @@ export const CompareBar = () => {
     <div className="fixed bottom-16 right-6 z-20">
   <Button
     className={`rounded-full h-14 w-14 bg-[#f10000] hover:bg-[#d10000] text-white shadow-lg transition-transform transform hover:scale-110 flex items-center justify-center`}
-    onClick={() => setOpen(!open)}
+    onClick={handleToggle}
     aria-label={open ? "Minimize compare panel" : "Open compare panel"}
   >
     {open ? (

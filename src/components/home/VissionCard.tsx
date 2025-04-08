@@ -152,7 +152,7 @@ const JaggedBorder: React.FC<JaggedBorderProps> = ({ animate = false, isRight = 
         duration: 1.5,
         ease: "easeInOut",
         repeat: Infinity,
-        repeatType: "loop" as const
+        repeatType: "loop" as const 
       }
     }
   };
