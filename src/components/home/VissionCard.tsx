@@ -146,7 +146,7 @@ const JaggedBorder: React.FC<JaggedBorderProps> = ({ animate = false, isRight = 
   };
   const variants = {
     pulse: {
-      scale: [1, 1.2, 1],
+      scale: [1, 1.03, 1],
       x: [0, 2, 0],
       transition: {
         duration: 1.5,

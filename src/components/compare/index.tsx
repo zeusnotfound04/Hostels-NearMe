@@ -8,8 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, X, Plus } from 'lucide-react';
 import { Hostel } from '@/types';
-import { FemaleIcon, MaleIcon 
-} from '@/components/ui/icon';
+import { FemaleIcon, MaleIcon } from '@/components/ui/icon';
 
 const MIN_HOSTELS_FOR_COMPARISON = 2;
 
@@ -36,11 +35,33 @@ export default function CompareComponent() {
     }
   }, [compareList, searchParams]);
 
-  const gridColsClass = useMemo(() => {
-    const gridCols = hostels.length + 1;
-    return `grid-cols-${gridCols > 4 ? 4 : gridCols}`;
+  // Calculate the grid layout class based on number of hostels
+  const gridClasses = useMemo(() => {
+    // We need to account for the "Add another hostel" card which takes one column
+    const totalColumns = hostels.length + 1;
+    
+    // Use specific class names that will exist in Tailwind
+    // This ensures proper compiling with Tailwind's JIT
+    switch (totalColumns) {
+      case 2: return "md:grid-cols-2";
+      case 3: return "md:grid-cols-3";
+      case 4: return "md:grid-cols-4";
+      default: return "md:grid-cols-4"; // Max at 4 columns
+    }
   }, [hostels.length]);
 
+  // Calculate table grid classes
+  const tableGridClasses = useMemo(() => {
+    // +1 for the label column
+    const totalColumns = hostels.length + 1;
+    
+    switch (totalColumns) {
+      case 2: return "grid-cols-2";
+      case 3: return "grid-cols-3";
+      case 4: return "grid-cols-4";
+      default: return "grid-cols-4"; // Max at 4 columns
+    }
+  }, [hostels.length]);
   
   const handleBack = () => router.back();
   
@@ -104,7 +125,6 @@ export default function CompareComponent() {
     };
   }, []);
 
-  
   const getHostelRules = useMemo(() => {
     return (hostel: Hostel): string[] => {
       const rules: string[] = [];
@@ -139,7 +159,7 @@ export default function CompareComponent() {
     label: string, 
     renderContent: (hostel: Hostel) => React.ReactNode
   ) => (
-    <div className={`grid grid-cols-${hostels.length + 1} gap-4 items-center border-b border-dashed border-[#912923] py-4`}>
+    <div className={`grid ${tableGridClasses} gap-4 items-center border-b border-dashed border-[#912923] py-4`}>
       <div>
         <div className="bg-[#912923] text-white rounded-md py-2 px-6 inline-block">
           <span className="font-bold">{label}</span>
@@ -175,7 +195,7 @@ export default function CompareComponent() {
       </div>
       
       {/* Hostel Cards */}
-      <div className={`grid grid-cols-1 md:${gridColsClass} gap-6`}>
+      <div className={`grid grid-cols-1 ${gridClasses} gap-6`}>
         {/* Add Another Hostel Card */}
         <div className="flex flex-col items-center justify-center cursor-pointer" onClick={handleAddMore}>
           <div className="border-2 border-dashed border-[#912923] rounded-md p-10 mb-2 flex items-center justify-center h-[150px] w-full">
@@ -253,8 +273,8 @@ export default function CompareComponent() {
           (hostel) => <span>{hostel.gender === "BOYS" ? "Boys" : "Girls"}</span>
         )}
 
-
-        <div className={`grid grid-cols-${hostels.length + 1} gap-4 items-start border-b border-dashed border-[#912923] py-4`}>
+        {/* Rules Row */}
+        <div className={`grid ${tableGridClasses} gap-4 items-start border-b border-dashed border-[#912923] py-4`}>
           <div>
             <div className="bg-[#912923] text-white rounded-md py-2 px-6 inline-block">
               <span className="font-bold">Hostel Rules</span>
@@ -274,7 +294,8 @@ export default function CompareComponent() {
           })}
         </div>
 
-        <div className={`grid grid-cols-${hostels.length + 1} gap-4 items-start border-b border-dashed border-[#912923] py-4`}>
+        {/* Amenities Row */}
+        <div className={`grid ${tableGridClasses} gap-4 items-start border-b border-dashed border-[#912923] py-4`}>
           <div>
             <div className="bg-[#912923] text-white rounded-md py-2 px-6 inline-block">
               <span className="font-bold">Amenities</span>
@@ -294,7 +315,7 @@ export default function CompareComponent() {
           })}
         </div>
 
-
+        {/* Availability Row */}
         {renderComparisonRow(
           "Availability", 
           (hostel) => (
@@ -305,8 +326,11 @@ export default function CompareComponent() {
         )}
       </div>
 
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+      {/* Action Buttons */}
+      <div className={`grid grid-cols-1 ${gridClasses} gap-6 mt-8`}>
+        {/* Empty space for balance with "Add another hostel" card */}
+        <div></div>
+        
         {hostels.map((hostel) => (
           <div key={`${hostel.id}-action`} className="flex justify-center">
             <Button 
@@ -318,7 +342,6 @@ export default function CompareComponent() {
           </div>
         ))}
       </div>
-
 
       <div className="text-center mt-16 mb-8">
         <p className="text-lg font-bold">
