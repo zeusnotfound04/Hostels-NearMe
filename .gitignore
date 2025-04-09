@@ -41,7 +41,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-
+db-docker
+db-docker/*
 db-docker/global/*
 db-docker/pg_wal/*
 db-docker/postmaster.pid

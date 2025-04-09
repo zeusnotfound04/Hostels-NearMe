@@ -1,8 +1,7 @@
-import HostelPromoCard from "@/components/promo";
+'use client';
 
-export default function Page(){
-
+export default function Page() {
   return (
-    <HostelPromoCard/>
-  )
+      <div>DEMO COMPONENT</div>
+  );
 }

@@ -271,7 +271,7 @@ export default function ListRequest() {
                       
                       <Button 
                         type="submit" 
-                        className="w-full transition-all"
+                        className="w-full transition-all text-white"
                       >
                         Submit Listing Request
                       </Button>

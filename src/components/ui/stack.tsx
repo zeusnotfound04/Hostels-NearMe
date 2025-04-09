@@ -1,5 +1,6 @@
+"use client";
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface CardRotateProps {
   children: React.ReactNode;
@@ -57,16 +58,28 @@ export default function Stack({
   animationConfig = { stiffness: 260, damping: 20 },
   sendToBackOnClick = false
 }: StackProps) {
+  // Default cards if none provided
+  const defaultCards = [
+    { id: 1, img: "https://content.jdmagicbox.com/comp/ghaziabad/w4/011pxx11.xx11.191217190807.e5w4/catalogue/rpn-boy-s-hostel-dasna-ghaziabad-hostels-adyayiouqi.jpg" },
+    { id: 2, img: "https://bgiedu.in/wp-content/uploads/2024/07/hostl-min-scaled.jpg" },
+    { id: 3, img: "https://grdedu.in/wp-content/gallery/grd-imt-hostel/Hostel-1-2-e1629272260929.jpg" },
+    { id: 4, img: "https://snit.edu.in/wp-content/uploads/2022/12/IMG_9036-1024x646.jpg" }
+  ];
+  
   const [cards, setCards] = useState(
-    cardsData.length
-      ? cardsData
-      : [
-        { id: 1, img: "https://content.jdmagicbox.com/comp/ghaziabad/w4/011pxx11.xx11.191217190807.e5w4/catalogue/rpn-boy-s-hostel-dasna-ghaziabad-hostels-adyayiouqi.jpg" },
-        { id: 2, img: "https://bgiedu.in/wp-content/uploads/2024/07/hostl-min-scaled.jpg" },
-        { id: 3, img: "https://grdedu.in/wp-content/gallery/grd-imt-hostel/Hostel-1-2-e1629272260929.jpg" },
-        { id: 4, img: "https://snit.edu.in/wp-content/uploads/2022/12/IMG_9036-1024x646.jpg" }
-      ]
+    cardsData.length ? cardsData : defaultCards
   );
+
+  // Client-side only detection
+  const [isClient, setIsClient] = useState(false);
+  
+  // Fixed (non-random) rotation values to avoid hydration mismatch
+  const fixedRotations = [1, -2, 3, -1];
+  
+  // Initialize on client-side only
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const sendToBack = (id: number) => {
     setCards((prev) => {
@@ -88,10 +101,9 @@ export default function Stack({
       }}
     >
       {cards.map((card, index) => {
-        const randomRotate = randomRotation
-          ? Math.random() * 10 - 5 // Random degree between -5 and 5
-          : 0;
-
+        // Use fixed rotation value to ensure consistency between server and client
+        const rotateValue = isClient && randomRotation ? fixedRotations[index % fixedRotations.length] : 0;
+        
         return (
           <CardRotate
             key={card.id}
@@ -101,12 +113,11 @@ export default function Stack({
             <motion.div
               className="rounded-2xl overflow-hidden border-4 border-white"
               onClick={() => sendToBackOnClick && sendToBack(card.id)}
-              animate={{
-                rotateZ: (cards.length - index - 1) * 4 + randomRotate,
-                scale: 1 + index * 0.06 - cards.length * 0.06,
-                transformOrigin: "90% 90%",
-              }}
               initial={false}
+              animate={{
+                rotateZ: (cards.length - index - 1) * 4 + rotateValue,
+                scale: 1 + index * 0.06 - cards.length * 0.06,
+              }}
               transition={{
                 type: "spring",
                 stiffness: animationConfig.stiffness,
@@ -115,6 +126,7 @@ export default function Stack({
               style={{
                 width: cardDimensions.width,
                 height: cardDimensions.height,
+                transformOrigin: "90% 90%"
               }}
             >
               <img
