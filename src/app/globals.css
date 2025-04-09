@@ -2,3 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  
+  .rotate-y-15 {
+    transform: rotateY(15deg);
+  }
+  
+  .rotate-x-5 {
+    transform: rotateX(5deg);
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+}
+
