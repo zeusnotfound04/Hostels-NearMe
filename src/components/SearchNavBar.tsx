@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import logo from "../../public/logo/logo.jpg"
 import HostelSearchBar from "@/components/ui/HostelSearchBar"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 
 export function SearchNavBar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -53,7 +53,7 @@ export function SearchNavBar() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator className="my-1" />
-        <DropdownMenuItem className="rounded-lg py-2 px-4 hover:bg-gray-50 text-red-500 font-medium">Logout</DropdownMenuItem>
+        <DropdownMenuItem className="rounded-lg py-2 px-4 hover:bg-gray-50 text-red-500 font-medium" onClick={()=> signOut()}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   ) : (

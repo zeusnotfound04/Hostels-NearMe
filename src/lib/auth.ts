@@ -1,17 +1,18 @@
-// import  { rateLimit } from "@/lib/redis";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./prisma";
 import { compare } from "bcrypt";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-
+import generateUsername from "@/actions/users/generateUsername";
+// import  { rateLimit } from "@/lib/redis";
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/login',
     signOut: '/logout',
+    error: '/login',
   },
 
   session: {
@@ -79,29 +80,60 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    // async signIn({ account, profile }) {
-    //   if (account?.provider === 'google' && profile?.email) {
-    //     try {
-
-    //       await prisma.user.upsert({
-    //         where: { email: profile.email },
-    //         create: {
-    //           email: profile.email,
-    //           username: profile.name ,
-    //           role: 'USER', // Default role for new users
-    //           gender: null, // Default to null, or modify based on your logic
-    //         },
-    //         update: {
-    //           username: profile.name || 'Anonymous',
-    //         },
-    //       });
-    //     } catch (error) {
-    //       console.error('Error during signIn callback:', error);
-    //       return false; // Deny the sign-in
-    //     }
-    //   }
-    //   return true; 
-    // },
+    async signIn({ account, profile }) {
+      if (account?.provider === 'google' && profile?.email) {
+        try {
+          
+          const existingUser = await prisma.user.findUnique({
+            where: { email: profile.email },
+            select: { id: true, password: true, username: true }
+          });
+          console.log("Existing user in signIn callback:", existingUser);
+    
+          
+          if (!existingUser) {
+            return `/register/google?email=${encodeURIComponent(profile.email)}&name=${encodeURIComponent(profile.name || "")}&providerAccountId=${account.providerAccountId}`;
+          }
+          
+          if (!existingUser.password || existingUser.password === "" || !existingUser.username) {
+            return `/register/google?email=${encodeURIComponent(profile.email)}&name=${encodeURIComponent(profile.name || "")}&providerAccountId=${account.providerAccountId}`;
+          }
+          
+          
+          const linkedAccount = await prisma.account.findFirst({
+            where: {
+              userId: existingUser.id,
+              provider: 'google',
+              providerAccountId: account.providerAccountId
+            }
+          });
+          
+          if (!linkedAccount) {
+          
+            await prisma.account.create({
+              data: {
+                userId: existingUser.id,
+                type: 'oauth',
+                provider: 'google',
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token,
+                expires_at: account.expires_at,
+                token_type: account.token_type,
+                scope: account.scope,
+                id_token: account.id_token,
+                refresh_token: account.refresh_token,
+              }
+            });
+          }
+          
+          return true; 
+        } catch (error) {
+          console.error('Error during signIn callback:', error);
+          return false; 
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;

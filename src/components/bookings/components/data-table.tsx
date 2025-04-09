@@ -16,7 +16,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-
 import {
   Table,
   TableBody,
@@ -28,10 +27,7 @@ import {
 
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
-
 import { DataTableSkeleton } from "./skeleton";
-
-
 
 interface Booking {
   id: string;
@@ -57,11 +53,16 @@ interface Booking {
   userGender: string;
 }
 
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  isLoading?: boolean;
+}
 
-export function DataTable<TData, TValue>({ 
-  columns, 
-  data, 
-  isLoading = false 
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  isLoading = false,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -102,13 +103,13 @@ export function DataTable<TData, TValue>({
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow 
+                <TableRow
                   key={headerGroup.id}
                   className="bg-zinc-50 transition-colors hover:bg-zinc-100"
                 >
                   {headerGroup.headers.map((header) => (
-                    <TableHead 
-                      key={header.id} 
+                    <TableHead
+                      key={header.id}
                       colSpan={header.colSpan}
                       className="text-black font-bold py-4 px-6 whitespace-nowrap"
                     >
@@ -123,13 +124,13 @@ export function DataTable<TData, TValue>({
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow 
-                    key={row.id} 
+                  <TableRow
+                    key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                     className="group transition-colors hover:bg-zinc-50 data-[state=selected]:bg-zinc-100"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell 
+                      <TableCell
                         key={cell.id}
                         className="py-3 px-6 font-medium text-zinc-900 whitespace-nowrap overflow-hidden text-ellipsis max-w-md transition-colors group-hover:text-[#7E2424]"
                       >
@@ -144,8 +145,8 @@ export function DataTable<TData, TValue>({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell 
-                    colSpan={columns.length} 
+                  <TableCell
+                    colSpan={columns.length}
                     className="h-24 text-center text-zinc-500 animate-fade-in"
                   >
                     No results.
@@ -157,16 +158,28 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
       <DataTablePagination table={table} />
-      
+
       <style jsx global>{`
         @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
-        
+
         @keyframes slide-in {
-          from { transform: translateX(-10px); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
+          from {
+            transform: translateX(-10px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
         }
 
         .animate-fade-in {
@@ -177,14 +190,14 @@ export function DataTable<TData, TValue>({
           animation: slide-in 0.2s ease-out;
         }
 
-        [data-state=selected] {
+        [data-state="selected"] {
           background-color: rgba(126, 36, 36, 0.05);
-          border-left: 2px solid #7E2424;
+          border-left: 2px solid #7e2424;
         }
 
-        .hover\:shadow-md:hover {
-          box-shadow: 0 4px 6px -1px rgba(126, 36, 36, 0.1), 
-                      0 2px 4px -1px rgba(126, 36, 36, 0.06);
+        .hover\\:shadow-md:hover {
+          box-shadow: 0 4px 6px -1px rgba(126, 36, 36, 0.1),
+            0 2px 4px -1px rgba(126, 36, 36, 0.06);
         }
 
         .overflow-x-auto::-webkit-scrollbar {

@@ -17,6 +17,10 @@ const SignupSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
+const handleGoogleSignIn = async () => {
+  await signIn("google", { callbackUrl: "/" });
+}
+
 export default function SignupForm() {
   const router = useRouter();
   const [formData , setFormData]= useState({
@@ -141,7 +145,7 @@ export default function SignupForm() {
             <button
               className="relative flex items-center justify-center px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
               type="button"
-              onClick={() => signIn("google", { callbackUrl: "/admin" })}
+              onClick={handleGoogleSignIn}
             >
               <FcGoogle className="h-5 w-5" />
               <span className="text-neutral-700 dark:text-neutral-300 text-sm ml-2">
