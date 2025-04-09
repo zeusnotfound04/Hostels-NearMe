@@ -8,7 +8,6 @@ import { HostelCard } from "./HostelCard";
 import { useFetchHostels } from "@/hooks/useFetchHostels";
 import FacilityIcon from "../../../public/icons/Facility.png";
 import { Hostel } from "@/types/index";
-import LoadingScreen from "@/components/LoadingScreen";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
@@ -26,6 +25,8 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import ScrollReveal from "../ui/animations/scrollReveal";
 import HostelLoader from "../loading/HostelLoader";
+import { motion } from "framer-motion";
+import { Building, SearchIcon, AlertCircle, Filter, ChevronRight, Loader2, WifiOff } from "lucide-react";
 
 const filterOptions = [
   { id: 1, name: "Gender", icon: <GenderIcon className="w-4 h-4" /> },
@@ -207,9 +208,6 @@ export default function HostelListing() {
       url.searchParams.delete("sortOrder");
     }
     
-    // Apply facility filters
-    // This would require backend support for filtering by facilities
-    
     // Close dialog before navigation
     handleCloseDialog();
     
@@ -217,14 +215,98 @@ export default function HostelListing() {
     router.push(url.pathname + url.search);
   };
 
+  const getActiveFilters = () => {
+    const activeFilters = [];
+    
+    if (filters.gender) activeFilters.push("Gender");
+    if (filters.hostelType) activeFilters.push("Accommodation type");
+    if (filters.sort) activeFilters.push("Sorting");
+    if (filters.priceRange[0] > 0 || filters.priceRange[1] < 50000) activeFilters.push("Price range");
+    if (filters.nearByCoaching) activeFilters.push("Nearby Coaching");
+    
+    return activeFilters;
+  };
+
   if (isLoading) {
-    return <HostelLoader />;
+    return (
+      <div className="flex flex-col justify-center items-center min-h-[60vh] mt-8">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
+        >
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6"
+          >
+            <Loader2 className="w-8 h-8 text-primary" />
+          </motion.div>
+          <h3 className="text-xl font-semibold mb-2">Filtering Hostels</h3>
+          <p className="text-muted-foreground">Finding the best matches for you...</p>
+          
+          {getActiveFilters().length > 0 && (
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
+              {getActiveFilters().map((filter, index) => (
+                <span 
+                  key={index} 
+                  className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800"
+                >
+                  <Filter className="w-3 h-3 mr-1" />
+                  {filter}
+                </span>
+              ))}
+            </div>
+          )}
+        </motion.div>
+
+        <div className="grid grid-cols-1 gap-4 mt-10 w-full max-w-2xl opacity-30">
+          {[1, 2].map(i => (
+            <div key={i} className="rounded-lg bg-muted/40 animate-pulse h-36"></div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p className="text-red-500 text-lg">Error loading hostels.</p>
+      <div className="flex flex-col justify-center items-center min-h-[60vh] mt-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
+        >
+          <motion.div 
+            animate={{ 
+              rotate: [0, 10, -10, 10, 0],
+              scale: [1, 1.1, 1]
+            }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+            className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-6"
+          >
+            <WifiOff className="w-8 h-8 text-red-500" />
+          </motion.div>
+          <h3 className="text-xl font-semibold mb-2">Connection Error</h3>
+          <p className="text-muted-foreground mb-6">We couldn't load hostel listings at the moment.</p>
+          <div className="flex flex-col md:flex-row gap-4 justify-center">
+            <Button 
+              onClick={() => window.location.reload()}
+              className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+            >
+              Try Again
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => router.push('/')}
+              className="px-4 py-2 rounded-md"
+            >
+              Back to Home
+            </Button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -450,36 +532,114 @@ export default function HostelListing() {
         </DialogContent>
       </Dialog>
   
-      <div className="space-y-6">
-        {hostels.length > 0 ? (
-          hostels.map((hostel: Hostel) => <HostelCard key={hostel.id} hostel={hostel} />)
-        ) : (
-          <div className="text-center text-gray-600">No hostels found.</div>
-        )}
-      </div>
-
-      <div className="flex justify-center mt-8 gap-4">
-        <Button
-          className="w-[50px] h-[50px] bg-[#902920] text-white rounded-[10px] p-0"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage <= 1}
+      {hostels.length > 0 ? (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, staggerChildren: 0.1 }}
+          className="space-y-6"
         >
-          <span className="font-black text-[25px]">{currentPage - 1}</span>
-        </Button>
-
-        <Button className="w-[50px] h-[50px] bg-[#902920] text-white rounded-[10px] p-0" disabled>
-          <span className="font-black text-[25px]">{currentPage}</span>
-        </Button>
-
-        <Button
-          className="w-[50px] h-[50px] bg-[#902920] text-white rounded-[10px] p-0"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage >= totalPages}
+          {hostels.map((hostel: Hostel, index) => (
+            <motion.div
+              key={hostel.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <HostelCard hostel={hostel} />
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col items-center justify-center py-16 px-4 text-center"
         >
-          <NextIcon className="w-7 h-[18px]" />
-        </Button>
-      </div>
+          <motion.div
+            animate={{ 
+              y: [0, -10, 0],
+            }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+            className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 mb-6"
+          >
+            <Building className="w-8 h-8 text-amber-600" />
+          </motion.div>
+          
+          <h3 className="text-xl font-semibold mb-2">No Hostels Found</h3>
+          <p className="text-muted-foreground max-w-md mb-8">
+            We couldn't find any hostels matching your current filters. Try adjusting your search criteria.
+          </p>
 
+          {getActiveFilters().length > 0 && (
+            <div className="mb-6">
+              <p className="text-sm text-gray-500 mb-2">Current active filters:</p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {getActiveFilters().map((filter, index) => (
+                  <span 
+                    key={index} 
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800"
+                  >
+                    <Filter className="w-3 h-3 mr-1" />
+                    {filter}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          <div className="flex flex-col sm:flex-row gap-4 mt-2">
+            <Button 
+              onClick={() => {
+                const url = new URL(window.location.href);
+                // Clear all filters
+                url.searchParams.delete("gender");
+                url.searchParams.delete("hostelType");
+                url.searchParams.delete("minPrice");
+                url.searchParams.delete("maxPrice");
+                url.searchParams.delete("sortBy");
+                url.searchParams.delete("sortOrder");
+                url.searchParams.delete("nearByCoaching");
+                router.push(url.pathname + url.search);
+              }}
+              className="bg-primary text-white"
+            >
+              Clear All Filters
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => router.push('/')}
+            >
+              Return to Home
+            </Button>
+          </div>
+        </motion.div>
+      )}
+
+      {hostels.length > 0 && (
+        <div className="flex justify-center mt-8 gap-4">
+          <Button
+            className="w-[50px] h-[50px] bg-[#902920] text-white rounded-[10px] p-0"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage <= 1}
+          >
+            <span className="font-black text-[25px]">{currentPage - 1}</span>
+          </Button>
+
+          <Button className="w-[50px] h-[50px] bg-[#902920] text-white rounded-[10px] p-0" disabled>
+            <span className="font-black text-[25px]">{currentPage}</span>
+          </Button>
+
+          <Button
+            className="w-[50px] h-[50px] bg-[#902920] text-white rounded-[10px] p-0"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage >= totalPages}
+          >
+            <NextIcon className="w-7 h-[18px]" />
+          </Button>
+        </div>
+      )}
 
       <div className="text-center mt-10 font-bold text-gray-600 text-xl">
         <p>

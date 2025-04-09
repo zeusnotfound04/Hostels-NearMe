@@ -34,7 +34,7 @@ export default function Home() {
         <HomeText />
         <HostelListing />
         <StepBooking />
-        <Suspense fallback={<div className="w-full h-[600px] flex items-center justify-center bg-gray-100 rounded-lg">Loading...</div>}>
+        <Suspense fallback={<div className="w-full h-[600px] flex items-center justify-center bg-white rounded-lg">Loading...</div>}>
           <HostelPromoCard />
         </Suspense>
         <Testimonials />

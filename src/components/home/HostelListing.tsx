@@ -2,6 +2,8 @@
 import HostelCard from "@/components/home/HostelCard";
 import { useFetchHostels } from "@/hooks/useFetchHostels";
 import { Hostel } from "@/types";
+import { motion } from "framer-motion";
+import { BuildingIcon, Loader2, Search, Wifi, WifiOff, HomeIcon } from "lucide-react";
 
 export function HostelListing() {
   const { data, isLoading, error } = useFetchHostels({ page: 1 }, 3);
@@ -9,25 +11,91 @@ export function HostelListing() {
   const hostels = data?.hostels || [];
 
   if (isLoading) return (
-    <div className="container mx-auto px-4 py-8 sm:py-12 flex justify-center items-center">
-      <p className="text-lg">Loading...</p>
-    </div>
-  );
+    <div className="container mx-auto px-4 py-12 sm:py-16 flex flex-col justify-center items-center">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6"
+        >
+          <Loader2 className="w-8 h-8 text-primary" />
+        </motion.div>
+        <h3 className="text-xl font-semibold mb-2">Loading Hostels</h3>
+        <p className="text-muted-foreground">Finding the perfect accommodation for you...</p>
+      </motion.div>
 
-  if (!data || !data.hostels || data.hostels.length === 0) return (
-    <div className="container mx-auto px-4 py-8 sm:py-12 flex justify-center items-center">
-      <p className="text-lg">No hostels available</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 w-full max-w-4xl opacity-30">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="rounded-lg bg-muted/40 animate-pulse h-[320px]"></div>
+        ))}
+      </div>
     </div>
   );
 
   if (error) {
     console.error(error);
     return (
-      <div className="container mx-auto px-4 py-8 sm:py-12 flex justify-center items-center">
-        <p className="text-lg text-red-500">Failed to load hostels</p>
+      <div className="container mx-auto px-4 py-12 sm:py-16 flex flex-col justify-center items-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
+        >
+          <motion.div 
+            animate={{ 
+              rotate: [0, 10, -10, 10, 0],
+              scale: [1, 1.1, 1]
+            }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+            className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-6"
+          >
+            <WifiOff className="w-8 h-8 text-red-500" />
+          </motion.div>
+          <h3 className="text-xl font-semibold mb-2">Connection Error</h3>
+          <p className="text-muted-foreground mb-6">We couldn't load hostels at the moment.</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+          >
+            Try Again
+          </button>
+        </motion.div>
       </div>
     );
   }
+
+  if (!data || !data.hostels || data.hostels.length === 0) return (
+    <div className="container mx-auto px-4 py-12 sm:py-16 flex flex-col justify-center items-center">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
+        <motion.div
+          animate={{ 
+            y: [0, -10, 0],
+          }}
+          transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+          className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-yellow-100 mb-6"
+        >
+          <BuildingIcon className="w-8 h-8 text-yellow-600" />
+        </motion.div>
+        <h3 className="text-xl font-semibold mb-2">No Hostels Found</h3>
+        <p className="text-muted-foreground">We couldn't find any hostels matching your criteria.</p>
+        <div className="mt-8 flex items-center gap-2 text-sm text-muted-foreground">
+          <Search className="w-4 h-4" /> 
+          <span>Try adjusting your search or check back soon for new listings.</span>
+        </div>
+      </motion.div>
+    </div>
+  );
 
   return (
     <div className="bg-white max-h-screen">
