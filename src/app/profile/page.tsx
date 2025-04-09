@@ -7,11 +7,7 @@ export default async function Page() {
 
   const session = await getServerSession(authOptions);
 
-  console.log("USER SERVER COMPONENT ::::::::::::" , session)
-  console.log("USER ID::::::::" , session?.user.id)
   const profileData =  await getProfileData(session?.user.id)
-  console.log("PROFILE DATA ::::::" , profileData)
-  // const profileData = await getProfileData()
   
   return (
    

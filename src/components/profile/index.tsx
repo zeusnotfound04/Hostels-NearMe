@@ -157,10 +157,34 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
   async function handleAvatarUpload(file: File) {
     try {
       setIsUploading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+
+      const formData = new FormData();
+      formData.append('imageType', "user");
+      formData.append('files', file);
+      
+
+      const uploadResponse = await axios.post("/api/imageUpload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      
+      if (!uploadResponse.data.success || !uploadResponse.data.fileUrls?.length) {
+        throw new Error("Failed to upload image");
+      }
+      
+      const imageUrl = uploadResponse.data.fileUrls[0];
+      
+      const response = await axios.patch("/api/profile", { 
+        pfpUrl: imageUrl 
+      });
       
       
-      setAvatar(URL.createObjectURL(file));
+      setAvatar(imageUrl);
+      
+      toast({
+        title: "Avatar updated",
+        description: "Your profile picture has been updated successfully.",
+      });
     } catch (error) {
       console.error("Error handling avatar upload:", error);
       toast({
@@ -451,36 +475,27 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
                   <div className="relative h-32 w-32 sm:h-40 sm:w-40 overflow-hidden rounded-full border-4 border-white bg-gradient-to-br from-[#f0f0f0] to-white z-10">
                     {avatar ? (
                       <img src={avatar} alt="Avatar" className="h-full w-full object-cover" />
-                    ) : profile?.pfpUrl ? (
-                      <img src={profile.pfpUrl} alt="Avatar" className="h-full w-full object-cover" />
+                    ) : initialProfile && 'pfpUrl' in initialProfile && initialProfile.pfpUrl ? (
+                      <img src={initialProfile.pfpUrl as string} alt="Avatar" className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-[#902920]/40">
                         <User className="h-16 w-16 sm:h-20 sm:w-20" />
-                      </div>
-                    )}
-
-                    {isUploading && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-20">
-                        <Loader2 className="h-8 w-8 sm:h-10 sm:w-10 text-white animate-spin" />
                       </div>
                     )}
                   </div>
                 </motion.div>
 
                 <div className="w-full">
-                  <label htmlFor="avatar-upload">
-                    <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                      <Button
-                        variant="outline"
-                        className="w-full border-[#902920]/30 text-[#902920] hover:bg-[#902920]/5 hover:text-[#902920] hover:border-[#902920] transition-all duration-300 group"
-                        disabled={isUploading}
-                        type="button"
-                      >
-                        <Upload className="mr-2 h-4 w-4" />
-                        {isUploading ? "Uploading..." : "Upload New Avatar"}
-                      </Button>
-                    </motion.div>
-                  </label>
+                  <Button
+                    variant="outline"
+                    className="w-full border-[#902920]/30 text-[#902920] hover:bg-[#902920]/5 hover:text-[#902920] hover:border-[#902920] transition-all duration-300 group"
+                    disabled={isUploading}
+                    type="button"
+                    onClick={() => document.getElementById('avatar-upload')?.click()}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {isUploading ? "Uploading..." : "Upload New Avatar"}
+                  </Button>
                   <Input
                     id="avatar-upload"
                     type="file"

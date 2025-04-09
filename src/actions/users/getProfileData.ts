@@ -14,6 +14,7 @@ export const getProfileData = cache(async (userId : string | undefined) => {
       state: true,
       role: true,
       createdAt: true,
+      pfpUrl: true,
     },
   });
 

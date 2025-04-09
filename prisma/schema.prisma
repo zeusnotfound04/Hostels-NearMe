@@ -19,13 +19,14 @@ model User {
   name      String
   username  String   @unique
   gender    Gender?
+  pfpUrl   String?
   city      String?
   state     String?  
   role      Role     @default(USER)  // Using enum Role for type safety
   createdAt DateTime @default(now())
   bookings  Booking[]
   emailVerified DateTime?
-    accounts      Account[]
+  accounts      Account[]
   sessions      Session[]
 
   @@index([email , username]) 

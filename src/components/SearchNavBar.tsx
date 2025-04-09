@@ -34,8 +34,18 @@ export function SearchNavBar() {
   const authButtons = isAuthenticated ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
-          <User className="h-5 w-5 text-gray-700" />
+        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors overflow-hidden">
+          {session?.user?.pfpUrl || (session?.user as any)?.pfpUrl ? (
+            <Image 
+              src={session?.user?.pfpUrl || (session?.user as any)?.pfpUrl} 
+              alt="Profile" 
+              width={40} 
+              height={40}
+              className="h-full w-full object-cover" 
+            />
+          ) : (
+            <User className="h-5 w-5 text-gray-700" />
+          )}
           <span className="sr-only">Open user menu</span>
         </Button>
       </DropdownMenuTrigger>

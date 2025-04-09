@@ -59,7 +59,8 @@ export const authOptions: NextAuthOptions = {
             name: true,
             username : true,
             role : true,
-            password : true
+            password : true,
+            pfpUrl : true,
           }
         });
 
@@ -141,17 +142,19 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email;
         token.username = user.username;
         token.role = (user as any).role;
+        token.pfpUrl = (user as any).pfpUrl;
       }
-      
+      console.log("USER in JWT in auth.ts:", user);
       return token;
     },
     async session({ session, token }) {
       session.user = {
         id: token.id,
-        name : token.name,
+        name: token.name,
         email: token.email,
         username: token.username,
-        role : token.role as string,
+        role: token.role as string,
+        pfpUrl: token.pfpUrl as string || null,
       };
       
       return session;

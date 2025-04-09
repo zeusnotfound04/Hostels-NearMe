@@ -1,4 +1,3 @@
-
 // app/api/profile/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
@@ -28,6 +27,7 @@ export async function GET(req: NextRequest) {
         state: true,
         role: true,
         createdAt: true,
+        pfpUrl: true,
       },
     });
 
@@ -61,7 +61,7 @@ export async function PATCH(req: NextRequest) {
 
     const body = await req.json();
     
-    const allowedFields = ['name', 'username', 'gender', 'city', 'state'];
+    const allowedFields = ['name', 'username', 'gender', 'city', 'state', 'pfpUrl'];
     
     const updateData: any = {};
     for (const field of allowedFields) {
@@ -90,6 +90,7 @@ export async function PATCH(req: NextRequest) {
         state: true,
         role: true,
         createdAt: true,
+        pfpUrl: true,
       },
     });
 

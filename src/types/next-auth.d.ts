@@ -8,6 +8,7 @@
       username: string;
       email: string;
       role : string;
+      pfpUrl? : string | null;
     }
 
     interface Session extends DefaultSession {
@@ -17,6 +18,7 @@
         username: string;
         email: string;
         role : string;
+        pfpUrl? : string | null;
       }
     }
   }
