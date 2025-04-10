@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+    console.log("Creating hostel with data:::::::🐉🐉", body);
 
     const hostel = await prisma.hostel.create({
       data: {
@@ -90,6 +91,7 @@ export async function POST(req: NextRequest) {
         updatedAt: new Date(),
       },
     });
+    console.log("Hostel created:", hostel);
 
 
     await updateActiveHostelsCount();

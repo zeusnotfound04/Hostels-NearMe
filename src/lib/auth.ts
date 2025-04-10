@@ -156,6 +156,7 @@ export const authOptions: NextAuthOptions = {
         role: token.role as string,
         pfpUrl: token.pfpUrl as string || null,
       };
+      console.log("Session in auth.ts:", session);
       
       return session;
     },

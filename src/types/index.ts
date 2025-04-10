@@ -71,11 +71,15 @@ export interface Booking {
   userGender?: string;
   phoneNumber?: string;
   address?: string;
+  updatedAt: string;
 
   hostel: {
     id: string;
     name: string;
+    price : number;
     address: string;
+    city : string;
+    state : string;
   };
   user: {
     id?: string;

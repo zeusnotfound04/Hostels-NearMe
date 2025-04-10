@@ -8,22 +8,36 @@ export async function updateActiveHostelsCount() {
             where: {
                 isAvailable : true
             },
+        });
 
-        })
-
-        await prisma.adminInsights.update({
-            where : {
-                id : "1"
+        // Use upsert instead of update to handle the case where the record doesn't exist
+        await prisma.adminInsights.upsert({
+            where: {
+                id: "1"  // Keep the same ID for consistency
             },
-            data : {
+            update: {
                 activeHostelsCount
+            },
+            create: {
+                id: "1",
+                activeHostelsCount,
+                totalBookings: 0,
+                confirmedBookings: 0,
+                cancelledBookings: 0,
+                totalUsers: 0,
+                newUsersThisMonth: 0,
+                bookingConversionRate: 0,
+                cancellationRate: 0,
+                avgBookingsPerUser: 0,
+                listHostelRequests: 0,
+                pendingRequests: 0,
+                cancelledRequests: 0
             }
-        })
+        });
     } catch (error) {
-        console.error("Error updating active hostels count :" , error)
-        throw new Error("Error updating active hostels count. Please try again later.")
+        console.error("Error updating active hostels count:", error);
+
     }
-    
 }
 
 
