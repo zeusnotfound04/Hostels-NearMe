@@ -24,8 +24,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-
-
 type BookingFormProps = {
   hostelId : string;
   hostelName : string;
@@ -49,10 +47,6 @@ const formSchema = z.object({
   }),
 });
 
-
-
-
-
 export default function BookingForm({ hostelId, hostelName, price }: BookingFormProps) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,28 +67,31 @@ export default function BookingForm({ hostelId, hostelName, price }: BookingForm
     }
   });
 
-  useEffect(() => {
-    const checkExistingBooking = async () => {
-      if (status === "loading") return;
-      
-      if (!session?.user) {
-        setIsLoading(false);
-        return;
+  const checkExistingBooking = async () => {
+    if (status === "loading") return;
+    
+    if (!session?.user) {
+      setIsLoading(false);
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`/api/bookings/check?hostelId=${hostelId}`);
+      if (!response.data.canBook && response.data.booking) {
+        setExistingBooking(response.data.booking);
+      } else {
+        setExistingBooking(null);
       }
-      
-      try {
-        const response = await axios.get(`/api/bookings/check?hostelId=${hostelId}`);
-        if (!response.data.canBook && response.data.booking) {
-          setExistingBooking(response.data.booking);
-        }
-      } catch (error) {
-        console.error("Error checking existing booking:", error);
-        toast.error("Failed to check booking status");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    } catch (error) {
+      console.error("Error checking existing booking:", error);
+      toast.error("Failed to check booking status");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     checkExistingBooking();
   }, [hostelId, session, status]);
 
@@ -127,6 +124,8 @@ export default function BookingForm({ hostelId, hostelName, price }: BookingForm
         setTimeout(() => {
           form.reset();
           setShowSuccess(false);
+          // After success animation completes, refresh the booking status
+          checkExistingBooking();
         }, 5000);
       } else {
         toast.error("Failed to create booking. Please try again.");
@@ -144,7 +143,6 @@ export default function BookingForm({ hostelId, hostelName, price }: BookingForm
       router.push(`/bookings/${existingBooking.id}`);
     }
   };
-
 
   if (isLoading) {
     return (
@@ -190,7 +188,6 @@ export default function BookingForm({ hostelId, hostelName, price }: BookingForm
       </Card>
     );
   }
-
 
   return (
     <div className="relative w-full max-w-md">

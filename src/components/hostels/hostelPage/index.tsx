@@ -16,16 +16,15 @@ import { facilityIcons } from "@/constants/label";
 import { X, ChevronLeft, ChevronRight, Maximize } from "lucide-react";
 
 export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
-  // State for fullscreen gallery
+
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-  // Filter available facilities
   const availableFacilities = facilityIcons.filter(
     (facility) => hostel[facility.property as keyof typeof hostel] === true
   );
 
-  // Handle fullscreen toggle
+
   const toggleFullscreen = (index: number) => {
     setActiveImageIndex(index);
     setIsFullscreen(!isFullscreen);
@@ -84,11 +83,10 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex flex-col ml-0 md:ml-4 lg:ml-[131px]">
         {/* Image Gallery and Booking Form Row for Desktop */}
         <div className="flex flex-col lg:flex-row lg:gap-6 mb-6">
-          {/* Image Gallery */}
+
           <Card className="w-full lg:w-[815px] h-auto rounded-[10px] bg-[#f5f5f5] mb-6 lg:mb-0 shadow-md">
             <CardContent className="p-3 md:p-4">
               {hostel.images && hostel.images.length > 0 ? (
@@ -142,7 +140,6 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
             </CardContent>
           </Card>
 
-          {/* Booking Form - Desktop Position (Right Side) */}
           <div className="hidden lg:block flex-shrink-0">
             <BookingForm
               hostelId={hostel.id}
@@ -153,11 +150,10 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
           </div>
         </div>
 
-        {/* Fullscreen Gallery Modal */}
         {isFullscreen && hostel.images && (
           <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center">
             <div className="relative w-full h-full flex items-center justify-center">
-              {/* Close button */}
+
               <button
                 onClick={() => setIsFullscreen(false)}
                 className="absolute top-4 right-4 z-10 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all duration-200"
@@ -165,7 +161,6 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
                 <X className="w-6 h-6" />
               </button>
               
-              {/* Navigation buttons */}
               <button
                 onClick={handlePrevImage}
                 className="absolute left-4 z-10 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all duration-200"
@@ -191,7 +186,6 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
                 />
               </div>
               
-              {/* Image counter */}
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 px-4 py-2 rounded-full text-white text-sm">
                 {activeImageIndex + 1} / {hostel.images.length}
               </div>
@@ -199,7 +193,6 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
           </div>
         )}
 
-        {/* Booking Form - Mobile Position (Below Image Gallery) */}
         <div className="mb-6 lg:hidden flex justify-center">
           <BookingForm
             hostelId={hostel.id}
@@ -210,9 +203,8 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
         </div>
         <hr />
         <br />
-        {/* Info Sections */}
         <div className="flex flex-col w-full lg:w-[795px]">
-          {/* Facilities Section */}
+
           <div className="w-full mb-6 md:mb-8">
             <div className="flex items-center">
               <h2 className="font-normal text-black text-2xl md:text-3xl lg:text-[40px] ml-2 md:ml-5">
@@ -237,7 +229,6 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
           <hr />
           <br />
 
-          {/* House Rules Section */}
           <div className="w-full mb-6 md:mb-8">
             <div className="flex items-center">
               <h2 className="font-normal text-black text-2xl md:text-3xl lg:text-[40px] ml-2 md:ml-5">
@@ -261,7 +252,6 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
           </div>
           <hr />
           <br />
-          {/* Location Section */}
           <div className="w-full mb-6 md:mb-8">
             <div className="flex items-center">
               <h2 className="font-normal text-black text-2xl md:text-3xl lg:text-[40px] ml-2 md:ml-5">
@@ -283,7 +273,6 @@ export default function HostelPage({ hostelId, hostel }: HostelPageProps) {
           <hr />
           <br />
 
-          {/* About Section */}
           <div className="w-full mb-6 md:mb-8">
             <div className="flex items-center">
               <h2 className="font-normal text-black text-2xl md:text-3xl lg:text-[40px] ml-2 md:ml-5">
