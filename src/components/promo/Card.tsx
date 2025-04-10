@@ -343,7 +343,7 @@ const HostelPromoCard = () => {
                 variants={numberVariants}
               >
                 <motion.span 
-                  className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-black"
+                  className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black"
                   style={{ color: colors.primary }}
                   animate={isMounted ? {
                     scale: [1, 1.05, 1],
