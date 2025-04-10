@@ -1,4 +1,5 @@
 import { updateAdminInsights } from "@/actions/adminInsights/insight";
+import { getHistoricalInsights } from "@/actions/adminInsights/historicalInsights";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/utils/user";
@@ -7,7 +8,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(){
     try {
-
+        // Update insights with latest data
         await updateAdminInsights();
         const session = await getServerSession(authOptions);
 
@@ -17,6 +18,7 @@ export async function GET(){
 )
         }
 
+        // Get current insights
         const insights = await prisma.adminInsights.findUnique({
             where : {
                 id : "1"
@@ -30,10 +32,19 @@ export async function GET(){
                 
             )
         }
+
+        // Get historical data
+        const historicalData = await getHistoricalInsights();
+        
         console.log("Insights in the backend :", insights)
 
-
-        return NextResponse.json({...insights , timestamp : new Date().toISOString() , status : 200});
+        // Return both current insights and historical data
+        return NextResponse.json({
+            ...insights, 
+            historicalData, 
+            timestamp: new Date().toISOString(), 
+            status: 200
+        });
     } catch (error) {
         console.error("GET /api/insights error:", error);
         return NextResponse.json(
