@@ -167,7 +167,6 @@ const PredictionsTab = ({ predictiveInsights, data }: PredictionsTabProps) => {
             </div>
           </div>
           
-          {/* Add hostel trend chart if data available */}
           {predictiveInsights.growthTrends.hostelExpansion.trend && (
             <div className="mt-4 pt-4 border-t">
               <ResponsiveContainer width="100%" height={100}>

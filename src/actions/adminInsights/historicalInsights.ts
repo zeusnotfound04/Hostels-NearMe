@@ -15,7 +15,7 @@ export interface HistoricalDataPoint {
   conversionRate?: number;
 }
 
-// Function to get the month names for the last 5 months including current
+
 export const getMonthLabels = (count = 5): string[] => {
   const months = [];
   for (let i = count - 1; i >= 0; i--) {
@@ -25,21 +25,19 @@ export const getMonthLabels = (count = 5): string[] => {
   return months;
 };
 
-/**
- * Fetches historical data for insights over the last 5 months
- */
+
 export async function getHistoricalInsights(): Promise<HistoricalDataPoint[]> {
   try {
-    // Get current date and 5 months ago date for the range
+    
     const now = new Date();
     const fiveMonthsAgo = new Date();
     fiveMonthsAgo.setMonth(now.getMonth() - 5);
     
-    // Format dates for comparison
+    
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth();
     
-    // Initialize result array with the last 5 months
+    
     const months = [];
     for (let i = 5; i >= 0; i--) {
       const date = new Date();
@@ -57,12 +55,12 @@ export async function getHistoricalInsights(): Promise<HistoricalDataPoint[]> {
       });
     }
     
-    // Prepare result array
+    
     const result: HistoricalDataPoint[] = [];
     
-    // For each month, gather the metrics
+    
     for (const monthData of months) {
-      // Get total bookings for the month
+      
       const bookingsCount = await prisma.booking.count({
         where: {
           createdAt: {
@@ -72,7 +70,7 @@ export async function getHistoricalInsights(): Promise<HistoricalDataPoint[]> {
         }
       });
       
-      // Get confirmed bookings for the month
+      
       const confirmedBookingsCount = await prisma.booking.count({
         where: {
           createdAt: {
@@ -83,7 +81,7 @@ export async function getHistoricalInsights(): Promise<HistoricalDataPoint[]> {
         }
       });
       
-      // Get cancelled bookings for the month
+      
       const cancelledBookingsCount = await prisma.booking.count({
         where: {
           createdAt: {
@@ -94,7 +92,7 @@ export async function getHistoricalInsights(): Promise<HistoricalDataPoint[]> {
         }
       });
       
-      // Get new users registered in the month
+      
       const newUsersCount = await prisma.user.count({
         where: {
           createdAt: {
@@ -104,7 +102,7 @@ export async function getHistoricalInsights(): Promise<HistoricalDataPoint[]> {
         }
       });
       
-      // Get new hostels listed in the month
+      
       const newHostelsCount = await prisma.hostel.count({
         where: {
           createdAt: {
@@ -114,7 +112,6 @@ export async function getHistoricalInsights(): Promise<HistoricalDataPoint[]> {
         }
       });
       
-      // Calculate conversion rate
       const conversionRate = bookingsCount > 0 ? (confirmedBookingsCount / bookingsCount) * 100 : 0;
       
       result.push({

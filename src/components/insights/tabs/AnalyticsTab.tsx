@@ -38,7 +38,6 @@ const AnalyticsTab = ({ data }: AnalyticsTabProps) => {
     { name: 'Cancelled', value: data?.cancelledRequests || 0, color: '#ef4444' }
   ];
   
-  // Extract performance trend data from historical records if available
   const performanceTrend = data?.historicalData?.map(item => ({
     name: item.month,
     bookings: item.bookings || 0,

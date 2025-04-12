@@ -53,7 +53,6 @@ export const calculatePredictiveInsights = (data: AdminInsights): PredictiveInsi
     const predictNextMonthBookings = Math.round(data.confirmedBookings * (1 + bookingGrowthRate));
     const predictNextMonthHostels = Math.round(data.activeHostelsCount * (1 + hostelGrowthRate));
     
-    // Return prediction data with real historical trends
     return {
       predictedNextMonthUsers: predictNextMonthUsers,
       predictedNextMonthBookings: predictNextMonthBookings,

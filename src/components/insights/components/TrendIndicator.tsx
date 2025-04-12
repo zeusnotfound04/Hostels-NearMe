@@ -8,7 +8,6 @@ interface TrendIndicatorProps {
   percentage?: boolean;
 }
 
-// Trend indicator component that shows up/down arrows based on trend
 const TrendIndicator = ({ value, percentage = true }: TrendIndicatorProps) => {
   const isPositive = value >= 0;
   

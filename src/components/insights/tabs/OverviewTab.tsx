@@ -28,9 +28,9 @@ interface OverviewTabProps {
 }
 
 const OverviewTab = ({ data }: OverviewTabProps) => {
-  // Calculate booking efficiency metrics
+  
   const bookingEfficiency = (data?.confirmedBookings || 0) / (data?.totalBookings || 1) * 100;
-  const hostelsUtilization = 85; // Example value - could be calculated from actual data
+  const hostelsUtilization = 85; 
   
   const bookingData = [
     { name: 'Confirmed', value: data?.confirmedBookings || 0, color: '#22c55e' },
@@ -86,7 +86,6 @@ const OverviewTab = ({ data }: OverviewTabProps) => {
         </Card>
       </motion.div>
 
-      {/* Total Users Card */}
       <motion.div variants={itemVariants} whileHover={{ scale: 1.03 }} transition={{ type: "spring", stiffness: 400 }}>
         <Card className="hover:shadow-lg transition-all border-l-4 border-indigo-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -112,7 +111,6 @@ const OverviewTab = ({ data }: OverviewTabProps) => {
         </Card>
       </motion.div>
 
-      {/* Booking Conversion Card */}
       <motion.div variants={itemVariants} whileHover={{ scale: 1.03 }} transition={{ type: "spring", stiffness: 400 }}>
         <Card className="hover:shadow-lg transition-all border-l-4 border-amber-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

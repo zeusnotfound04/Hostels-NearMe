@@ -15,7 +15,6 @@ interface JaggedBorderProps extends SideBorderProps { }
 
 interface WavyDividerProps extends DecorativeBorderProps { }
 
-// Define interfaces for other objects
 interface Particle {
   x: number;
   y: number;

@@ -34,7 +34,6 @@ export default function Home() {
         <Testimonials />
         <MissionVisionCards />
       </div>
-      <Link href="/admin">Open My Admin</Link>
     </main>
   );
 }

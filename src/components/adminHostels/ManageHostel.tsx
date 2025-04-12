@@ -609,14 +609,14 @@ export default function HostelManagement() {
                       className="w-full group hover:shadow-md transition-all duration-300"
                       onClick={() => router.push(`/hostels/${hostel.id}`)}
                     >
-                      <span>View Details</span>
+                      <span className="text-white">View Details</span>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
                         height="16"
                         viewBox="0 0 24 24"
                         fill="none"
-                        stroke="currentColor"
+                        stroke="white"
                         strokeWidth="2"
                         className="ml-1 group-hover:translate-x-1 transition-transform"
                       >
@@ -634,7 +634,7 @@ export default function HostelManagement() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300"
+            className="text-center  py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -657,7 +657,7 @@ export default function HostelManagement() {
               <Button onClick={clearFilters} variant="outline">
                 Clear Filters
               </Button>
-              <Button onClick={() => router.push("/admin/hostels/addHostels")}>
+              <Button  onClick={() => router.push("/admin/hostels/addHostels")}>
                 Add New Hostel
               </Button>
             </div>

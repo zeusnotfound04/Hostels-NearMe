@@ -33,7 +33,7 @@ export default function RootLayout({
               <Toaster />
             </Container>
             <CompareBar/>
-            {/* <Footer/> */}
+            <Footer/>
           </ReactQueryProvider>
           </CompareProviderWrapper>
         </SessionProviderWrapper>

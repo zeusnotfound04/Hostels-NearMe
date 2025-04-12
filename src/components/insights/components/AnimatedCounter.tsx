@@ -7,7 +7,6 @@ interface AnimatedCounterProps {
   duration?: number;
 }
 
-// Animated counter component for number transitions
 const AnimatedCounter = ({ value, duration = 1.5 }: AnimatedCounterProps) => {
   const [count, setCount] = useState(0);
   
