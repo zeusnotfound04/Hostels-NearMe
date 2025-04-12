@@ -8,7 +8,7 @@ export async function updateBooking(bookingId: string, formData: { status: strin
       headers: { "Content-Type": "application/json" },
     });
 
-    return { success: true };
+    return { success: true , data: response.data };
   } catch (error) {
     console.error("Error updating booking:", error);
     return { success: false, error: "Failed to update booking" };

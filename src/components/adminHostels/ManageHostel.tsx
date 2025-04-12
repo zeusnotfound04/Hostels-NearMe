@@ -96,7 +96,7 @@ const amenityIcons: Record<string, React.ReactNode> = {
   indoorGames: <IndoorGamesIcon width={18} height={18} />,
   biweeklycleaning: <CleaningIcon width={18} height={18} />,
   securityGuard: <SecurityGuardIcon width={18} height={18} />,
-  allDayWarden: <Shield className="h-4 w-4" />,
+  allDayWarden: <Shield   className="h-4 text-primary w-4" />,
   wiFi: <WifiIcon width={18} height={18} />,
   airconditioner: <AirConditionerIcon width={18} height={18} />,
   cooler: <CoolerIcon width={18} height={18} />,

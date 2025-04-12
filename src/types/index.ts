@@ -1,4 +1,3 @@
-
 import { facilityLabels, houseRulesLabels } from "@/constants/label";
 import { HostelType, HostelGender } from "@prisma/client";
 
@@ -227,16 +226,41 @@ export type AdminInsights = {
 
 
 export interface FilterState {
-  search : string;
-  type : string;
-  city : string;
-  priceRange : {
-    min : string;
-    max : string;
+  search: string;
+  type: string;
+  city: string;
+  priceRange: {
+    min: string;
+    max: string;
   },
-  page : number;
+  page: number;
+  gender: string;
+  hostelType: string;
+  facilities: string[];
+  sharingType: string;
+  sort: string;
+  nearByCoaching: string[];
 }
 
+export interface FilterOption {
+  id: string | number;
+  name: string;
+  label?: string;
+  icon?: React.ReactNode;
+}
+
+export interface CoachingOption {
+  id: string;
+  label: string;
+}
+
+export interface FilterDialogProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+  onApply: () => void;
+}
 
 export interface HostelState {
   data: Hostel[];
@@ -256,6 +280,16 @@ export interface HostelPageProps{
   hostel : Hostel
 }
 
+type OrderDirection = 'asc' | 'desc';
+
+export type OrderByField = {
+  isAvailable?: OrderDirection;
+  createdAt?: OrderDirection;
+};
+
+export type Filters = {
+  isAvailable?: boolean;
+};
 
 
 export interface FetchHostelParams {

@@ -2,15 +2,19 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { HostelType, HostelGender } from "@prisma/client";
+import { HostelType, HostelGender, Prisma } from "@prisma/client";
 import { hostelRequiredFields } from "@/constants";
 import { isAdmin } from "@/utils/user";
 import { updateActiveHostelsCount } from "@/utils/hostels";
+import { OrderByField } from "@/types";
 
+// Type safe way to add boolean fields to the filters object
+type FilterWithBooleanFields = Prisma.HostelWhereInput & {
+  [key: string]: unknown;
+};
 
 export async function POST(req: NextRequest) {
   try {
-
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user || !session.user.id || !isAdmin(session.user.role)) {
@@ -19,16 +23,14 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
-    
 
     const body = await req.json();
-   
 
     const missingFields = hostelRequiredFields.filter(field => !body[field]);
-    
+
     if (missingFields.length > 0) {
       return NextResponse.json(
-        { error: `Missing required fields: ${missingFields.join(', ')}` },
+        { error: `Missing required fields: ${missingFields.join(", ")}` },
         { status: 400 }
       );
     }
@@ -59,7 +61,7 @@ export async function POST(req: NextRequest) {
         hostelType: body.hostelType as HostelType,
         address: body.address,
         images: body.images,
-        nearByCoaching : body.nearByCoaching,
+        nearByCoaching: body.nearByCoaching,
         isAvailable: body.isAvailable ?? true,
         isNonVeg: body.isNonVeg ?? false,
         Almirah: body.Almirah ?? false,
@@ -93,7 +95,6 @@ export async function POST(req: NextRequest) {
     });
     console.log("Hostel created:", hostel);
 
-
     await updateActiveHostelsCount();
     return NextResponse.json(
       { message: "Hostel Created Successfully", hostel },
@@ -102,125 +103,149 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Error creating hostel:", error);
     return NextResponse.json(
-      { 
+      {
         error: "Failed to create hostel",
-        details: error instanceof Error ? error.message : "Unknown error"
+        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     );
   }
 }
 
-
-
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    console.log('Received search params:', Object.fromEntries(searchParams));
+    console.log("Received search params:", Object.fromEntries(searchParams));
 
     const page = parseInt(searchParams.get("page") ?? "1");
     const limit = parseInt(searchParams.get("limit") ?? "10");
     const skip = (page - 1) * limit;
 
-    const filters: any = {
+    // Cast filters to our extended type that allows string indexing
+    const filters: FilterWithBooleanFields = {
       isAvailable: searchParams.get("isAvailable") === "true",
     };
 
-    
-    if (searchParams.get("search")) {
-      const searchTerm = searchParams.get("search");
+    const searchTerm = searchParams.get("search") ?? undefined;
+    if (searchTerm) {
       filters.OR = [
         {
           name: {
             contains: searchTerm,
             mode: "insensitive",
-          }
+          },
         },
         {
           city: {
             contains: searchTerm,
             mode: "insensitive",
-          }
-        }
+          },
+        },
       ];
     }
 
-    if (searchParams.get("hostelType")) {
-      filters.hostelType = searchParams.get("hostelType") as HostelType;
+    const hostelType = searchParams.get("hostelType") ?? undefined;
+    if (hostelType) {
+      filters.hostelType = hostelType as HostelType;
     }
 
-    if (searchParams.get("gender")) {
-      filters.gender = searchParams.get("gender") as HostelGender;
+    const gender = searchParams.get("gender") ?? undefined;
+    if (gender) {
+      filters.gender = gender as HostelGender;
     }
 
-    if (searchParams.get("nearByCoaching")) {
-      const coachingTerm = searchParams.get("nearByCoaching");
+    const coachingTerm = searchParams.get("nearByCoaching") ?? undefined;
+    if (coachingTerm) {
       filters.nearByCoaching = {
-        has: coachingTerm
+        has: coachingTerm,
       };
     }
-  
-    if (searchParams.get("city") && !searchParams.get("search")) {
+
+    const city = searchParams.get("city") ?? undefined;
+    const search = searchParams.get("search") ?? undefined;
+    if (city && !search) {
       filters.city = {
-        contains: searchParams.get("city"),
+        contains: city,
         mode: "insensitive",
       };
     }
 
-    if (searchParams.get("state")) {
+    const state = searchParams.get("state") ?? undefined;
+    if (state) {
       filters.state = {
-        contains: searchParams.get("state"),
+        contains: state,
         mode: "insensitive",
       };
     }
 
-    if (searchParams.get("minPrice") || searchParams.get("maxPrice")) {
+    const minPrice = searchParams.get("minPrice") ?? undefined;
+    const maxPrice = searchParams.get("maxPrice") ?? undefined;
+    if (minPrice || maxPrice) {
       filters.price = {};
-      
-      if (searchParams.get("minPrice")) {
-        filters.price.gte = parseFloat(searchParams.get("minPrice")!);
+
+      if (minPrice) {
+        filters.price.gte = parseFloat(minPrice);
       }
-      
-      if (searchParams.get("maxPrice")) {
-        filters.price.lte = parseFloat(searchParams.get("maxPrice")!);
+
+      if (maxPrice) {
+        filters.price.lte = parseFloat(maxPrice);
       }
     }
 
-   
     const booleanFields = [
-      "isNonVeg", "Almirah", "attachedWashroom", "cctv", "chair",
-      "cooler", "inverterBackup", "parking", "biweeklycleaning",
-      "allDayElectricity", "generator", "geyser", "indoorGames",
-      "pillow", "waterByRO", "securityGuard", "table", "wiFi",
-      "foodIncluded", "bed", "vegetarienMess", "allDayWaterSupply",
-      "gym", "allDayWarden", "airconditioner"
+      "isNonVeg",
+      "Almirah",
+      "attachedWashroom",
+      "cctv",
+      "chair",
+      "cooler",
+      "inverterBackup",
+      "parking",
+      "biweeklycleaning",
+      "allDayElectricity",
+      "generator",
+      "geyser",
+      "indoorGames",
+      "pillow",
+      "waterByRO",
+      "securityGuard",
+      "table",
+      "wiFi",
+      "foodIncluded",
+      "bed",
+      "vegetarienMess",
+      "allDayWaterSupply",
+      "gym",
+      "allDayWarden",
+      "airconditioner",
     ];
 
-    booleanFields.forEach(field => {
-      const value = searchParams.get(field);
+    booleanFields.forEach((field) => {
+      const value = searchParams.get(field) ?? undefined;
       if (value === "true" || value === "false") {
+        // Now TypeScript knows we can use string indexing on our extended type
         filters[field] = value === "true";
       }
     });
 
-    let orderBy: any[] = [
-      { isAvailable: 'desc' }, 
-      { createdAt: 'desc' }   
+    let orderBy: OrderByField[] = [
+      { isAvailable: "desc" },
+      { createdAt: "desc" },
     ];
 
-    const sortBy = searchParams.get("sortBy");
-    const sortOrder = searchParams.get("sortOrder") || 'asc';
-    
+    const sortBy = searchParams.get("sortBy") ?? undefined;
+    const sortOrder = searchParams.get("sortOrder") ?? "asc";
+
     if (sortBy) {
-     
-      orderBy = [{ [sortBy]: sortOrder.toLowerCase() }];
+      const orderObj: Record<string, Prisma.SortOrder> = {};
+      orderObj[sortBy] = (sortOrder.toLowerCase() === 'desc' ? 'desc' : 'asc') as Prisma.SortOrder;
       
-      
-      orderBy.push({ isAvailable: 'desc' });
+      orderBy = [orderObj as OrderByField];
+      orderBy.push({ isAvailable: "desc" });
     }
 
-    console.log('Applied filters:', JSON.stringify(filters, null, 2));
-    console.log('Applied sorting:', JSON.stringify(orderBy, null, 2));
+    console.log("Applied filters:", JSON.stringify(filters, null, 2));
+    console.log("Applied sorting:", JSON.stringify(orderBy, null, 2));
 
     const total = await prisma.hostel.count({
       where: filters,
@@ -242,7 +267,7 @@ export async function GET(req: NextRequest) {
         address: true,
         about: true,
         images: true,
-        nearByCoaching : true,
+        nearByCoaching: true,
         isAvailable: true,
         isNonVeg: true,
         Almirah: true,
@@ -271,7 +296,7 @@ export async function GET(req: NextRequest) {
         airconditioner: true,
         createdAt: true,
         updatedAt: true,
-      }
+      },
     });
 
     console.log(`Found ${hostels.length} hostels out of ${total} total`);
@@ -282,9 +307,8 @@ export async function GET(req: NextRequest) {
         totalItems: total,
         currentPage: page,
         totalPages: Math.ceil(total / limit),
-      }
+      },
     });
-
   } catch (error) {
     console.error("Error fetching hostels:", error);
     return NextResponse.json(

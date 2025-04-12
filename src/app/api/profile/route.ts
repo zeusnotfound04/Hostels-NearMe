@@ -1,10 +1,45 @@
-// app/api/profile/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { Gender } from '@prisma/client';
 
-export async function GET(req: NextRequest) {
+// Define types for profile data
+interface UserProfile {
+  id: string;
+  email: string;
+  name: string;
+  username: string;
+  gender: Gender | null;
+  city: string | null;
+  state: string | null;
+  role: string;
+  createdAt: Date;
+  pfpUrl: string | null;
+}
+
+// Define type for update profile request
+interface UpdateProfileRequest {
+  name?: string;
+  username?: string;
+  gender?: Gender | null;
+  city?: string | null;
+  state?: string | null;
+  pfpUrl?: string | null;
+}
+
+interface PrismaError extends Error {
+  code?: string;
+  meta?: {
+    target?: string[];
+  };
+}
+
+function isValidGender(value: unknown): value is Gender {
+  return value === 'MALE' || value === 'FEMALE';
+}
+
+export async function GET(): Promise<NextResponse<UserProfile | { error: string }>> {
   try {
     const session = await getServerSession(authOptions);
     
@@ -48,7 +83,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function PATCH(req: NextRequest) {
+export async function PATCH(req: NextRequest): Promise<NextResponse<UserProfile | { error: string }>> {
   try {
     const session = await getServerSession(authOptions);
     
@@ -59,14 +94,47 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
+    const body = await req.json() as Record<string, unknown>;
     
-    const allowedFields = ['name', 'username', 'gender', 'city', 'state', 'pfpUrl'];
+    const allowedFields: Array<keyof UpdateProfileRequest> = ['name', 'username', 'gender', 'city', 'state', 'pfpUrl'];
     
-    const updateData: any = {};
+    const updateData: Partial<UpdateProfileRequest> = {};
     for (const field of allowedFields) {
       if (body[field] !== undefined) {
-        updateData[field] = body[field];
+        // Special handling for gender field
+        if (field === 'gender') {
+          if (body.gender === null) {
+            updateData.gender = null;
+          } else if (isValidGender(body.gender)) {
+            updateData.gender = body.gender;
+          } else if (body.gender !== undefined) {
+            return NextResponse.json(
+              { error: 'Invalid gender value. Must be "MALE" or "FEMALE"' },
+              { status: 400 }
+            );
+          }
+        } else {
+          
+          const value = body[field];
+          
+          if (typeof value === 'string' || value === null) {
+          
+            switch(field) {
+              case 'name':
+              case 'username':
+                if (typeof value === 'string') {
+                  updateData[field] = value;
+                }
+                break;
+              case 'city':
+              case 'state':
+              case 'pfpUrl':
+          
+                updateData[field] = value as string | null;
+                break;
+            }
+          }
+        }
       }
     }
 
@@ -95,12 +163,14 @@ export async function PATCH(req: NextRequest) {
     });
 
     return NextResponse.json(updatedUser);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error updating user profile:', error);
     
-    if (error.code === 'P2002') {
+    const prismaError = error as PrismaError;
+    
+    if (prismaError.code === 'P2002') {
       return NextResponse.json(
-        { error: `The ${error.meta?.target?.[0] || 'field'} is already taken` },
+        { error: `The ${prismaError.meta?.target?.[0] || 'field'} is already taken` },
         { status: 409 }
       );
     }

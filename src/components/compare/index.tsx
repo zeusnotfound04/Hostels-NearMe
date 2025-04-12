@@ -343,7 +343,7 @@ export default function CompareComponent() {
         ))}
       </div>
 
-      <div className="text-center mt-16 mb-8">
+      <div className="text-center mt-16 mb-28">
         <p className="text-lg font-bold">
           Made in <span className="text-[#912923]">India</span>. For the <span className="text-[#912923]">World</span>
         </p>

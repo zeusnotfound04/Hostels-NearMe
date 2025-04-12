@@ -85,7 +85,8 @@ export default function HostelListing() {
     sharingType: "",
     sort: "",
     priceRange: [0, 50000] as [number, number],
-    nearByCoaching: "",
+
+    nearByCoaching: [] as string[],
   });
 
   const [queryParams, setQueryParams] = useState<{
@@ -144,10 +145,8 @@ export default function HostelListing() {
           searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : 50000
       ],
       sort: sortValue,
+      nearByCoaching: searchParams.get("nearByCoaching") ? searchParams.get("nearByCoaching")?.split(",") || [] : [],
     }));
-    console.log(filters)
-    console.log(queryParams)
-
   }, [searchParams]);
 
   const { data, isLoading, error } = useFetchHostels(queryParams);
@@ -183,8 +182,8 @@ export default function HostelListing() {
       url.searchParams.delete("gender");
     }
 
-    if (filters.nearByCoaching) {
-      url.searchParams.set("nearByCoaching", filters.nearByCoaching);
+    if (filters.nearByCoaching.length > 0) {
+      url.searchParams.set("nearByCoaching", filters.nearByCoaching.join(","));
     } else {
       url.searchParams.delete("nearByCoaching");
     }
@@ -222,7 +221,7 @@ export default function HostelListing() {
     if (filters.hostelType) activeFilters.push("Accommodation type");
     if (filters.sort) activeFilters.push("Sorting");
     if (filters.priceRange[0] > 0 || filters.priceRange[1] < 50000) activeFilters.push("Price range");
-    if (filters.nearByCoaching) activeFilters.push("Nearby Coaching");
+    if (filters.nearByCoaching.length > 0) activeFilters.push("Nearby Coaching");
     
     return activeFilters;
   };
@@ -512,18 +511,30 @@ export default function HostelListing() {
             <DialogTitle>Filter by Nearby Coaching</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <RadioGroup 
-              value={filters.nearByCoaching} 
-              onValueChange={(value) => setFilters({...filters, nearByCoaching: value})}
-              className="flex flex-col gap-2"
-            >
+            <div className="flex flex-col gap-2">
               {coachingOptions.map((coaching) => (
                 <div key={coaching.id} className="flex items-center space-x-2">
-                  <RadioGroupItem value={coaching.id} id={`coaching-${coaching.id}`} />
+                  <Checkbox 
+                    id={`coaching-${coaching.id}`} 
+                    checked={filters.nearByCoaching.includes(coaching.id)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setFilters({
+                          ...filters, 
+                          nearByCoaching: [...filters.nearByCoaching, coaching.id]
+                        });
+                      } else {
+                        setFilters({
+                          ...filters, 
+                          nearByCoaching: filters.nearByCoaching.filter(id => id !== coaching.id)
+                        });
+                      }
+                    }}
+                  />
                   <Label htmlFor={`coaching-${coaching.id}`}>{coaching.label}</Label>
                 </div>
               ))}
-            </RadioGroup>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
@@ -641,7 +652,7 @@ export default function HostelListing() {
         </div>
       )}
 
-      <div className="text-center mt-10 font-bold text-gray-600 text-xl">
+      <div className="text-center mt-10 mb-20 font-bold text-gray-600 text-xl">
         <p>
           Made in <span className="text-red-900">India</span>. For the <span className="text-red-900">World</span>
         </p>

@@ -9,15 +9,22 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Booking } from "@/types";
+import { Booking, BookingDetails } from "@/types";
 
-// Async Server Component to fetch booking data
 async function BookingContent({ bookingId }: { bookingId: string }) {
-  const booking  = await getBookingData(bookingId);
+  const bookingData = await getBookingData(bookingId);
   
-  if (!booking) {
+  if (!bookingData) {
     notFound();
   }
+
+  const booking: BookingDetails = {
+    ...bookingData,
+    hostel: {
+      ...bookingData.hostel,
+      price: bookingData.hostel.price?.toString() // Convert number to string
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -33,7 +40,6 @@ async function BookingContent({ bookingId }: { bookingId: string }) {
   );
 }
 
-// Main page component
 export default async function BookingEditPage({ 
   params: { bookingId } 
 }: { 

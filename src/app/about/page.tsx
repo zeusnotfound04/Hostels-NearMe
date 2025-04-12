@@ -1,8 +1,8 @@
-import { PromiseSection } from "@/components/about/PromiseSection";
+import AboutPage from "@/components/about";
 
 export default function Page() {
   return (
-    <PromiseSection/>
+    <AboutPage/>
     
   );
 }

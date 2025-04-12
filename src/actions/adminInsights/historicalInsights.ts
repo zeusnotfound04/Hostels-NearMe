@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { startOfMonth, subMonths, format } from "date-fns";
+import {  subMonths, format } from "date-fns";
 
 const prisma = new PrismaClient();
 
@@ -34,7 +34,6 @@ export async function getHistoricalInsights(): Promise<HistoricalDataPoint[]> {
     fiveMonthsAgo.setMonth(now.getMonth() - 5);
     
     
-    const currentYear = now.getFullYear();
     const currentMonth = now.getMonth();
     
     

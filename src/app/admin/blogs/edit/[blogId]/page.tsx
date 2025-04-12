@@ -1,6 +1,6 @@
 import { getBlog } from "@/actions";
 import BlogForm from "@/components/blogs/form";
-import { Blog, ParentBlogPageProps } from "@/types";
+import {  ParentBlogPageProps } from "@/types";
 
 
 export default async function Page({ params }: ParentBlogPageProps) {
