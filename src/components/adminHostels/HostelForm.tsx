@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 "use client";
 import { useState , useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -58,7 +60,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function HostelForm({hostelId  , initialData  }: HostelFormProps) {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const isEditMode = !!hostelId;
   const [loading, setLoading] = useState<boolean>(false);
   const { toast } = useToast();

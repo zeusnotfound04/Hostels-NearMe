@@ -2,7 +2,7 @@
 import { useBlogSearch } from "@/hooks/useFetchBlogs";
 import { useEffect, useState } from "react";
 import BlogCards from "@/components/blogs/blogList/BlogCards";
-import { Loader2 } from "lucide-react";
+
 import { Blog } from "@/types";
 import { deleteBlog } from "@/actions"; 
 import AdminLoadingScreen from "@/components/loading/AdminLoader";

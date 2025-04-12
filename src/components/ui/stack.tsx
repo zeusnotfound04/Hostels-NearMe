@@ -1,6 +1,7 @@
 "use client";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface CardRotateProps {
   children: React.ReactNode;
@@ -129,10 +130,13 @@ export default function Stack({
                 transformOrigin: "90% 90%"
               }}
             >
-              <img
+              <Image
                 src={card.img}
                 alt={`card-${card.id}`}
-                className="w-full h-full object-cover pointer-events-none"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover pointer-events-none"
+                priority={index === cards.length - 1}
               />
             </motion.div>
           </CardRotate>

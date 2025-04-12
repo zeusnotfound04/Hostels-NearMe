@@ -3,7 +3,6 @@
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Label } from "@/components/ui/acelabel";
@@ -20,7 +19,6 @@ const registrationSchema = z.object({
     email: z.string().email("Invalid email address"),
   });
 export default function GoogleRegister() {
-    const router = useRouter();
     const searchParams = useSearchParams();
     const [formData, setFormData] = useState({
       name: "",
@@ -88,7 +86,7 @@ export default function GoogleRegister() {
           redirect: true,
           callbackUrl: "/"
         });
-        
+        return result;
       } catch (error) {
         if (error instanceof z.ZodError) {
           const formattedErrors: Record<string, string> = {};

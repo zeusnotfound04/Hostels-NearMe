@@ -35,9 +35,9 @@ export function SearchNavBar() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors overflow-hidden">
-          {session?.user?.pfpUrl || (session?.user as any)?.pfpUrl ? (
+          {session?.user?.pfpUrl ? (
             <Image 
-              src={session?.user?.pfpUrl || (session?.user as any)?.pfpUrl} 
+              src={session.user.pfpUrl} 
               alt="Profile" 
               width={40} 
               height={40}

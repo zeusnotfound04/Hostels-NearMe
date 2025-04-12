@@ -1,12 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { Hostel } from '@/types';
 
 interface DeleteResponse {
   message: string;
 }
 
 interface MutationContext {
-  previousHostels?: DeleteResponse[];
+  previousHostels?: Hostel[];
 }
 
 const deleteHostel = async (hostelId: string): Promise<DeleteResponse> => {
@@ -25,10 +26,10 @@ export function useDeleteHostel() {
     onMutate: async (hostelId) => {
       await queryClient.cancelQueries({ queryKey: ['hostels'] });
 
-      const previousHostels = queryClient.getQueryData<DeleteResponse[]>(['hostels']);
+      const previousHostels = queryClient.getQueryData<Hostel[]>(['hostels']);
 
-      queryClient.setQueryData<DeleteResponse[]>(['hostels'], (old) =>
-        old ? old.filter((h: any) => h.id !== hostelId) : []
+      queryClient.setQueryData<Hostel[]>(['hostels'], (old) =>
+        old ? old.filter((hostel) => hostel.id !== hostelId) : []
       );
 
       return { previousHostels };

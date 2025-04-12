@@ -10,11 +10,7 @@
   } from "lucide-react"
 import { 
   AirConditionerIcon, 
-  FemaleIcon, 
-  LocationIcon, 
-  MaleIcon, 
   ParkingIcon, 
-  VegetarianMessIcon, 
   WashroomIcon,
   AlmirahIcon,
   CCTVIcon,

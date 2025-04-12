@@ -29,29 +29,29 @@ import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 import { DataTableSkeleton } from "./skeleton";
 
-interface Booking {
-  id: string;
-  address: string;
-  createdAt: string;
-  updatedAt: string;
-  phoneNumber: string;
-  referenceId: string;
-  status: string;
-  hostel: {
-    id: string;
-    name: string;
-  };
-  hostelId: string;
-  hostelName: string;
-  user: {
-    id: string;
-    username: string;
-    email: string;
-  };
-  userId: string;
-  username: string;
-  userGender: string;
-}
+// interface Booking {
+//   id: string;
+//   address: string;
+//   createdAt: string;
+//   updatedAt: string;
+//   phoneNumber: string;
+//   referenceId: string;
+//   status: string;
+//   hostel: {
+//     id: string;
+//     name: string;
+//   };
+//   hostelId: string;
+//   hostelName: string;
+//   user: {
+//     id: string;
+//     username: string;
+//     email: string;
+//   };
+//   userId: string;
+//   username: string;
+//   userGender: string;
+// }
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

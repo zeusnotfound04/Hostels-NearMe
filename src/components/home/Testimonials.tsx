@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
 import { motion } from "framer-motion"
@@ -57,7 +58,6 @@ export function Testimonials() {
     }
   };
 
-  // Use intersection observer hooks for triggering animations
   const [containerRef, containerInView] = useInView({
     triggerOnce: true,
     threshold: 0.1
@@ -134,6 +134,8 @@ export function Testimonials() {
         className="text-center mb-12"
         ref={titleRef}
         variants={titleVariants}
+        initial="hidden"
+        animate={titleInView ? "visible" : "hidden"}
       >
         <motion.h2 
           className="text-4xl md:text-5xl font-bold mb-2"

@@ -1,59 +1,69 @@
 import { prisma } from "@/lib/prisma";
-
+import { UserRole } from "@prisma/client";
 
 interface User {
-  name : string;
-    username: string;
-    email: string;
-    password: string;
+  name: string;
+  username: string;
+  email: string;
+  password: string;
 }
 
-
-export async function createUserWithAccount({ name , username, email, password }: User) {
-  console.log({
-    name,
-    username,
-    email,
-    password
-  });
+/**
+ * Creates a new user with account
+ * @param userData User data containing name, username, email, and password
+ * @returns The created user object
+ */
+export async function createUserWithAccount({ name, username, email, password }: User) {
   try {
-  
-    const newUser = await prisma.user.create({
-        data:{
-          name : name,
-          username : username,
-          email: email,
-          password : password
-        }
+    // Check if user with this email already exists
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
     });
-    console.log("New user created: ", newUser);
-    
-    return newUser; 
+
+    if (existingUser) {
+      throw new Error("User with this email already exists");
+    }
+
+    // Create the new user
+    const user = await prisma.user.create({
+      data: {
+        name,
+        username,
+        email,
+        password, // Note: Password should be hashed before saving
+      },
+    });
+
+    return user;
   } catch (error) {
-    console.log("Error creating the user: ", error);
-    throw error; 
+    console.error("Error creating user:", error);
+    throw error;
   }
 }
 
-
+/**
+ * Gets a user by email
+ * @param email User's email address
+ * @returns The user object if found, or null
+ */
 export async function getUserbyEmail(email: User['email']) {
   try {
-    console.log("Fetching user by email...");
-    const user = await prisma.user.findUnique({
-        where: {
-            email
-        },
+    return await prisma.user.findUnique({
+      where: {
+        email,
+      },
     });
-    console.log(user)
- 
-
-    return user; 
   } catch (error) {
-    console.log("Error getting user by email: ", error);
-    throw error
-   
+    console.error("Error getting user by email:", error);
+    throw error;
   }
 }
 
-
-export const isAdmin = (role: string | undefined) => role === "ADMIN";
+/**
+ * Checks if a user has admin role
+ * @param role User's role
+ * @returns boolean indicating if user is an admin
+ */
+export const isAdmin = (role: string | undefined): boolean => role === UserRole.ADMIN;

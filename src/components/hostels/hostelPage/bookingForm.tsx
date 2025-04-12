@@ -1,8 +1,10 @@
+/* eslint-disable react/no-unescaped-entities */
+
 "use client"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FemaleIcon, LocationIcon, MaleIcon } from "@/components/ui/icon";
+import {  LocationIcon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/aceinput";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner"
@@ -15,7 +17,7 @@ import {
 } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import axios from "axios";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { motion, AnimatePresence } from "framer-motion";
@@ -67,7 +69,7 @@ export default function BookingForm({ hostelId, hostelName, price }: BookingForm
     }
   });
 
-  const checkExistingBooking = async () => {
+  const checkExistingBooking = useCallback(async () => {
     if (status === "loading") return;
     
     if (!session?.user) {
@@ -89,11 +91,11 @@ export default function BookingForm({ hostelId, hostelName, price }: BookingForm
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [hostelId, session, status]);
 
   useEffect(() => {
     checkExistingBooking();
-  }, [hostelId, session, status]);
+  }, [checkExistingBooking]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {

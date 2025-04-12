@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import { useSession } from "next-auth/react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import axios, { AxiosError, isAxiosError } from "axios";
+
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,7 +78,6 @@ import {
   Utensils,
   Shield,
   Loader2,
-  AlertCircle,
 } from "lucide-react";
 
 import { SkeletonGrid } from "@/components/adminHostels/components/skeleton";
@@ -114,7 +114,6 @@ const amenityIcons: Record<string, React.ReactNode> = {
 
 export default function HostelManagement() {
   const router = useRouter();
-  const { data: session, status } = useSession();
   const { toast } = useToast();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -132,9 +131,9 @@ export default function HostelManagement() {
   const {
     data,
     isLoading: isFetchingHostels,
+    isFetching,
     isError: isHostelError,
     error: hostelError,
-    isFetching,
   } = useFetchHostels({
     page: currentPage,
     search: searchTerm,
@@ -147,8 +146,6 @@ export default function HostelManagement() {
   const {
     mutate: deleteHostel,
     isPending: isDeleting,
-    isError: isDeleteError,
-    error: deleteError,
   } = useDeleteHostel();
 
   const handlePriceRangeChange = useCallback((value: string) => {
@@ -167,6 +164,8 @@ export default function HostelManagement() {
     setSelectedType(value);
   }, []);
 
+
+
   const handleDelete = useCallback(
     (hostelId: string) => {
       deleteHostel(hostelId, {
@@ -178,18 +177,25 @@ export default function HostelManagement() {
           });
           setShowDeleteDialog(false);
         },
-        onError: (error: any) => {
+        onError: (error: Error) => {
+          let errorMessage = "Failed to delete hostel";
+  
+          if (isAxiosError<{ error: string }>(error)) {
+            errorMessage = error.response?.data?.error || errorMessage;
+          }
+  
           toast({
             variant: "destructive",
             title: "Error",
-            description:
-              error.response?.data?.error || "Failed to delete hostel",
+            description: errorMessage,
           });
         },
       });
     },
     [deleteHostel, toast]
   );
+  
+  
 
   const formatPrice = useCallback((price: number) => {
     return new Intl.NumberFormat("en-IN", {

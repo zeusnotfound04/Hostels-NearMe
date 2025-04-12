@@ -1,5 +1,8 @@
+/* eslint-disable react/no-unescaped-entities */
+
+
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileUpload } from "@/components/ui/acefileupload";
@@ -32,7 +35,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function BlogForm({ blogId, initialData }: BlogFormProps) {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const isEditMode = !!blogId;
   const [loading, setLoading] = useState<boolean>(false);
   const { toast } = useToast();

@@ -1,7 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { FetchHostelParams, Hostel, HostelResponse } from "@/types";
+import { FetchHostelParams,  HostelResponse } from "@/types";
 import axios from "axios";
-import { useState, useEffect } from "react";
 import useDebounce from "./useDebounce";
 
 // Keep the existing useDebounce hook

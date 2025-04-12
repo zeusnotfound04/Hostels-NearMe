@@ -4,12 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from "framer-motion";
 import { useUpdateBooking } from "@/hooks/useBookings";
-import { 
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
+
 import {
   Select,
   SelectContent,
@@ -21,7 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { 
   AlertCircle, Save, User, Phone, MapPin, Calendar, Clock, 
-  Home, Mail, Shield, IndianRupee, Users, Check, X 
+  Home, Mail, Shield, IndianRupee, Users, Check, X,
+  LucideIcon
 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BookingDetails } from "@/types";
@@ -44,7 +40,7 @@ interface AmenityItemProps {
 
 
 interface infoItemProps {
-    icon: any;
+    icon: LucideIcon;
     label: string;
     value: string;
     accent?: boolean;

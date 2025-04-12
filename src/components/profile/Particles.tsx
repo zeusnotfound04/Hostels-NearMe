@@ -1,12 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 
+interface ParticleProps {
+  top: string;
+  left: string;
+  yMovement: number;
+  xMovement: number;
+  duration: number;
+}
+
 export const Particles = ({ count = 10 }: { count?: number }) => {
-  const [particles, setParticles] = useState<any>([])
+  const [particles, setParticles] = useState<ParticleProps[]>([])
 
   useEffect(() => {
-
     const newParticles = Array.from({ length: count }).map(() => ({
       top: `${Math.random() * 100}%`,
       left: `${Math.random() * 100}%`,
@@ -19,24 +27,23 @@ export const Particles = ({ count = 10 }: { count?: number }) => {
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {particles.map((particle : any, i : any) => (
+      {particles.map((particle, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 rounded-full bg-[#902920] opacity-20"
+          className="absolute w-1.5 h-1.5 rounded-full bg-primary/30"
           style={{
             top: particle.top,
-            left: particle.left,
+            left: particle.left
           }}
           animate={{
-            y: [0, particle.yMovement],
-            x: [0, particle.xMovement],
-            opacity: [0.1, 0.3, 0.1],
+            y: [0, particle.yMovement, 0],
+            x: [0, particle.xMovement, 0],
           }}
           transition={{
             duration: particle.duration,
             repeat: Infinity,
-            repeatType: "reverse",
             ease: "easeInOut",
+            repeatType: "reverse"
           }}
         />
       ))}

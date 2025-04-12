@@ -4,8 +4,22 @@ import { prisma } from "./prisma";
 import { compare } from "bcrypt";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import generateUsername from "@/actions/users/generateUsername";
+import { User } from "next-auth";
+import { JWT } from "next-auth/jwt";
+import { Session } from "next-auth";
 // import  { rateLimit } from "@/lib/redis";
+
+// Define specific types for our callbacks
+type JWTCallbackParams = {
+  token: JWT;
+  user: User | undefined;
+};
+
+type SessionCallbackParams = {
+  session: Session;
+  token: JWT;
+};
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
@@ -37,7 +51,7 @@ export const authOptions: NextAuthOptions = {
         password:
          { label: 'Password', type: 'password' },
       },
-      async authorize(credentials , req) {
+      async authorize(credentials  ) {
         if (!credentials?.email || !credentials.password) {
           throw new Error('Email and password are required');
         }
@@ -135,26 +149,26 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user }: JWTCallbackParams) {
       if (user) {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
         token.username = user.username;
-        token.role = (user as any).role;
-        token.pfpUrl = (user as any).pfpUrl;
+        token.role = user.role;
+        token.pfpUrl = user.pfpUrl;
       }
       console.log("USER in JWT in auth.ts:", user);
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: SessionCallbackParams) {
       session.user = {
         id: token.id,
         name: token.name,
         email: token.email,
         username: token.username,
-        role: token.role as string,
-        pfpUrl: token.pfpUrl as string || null,
+        role: token.role,
+        pfpUrl: token.pfpUrl as string | null,
       };
       console.log("Session in auth.ts:", session);
       

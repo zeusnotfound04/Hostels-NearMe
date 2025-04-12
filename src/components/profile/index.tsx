@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 
 import React, { useState, useRef, useEffect } from "react"
@@ -17,12 +18,9 @@ import { genderOptions } from "@/constants"
 import { profileFormSchema } from "./schema"
 import { Particles } from "./Particles"
 import { AnimatedFormField } from "./Fields"
-import { State, City, IState } from "country-state-city"
+import { State, City } from "country-state-city"
 import axios from "axios"
-
-interface CityType {
-  name: string;
-}
+import Image from "next/image"
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
 
@@ -36,6 +34,7 @@ export interface ProfileData {
   role: "USER" | "ADMIN";
   email: string;
   createdAt: Date;
+  pfpUrl?: string;
 }
 
 interface ProfileProps {
@@ -49,10 +48,8 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
   const [isUpdating, setIsUpdating] = useState(false)
   const formRef = useRef<HTMLDivElement>(null)
   const [selectedStateName, setSelectedStateName] = useState<string>("")
-  const [formInitialized, setFormInitialized] = useState(false)
-  const [states, setStates] = useState<any[]>([])
-  const [cities, setCities] = useState<any[]>([])
-  const [profile, setProfile] = useState<any>(null)
+  const [states, setStates] = useState<Array<{isoCode: string, name: string}>>([])
+  const [cities, setCities] = useState<Array<{name: string}>>([])
   const [stateCode, setStateCode] = useState<string>("");
 
   useEffect(() => {
@@ -110,7 +107,6 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
         state: initialProfile.state || "",
       });
   
-      setFormInitialized(true);
     }
   }, [initialProfile, form, states]);
   
@@ -118,8 +114,6 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
     try {
       setIsUpdating(true);
       
-      
-
       const formData = {
         ...data,
         state: selectedStateName, 
@@ -127,7 +121,6 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
 
       console.log("FORM DATA :::::::" , formData)
       
-
       const response = await axios.patch("/api/profile" , formData)
       console.log("RESPONSE FORM THE BACKEND :::+++" , response.data)
       
@@ -158,12 +151,10 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
     try {
       setIsUploading(true);
       
-
       const formData = new FormData();
       formData.append('imageType', "user");
       formData.append('files', file);
       
-
       const uploadResponse = await axios.post("/api/imageUpload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -177,7 +168,6 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
       const response = await axios.patch("/api/profile", { 
         pfpUrl: imageUrl 
       });
-      
       
       setAvatar(imageUrl);
       
@@ -209,7 +199,6 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
     const stateObj = State.getStateByCodeAndCountry(stateIsoCode, "IN");
     const stateName = stateObj?.name || "";
     setSelectedStateName(stateName); 
-    
     
     form.setValue("state", stateName);
     form.setValue("city", ""); 
@@ -340,7 +329,6 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
                         <FormLabel className="text-[#902920] font-semibold">State</FormLabel>
                         <Select 
                           onValueChange={handleStateChange}
-                          // Use state code for selection trigger, but we're storing the name in field.value
                           value={stateCode}
                         >
                           <FormControl>
@@ -363,7 +351,6 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
                   />
                 </AnimatedFormField>
 
-                {/* City Select Field */}
                 <AnimatedFormField index={4}>
                   <FormField
                     control={form.control}
@@ -474,9 +461,9 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
                   <div className="absolute -inset-1 bg-gradient-to-r from-[#902920] to-[#d85a4f] rounded-full opacity-75 blur-sm" />
                   <div className="relative h-32 w-32 sm:h-40 sm:w-40 overflow-hidden rounded-full border-4 border-white bg-gradient-to-br from-[#f0f0f0] to-white z-10">
                     {avatar ? (
-                      <img src={avatar} alt="Avatar" className="h-full w-full object-cover" />
+                      <Image src={avatar} alt="Avatar" className="h-full w-full object-cover" width={160} height={160} />
                     ) : initialProfile && 'pfpUrl' in initialProfile && initialProfile.pfpUrl ? (
-                      <img src={initialProfile.pfpUrl as string} alt="Avatar" className="h-full w-full object-cover" />
+                      <Image src={initialProfile.pfpUrl as string} alt="Avatar" className="h-full w-full object-cover" width={160} height={160} />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-[#902920]/40">
                         <User className="h-16 w-16 sm:h-20 sm:w-20" />

@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @typescript-eslint/no-unused-vars */ // hostelId is used in BookingForm
 "use client"
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";

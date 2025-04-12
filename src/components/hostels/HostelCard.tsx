@@ -18,7 +18,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import toast from "sonner";
 import { useCompare } from "@/context/compare-context";
 
 export const HostelCard = ({ hostel }: { hostel: Hostel }) => {

@@ -1,7 +1,18 @@
 import { useState , useEffect , useCallback , useMemo } from "react";
 import axios from "axios";
-import { FilterState , HostelState , DeleteDialogState } from "@/types";
+import { FilterState, HostelState, DeleteDialogState, Hostel } from "@/types";
 
+// Define a QueryParams type for better type safety
+interface QueryParams {
+  page: string;
+  limit: string;
+  isAvailable: string;
+  gender?: string;
+  search?: string;
+  city?: string;
+  minPrice?: string;
+  maxPrice?: string;
+}
 
 export default function useHostelManagement () {
     // Consolidated states
@@ -13,7 +24,13 @@ export default function useHostelManagement () {
         min: '',
         max: ''
       },
-      page: 1
+      page: 1,
+      gender: '',
+      hostelType: '',
+      facilities: [],
+      sharingType: '',
+      sort: '',
+      nearByCoaching: []
     });
   
     const [hostelState, setHostelState] = useState<HostelState>({
@@ -29,7 +46,7 @@ export default function useHostelManagement () {
     });
   
     // Memoized query parameters
-    const queryParams = useMemo(() => {
+    const queryParams = useMemo<URLSearchParams>(() => {
       const params = new URLSearchParams({
         page: filters.page.toString(),
         limit: '10',
@@ -58,11 +75,15 @@ export default function useHostelManagement () {
   
       return params;
     }, [filters]);
+
     const fetchHostels = useCallback(async () => {
         try {
           setHostelState(prev => ({ ...prev, loading: true, error: null }));
           
-          const response = await axios.get(`/api/hostels?${queryParams.toString()}`);
+          const response = await axios.get<{
+            hostels: Hostel[];
+            pagination: { totalPages: number }
+          }>(`/api/hostels?${queryParams.toString()}`);
           
           setHostelState({
             data: response.data.hostels || [],
@@ -70,11 +91,17 @@ export default function useHostelManagement () {
             loading: false,
             error: null
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const errorMessage = axios.isAxiosError(error)
+            ? error.response?.data?.details || error.message
+            : error instanceof Error
+              ? error.message
+              : 'An unknown error occurred';
+
           setHostelState(prev => ({
             ...prev,
             loading: false,
-            error: error.response?.data?.details || error.message
+            error: errorMessage
           }));
         }
       }, [queryParams]);
@@ -111,22 +138,34 @@ export default function useHostelManagement () {
           type: 'all',
           city: '',
           priceRange: { min: '', max: '' },
-          page: 1
+          page: 1,
+          gender: '',
+          hostelType: '',
+          facilities: [],
+          sharingType: '',
+          sort: '',
+          nearByCoaching: []
         });
       }, []);
     
       // Delete hostel handler
       const handleDelete = useCallback(async (hostelId: string) => {
         try {
-          const response = await axios.delete(`/api/hostels/${hostelId}`);
+          const response = await axios.delete<{ message: string }>(`/api/hostels/${hostelId}`);
           if (response.data.message === "Hostel deleted successfully") {
             setDeleteDialog({ isOpen: false, hostel: null });
             fetchHostels();
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const errorMessage = axios.isAxiosError(error)
+            ? error.response?.data?.error || "Failed to delete hostel"
+            : error instanceof Error
+              ? error.message
+              : "Failed to delete hostel";
+              
           setHostelState(prev => ({
             ...prev,
-            error: error.response?.data?.error || "Failed to delete hostel"
+            error: errorMessage
           }));
         }
       }, [fetchHostels]);
@@ -142,4 +181,3 @@ export default function useHostelManagement () {
         setDeleteDialog
       };
     };
-    

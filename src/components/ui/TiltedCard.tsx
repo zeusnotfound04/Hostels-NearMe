@@ -42,8 +42,10 @@ export default function TiltedCard({
   const ref = useRef<HTMLElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const rotateX = useSpring(useMotionValue(0), springValues);
-  const rotateY = useSpring(useMotionValue(0), springValues);
+  const motionValueX = useMotionValue(0); // Create motionValue outside of useSpring
+  const motionValueY = useMotionValue(0); // Create motionValue outside of useSpring
+  const rotateX = useSpring(motionValueX, springValues);
+  const rotateY = useSpring(motionValueY, springValues);
   const scale = useSpring(1, springValues);
   const opacity = useSpring(0);
   const rotateFigcaption = useSpring(0, {
@@ -51,7 +53,6 @@ export default function TiltedCard({
     damping: 30,
     mass: 1,
   });
-
   const [lastY, setLastY] = useState(0);
 
   function handleMouse(e: React.MouseEvent<HTMLElement>) {
@@ -64,8 +65,8 @@ export default function TiltedCard({
     const rotationX = (offsetY / (rect.height / 2)) * -rotateAmplitude;
     const rotationY = (offsetX / (rect.width / 2)) * rotateAmplitude;
 
-    rotateX.set(rotationX);
-    rotateY.set(rotationY);
+    motionValueX.set(rotationX); // Use the separately defined motionValue
+    motionValueY.set(rotationY); // Use the separately defined motionValue
 
     x.set(e.clientX - rect.left);
     y.set(e.clientY - rect.top);
@@ -83,8 +84,8 @@ export default function TiltedCard({
   function handleMouseLeave() {
     opacity.set(0);
     scale.set(1);
-    rotateX.set(0);
-    rotateY.set(0);
+    motionValueX.set(0); // Reset the motion values
+    motionValueY.set(0); // Reset the motion values
     rotateFigcaption.set(0);
   }
 

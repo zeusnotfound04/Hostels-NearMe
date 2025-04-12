@@ -1,10 +1,9 @@
 "use client"
 import { LeftDoodle1, LeftDoodle2, LeftDoodle3, LeftDoodle4, RightDoodle1, RightDoodle2, RightDoodle3, RightDoodle4 } from '@/components/ui/icon';
 import { useBlogSearch } from '@/hooks/useFetchBlogs';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Blog } from '@/types';
-import Image from 'next/image';
-import { ChevronDown, ChevronUp, Search } from 'lucide-react';
+import {Search } from 'lucide-react';
 import useDebounce from '@/hooks/useDebounce';
 import BlogCard from './BlogCard';
 import { BlogSkeleton } from './Skeleton';

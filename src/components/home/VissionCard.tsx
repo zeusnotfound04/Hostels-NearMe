@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 import React, { useEffect } from 'react';
 import { motion, Variants } from 'framer-motion';
@@ -11,10 +12,6 @@ interface DecorativeBorderProps {
 interface SideBorderProps extends DecorativeBorderProps {
   isRight?: boolean;
 }
-
-interface JaggedBorderProps extends SideBorderProps { }
-
-interface WavyDividerProps extends DecorativeBorderProps { }
 
 interface Particle {
   x: number;
@@ -123,7 +120,7 @@ const SideBorder: React.FC<SideBorderProps> = ({ animate = false, isRight = fals
   );
 };
 
-const JaggedBorder: React.FC<JaggedBorderProps> = ({ animate = false, isRight = false }) => {
+const JaggedBorder: React.FC<SideBorderProps> = ({ animate = false, isRight = false }) => {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1
@@ -192,7 +189,7 @@ const JaggedBorder: React.FC<JaggedBorderProps> = ({ animate = false, isRight = 
   );
 };
 
-const WavyDivider: React.FC<WavyDividerProps> = ({ animate = false }) => {
+const WavyDivider: React.FC<DecorativeBorderProps> = ({ animate = false }) => {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1

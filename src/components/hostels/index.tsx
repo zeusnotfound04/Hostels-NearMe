@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -23,10 +24,8 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import ScrollReveal from "../ui/animations/scrollReveal";
-import HostelLoader from "../loading/HostelLoader";
 import { motion } from "framer-motion";
-import { Building, SearchIcon, AlertCircle, Filter, ChevronRight, Loader2, WifiOff } from "lucide-react";
+import { Building, Filter, Loader2, WifiOff } from "lucide-react";
 
 const filterOptions = [
   { id: 1, name: "Gender", icon: <GenderIcon className="w-4 h-4" /> },

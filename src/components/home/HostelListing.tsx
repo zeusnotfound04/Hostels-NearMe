@@ -1,9 +1,11 @@
+/* eslint-disable react/no-unescaped-entities */
+
 "use client"
 import HostelCard from "@/components/home/HostelCard";
 import { useFetchHostels } from "@/hooks/useFetchHostels";
 import { Hostel } from "@/types";
 import { motion } from "framer-motion";
-import { BuildingIcon, Loader2, Search, Wifi, WifiOff, HomeIcon } from "lucide-react";
+import { BuildingIcon, Loader2, Search,  WifiOff } from "lucide-react";
 
 export function HostelListing() {
   const { data, isLoading, error } = useFetchHostels({ page: 1 }, 3);

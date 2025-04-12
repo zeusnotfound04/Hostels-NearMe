@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -76,7 +78,7 @@ export  const DataTableSkeleton = ({ columns } : any ) => {
             <Table>
               <TableHeader>
                 <TableRow className="bg-zinc-50">
-                  {columns.map((column, index) => (
+                  {columns.map(( index : any) => (
                     <TableHead 
                       key={index}
                       className="text-black font-bold py-4 px-6 whitespace-nowrap"

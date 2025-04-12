@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import { X, ChevronRight, ArrowLeft, ShoppingBasket, Info } from 'lucide-react';
+import { X, ChevronRight, ArrowLeft, ShoppingBasket } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useCompare } from '@/context/compare-context';
@@ -11,7 +11,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarProvider,
-  SidebarTrigger,
+
 } from '@/components/ui/sidebar';
 import { Badge } from '@/components/ui/badge';
 import { MaleIcon, FemaleIcon, HostelIcon } from '@/components/ui/icon';

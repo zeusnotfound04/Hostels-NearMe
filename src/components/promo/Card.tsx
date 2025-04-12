@@ -32,7 +32,6 @@ const HostelPromoCard = () => {
   // Screen size detection
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
   
   // Responsive card dimensions based on screen size
   const [cardDimensions, setCardDimensions] = useState({ 
@@ -48,7 +47,6 @@ const HostelPromoCard = () => {
       const width = window.innerWidth;
       setIsMobile(width < 640);
       setIsTablet(width >= 640 && width < 1024);
-      setIsLargeScreen(width >= 1024);
       
       if (width < 640) {
         // Mobile dimensions
@@ -104,7 +102,7 @@ const HostelPromoCard = () => {
       opacity: 0,
       scale: 0.8
     },
-    visible: (custom : any) => ({
+    visible: (custom: number) => ({
       y: 0,
       opacity: 1,
       scale: 1,
@@ -151,22 +149,6 @@ const HostelPromoCard = () => {
         times: [0, 0.6, 1]
       }
     }
-  };
-  
-  const textContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const letterVariant = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 },
   };
 
   const getResponsiveSize = (mobile: number, tablet: number, desktop: number) => {

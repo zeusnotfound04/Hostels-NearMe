@@ -49,20 +49,26 @@ export default function SignupForm() {
       setLoading(false);
       return;
     }
-
+  
     try {
       const response = await axios.post("/api/users", formData);
       console.log(response.data);
       router.push("/login"); 
-    } catch (error: any) {
-      if (error.response && error.response.status === 400) {
-        setError("User already exists");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400) {
+          setError("User already exists");
+        } else {
+          setError("Something went wrong");
+        }
       } else {
-        setError("Something went wrong");
+        // Not an Axios error – could be a network or runtime error
+        setError("Unexpected error occurred");
       }
     } finally {
       setLoading(false);
     }
+    
   };
 
   return (

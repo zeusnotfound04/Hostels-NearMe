@@ -3,8 +3,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Trash } from "lucide-react";
 import { BlogListProps } from "@/types";
-import { useState } from "react";
-
 export default function BlogCards({ blogs, onDeleteBlog }: BlogListProps & { onDeleteBlog: (id: string) => void }) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

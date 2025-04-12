@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { toast } from 'sonner'; // Replace with your actual toast import
-
 // Define types for the profile data
 export interface UserProfile {
   id: string;
@@ -65,7 +63,7 @@ export function useProfile() {
     //     description: "Your profile has been updated successfully.",
     //   });
     },
-    onError: (error: any) => {
+    onError: (error: Error & { response?: { status?: number; data?: { error?: string } } }) => {
       console.error("Error updating profile:", error);
       
       // Handle specific errors
@@ -113,7 +111,7 @@ export function useProfile() {
   };
 
   return {
-   
+    profile,
     isLoading,
     error,
     updateProfile,

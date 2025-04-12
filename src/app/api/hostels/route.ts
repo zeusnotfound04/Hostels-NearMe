@@ -11,6 +11,16 @@ import { OrderByField } from "@/types";
 // Type safe way to add boolean fields to the filters object
 type FilterWithBooleanFields = Prisma.HostelWhereInput & {
   [key: string]: unknown;
+  OR?: Array<{
+    name?: { contains: string; mode: 'insensitive' };
+    city?: { contains: string; mode: 'insensitive' };
+  }>;
+  hostelType?: HostelType;
+  gender?: HostelGender;
+  nearByCoaching?: { has: string };
+  city?: { contains: string; mode: 'insensitive' };
+  state?: { contains: string; mode: 'insensitive' };
+  price?: { gte?: number; lte?: number };
 };
 
 export async function POST(req: NextRequest) {
@@ -145,12 +155,12 @@ export async function GET(req: NextRequest) {
     }
 
     const hostelType = searchParams.get("hostelType") ?? undefined;
-    if (hostelType) {
+    if (hostelType && Object.values(HostelType).includes(hostelType as HostelType)) {
       filters.hostelType = hostelType as HostelType;
     }
 
     const gender = searchParams.get("gender") ?? undefined;
-    if (gender) {
+    if (gender && Object.values(HostelGender).includes(gender as HostelGender)) {
       filters.gender = gender as HostelGender;
     }
 
@@ -180,24 +190,24 @@ export async function GET(req: NextRequest) {
 
     const minPrice = searchParams.get("minPrice") ?? undefined;
     const maxPrice = searchParams.get("maxPrice") ?? undefined;
+    
     if (minPrice || maxPrice) {
       filters.price = {};
-
-      if (minPrice) {
+      
+      if (minPrice && !isNaN(parseFloat(minPrice))) {
         filters.price.gte = parseFloat(minPrice);
       }
-
-      if (maxPrice) {
+      
+      if (maxPrice && !isNaN(parseFloat(maxPrice))) {
         filters.price.lte = parseFloat(maxPrice);
       }
     }
 
+    // Type-safe boolean fields handling
     const booleanFields = [
-      "isNonVeg",
-      "Almirah",
       "attachedWashroom",
       "cctv",
-      "chair",
+      "wiFi",
       "cooler",
       "inverterBackup",
       "parking",
@@ -206,13 +216,9 @@ export async function GET(req: NextRequest) {
       "generator",
       "geyser",
       "indoorGames",
-      "pillow",
       "waterByRO",
       "securityGuard",
-      "table",
-      "wiFi",
       "foodIncluded",
-      "bed",
       "vegetarienMess",
       "allDayWaterSupply",
       "gym",
@@ -237,76 +243,82 @@ export async function GET(req: NextRequest) {
     const sortOrder = searchParams.get("sortOrder") ?? "asc";
 
     if (sortBy) {
-      const orderObj: Record<string, Prisma.SortOrder> = {};
-      orderObj[sortBy] = (sortOrder.toLowerCase() === 'desc' ? 'desc' : 'asc') as Prisma.SortOrder;
+      const validSortOrder: Prisma.SortOrder = 
+        (sortOrder.toLowerCase() === 'desc' ? 'desc' : 'asc');
       
-      orderBy = [orderObj as OrderByField];
+      // Type-safe way to create the order object
+      const orderObj = { [sortBy]: validSortOrder } as OrderByField;
+      
+      orderBy = [orderObj];
       orderBy.push({ isAvailable: "desc" });
     }
 
     console.log("Applied filters:", JSON.stringify(filters, null, 2));
     console.log("Applied sorting:", JSON.stringify(orderBy, null, 2));
 
-    const total = await prisma.hostel.count({
-      where: filters,
-    });
+    const [hostels, totalItems] = await Promise.all([
+      prisma.hostel.findMany({
+        where: filters,
+        skip,
+        take: limit,
+        orderBy,
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          hostelType: true,
+          gender: true,
+          state: true,
+          city: true,
+          address: true,
+          about: true,
+          images: true,
+          nearByCoaching: true,
+          isAvailable: true,
+          isNonVeg: true,
+          Almirah: true,
+          attachedWashroom: true,
+          cctv: true,
+          chair: true,
+          cooler: true,
+          inverterBackup: true,
+          parking: true,
+          biweeklycleaning: true,
+          allDayElectricity: true,
+          generator: true,
+          geyser: true,
+          indoorGames: true,
+          pillow: true,
+          waterByRO: true,
+          securityGuard: true,
+          table: true,
+          wiFi: true,
+          foodIncluded: true,
+          bed: true,
+          vegetarienMess: true,
+          allDayWaterSupply: true,
+          gym: true,
+          allDayWarden: true,
+          airconditioner: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      }),
+      prisma.hostel.count({
+        where: filters,
+      }),
+    ]);
 
-    const hostels = await prisma.hostel.findMany({
-      where: filters,
-      skip,
-      take: limit,
-      orderBy,
-      select: {
-        id: true,
-        name: true,
-        price: true,
-        hostelType: true,
-        gender: true,
-        state: true,
-        city: true,
-        address: true,
-        about: true,
-        images: true,
-        nearByCoaching: true,
-        isAvailable: true,
-        isNonVeg: true,
-        Almirah: true,
-        attachedWashroom: true,
-        cctv: true,
-        chair: true,
-        cooler: true,
-        inverterBackup: true,
-        parking: true,
-        biweeklycleaning: true,
-        allDayElectricity: true,
-        generator: true,
-        geyser: true,
-        indoorGames: true,
-        pillow: true,
-        waterByRO: true,
-        securityGuard: true,
-        table: true,
-        wiFi: true,
-        foodIncluded: true,
-        bed: true,
-        vegetarienMess: true,
-        allDayWaterSupply: true,
-        gym: true,
-        allDayWarden: true,
-        airconditioner: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+    const totalPages = Math.ceil(totalItems / limit);
 
-    console.log(`Found ${hostels.length} hostels out of ${total} total`);
+    console.log(`Found ${hostels.length} hostels out of ${totalItems} total`);
 
     return NextResponse.json({
       hostels,
       pagination: {
-        totalItems: total,
+        totalPages,
         currentPage: page,
-        totalPages: Math.ceil(total / limit),
+        totalItems,
       },
     });
   } catch (error) {

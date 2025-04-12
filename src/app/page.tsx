@@ -7,7 +7,6 @@ import MissionVisionCards from "@/components/home/VissionCard";
 import { Testimonials } from "@/components/home/Testimonials";
 import { HostelListing } from "@/components/home/HostelListing";
 import HomeText from "@/components/home/HomeText";
-import Link from "next/link";
 import PromoCard from "@/components/promo";
 
 

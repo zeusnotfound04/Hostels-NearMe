@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, { useState, useEffect } from "react";
 import { Send, ChevronDown } from "lucide-react";
 import {
@@ -68,7 +69,7 @@ function HostelSearchBar({
     }, 3000);
 
     return () => clearInterval(animationTimer);
-  }, [AnimatePlaceholder]);
+  }, [AnimatePlaceholder, placeholderTexts.length]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchParams((prev) => ({ ...prev, search: e.target.value }));
@@ -101,7 +102,7 @@ function HostelSearchBar({
     : "Enter your destination";
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${className}`}>
       {/* Desktop View */}
       <div className={`${positionStyle} max-w-4xl mx-auto hidden md:flex`}>
         <div className="flex items-center w-[50%] px-2 sm:px-4 relative overflow-hidden">
