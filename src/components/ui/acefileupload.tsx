@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-unused-expressions */
 import { cn } from "@/utils/utils";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { IconUpload, IconTrash } from "@tabler/icons-react";
 import { useDropzone } from "react-dropzone";
@@ -35,9 +35,15 @@ export const FileUpload = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (newFiles: File[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    onChange && onChange([...files, ...newFiles]);
+    const updatedFiles = [...files, ...newFiles];
+    setFiles(updatedFiles);
+    // Don't call onChange here to avoid the loop
   };
+
+  // Use useEffect to call onChange only when files state changes
+  useEffect(() => {
+    onChange && onChange(files);
+  }, [files, onChange]);
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -46,7 +52,7 @@ export const FileUpload = ({
   const removeFile = (indexToRemove: number) => {
     const updatedFiles = files.filter((_, index) => index !== indexToRemove);
     setFiles(updatedFiles);
-    onChange && onChange(updatedFiles);
+    // Don't call onChange here either, the useEffect will handle it
   };
 
   const { getRootProps, isDragActive } = useDropzone({

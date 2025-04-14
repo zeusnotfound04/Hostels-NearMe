@@ -6,7 +6,27 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "hostelsnearme-web-storage.s3.us-east-1.amazonaws.com",
-        pathname: "/**", 
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "content.jdmagicbox.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "bgiedu.in",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "grdedu.in",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "snit.edu.in",
+        pathname: "/**",
       },
     ],
   },

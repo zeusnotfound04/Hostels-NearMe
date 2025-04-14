@@ -116,10 +116,11 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
     console.log("Hostel Data  ::::" , values)
     try {
       let imageUrls: string[] = [...(values.existingImages || [])];
-  
+      console.log("EXISTING IMAGES :::: " , imageUrls)
       if (values.images && values.images.length > 0) {
         const formData = new FormData();
         formData.append('imageType', "hostel");
+      
         values.images.forEach((file: File) => {
           formData.append("files", file);
         });
@@ -297,6 +298,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
                       variant="inverted"
                       animation={2}
                       maxCount={3}
+                      asChild={true}
                     />
                   </FormControl>
                   <FormDescription>
@@ -592,8 +594,13 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
         <FormControl>
           <FileUpload
             onChange={(files) => {
-              const newFiles = field.value ? [...field.value, ...files] : files ||  [];
-              field.onChange(newFiles.slice(0, 4));
+              // Prevent unnecessary updates if files are the same
+              const newFiles = files.slice(0, 4);
+              // Only update if the arrays have different lengths
+              // or if we're not already processing the same files
+              if (!field.value || field.value.length !== newFiles.length) {
+                field.onChange(newFiles);
+              }
             }}
           />
         </FormControl>

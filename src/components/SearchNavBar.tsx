@@ -16,13 +16,15 @@ import {
 import logo from "../../public/logo/logo.jpg"
 import HostelSearchBar from "@/components/ui/HostelSearchBar"
 import { signOut, useSession } from "next-auth/react"
+import { useProfile } from "@/hooks/useProfile"
 
 export function SearchNavBar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+
   const [showMobileSearch, setShowMobileSearch] = useState(false)
+  const { profile } = useProfile()
+
   const { data: session, status } = useSession()
-  console.log("CURRENT SESSION :::"  , session)
-  
   useEffect(() => {
     if (status === "authenticated") {
       setIsAuthenticated(true)
@@ -35,9 +37,9 @@ export function SearchNavBar() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors overflow-hidden">
-          {session?.user?.pfpUrl ? (
+          {profile?.pfpUrl ? (
             <Image 
-              src={session.user.pfpUrl} 
+              src={profile.pfpUrl} 
               alt="Profile" 
               width={40} 
               height={40}
@@ -134,7 +136,7 @@ export function SearchNavBar() {
               text-white font-medium flex-shrink-0 px-6 py-2 rounded-full
               flex items-center justify-center shadow-md hover:shadow-lg
               transition-all transform hover:scale-105"
-              AnimatePlaceholder={false}
+              AnimatePlaceholder={true}
 
 />
 

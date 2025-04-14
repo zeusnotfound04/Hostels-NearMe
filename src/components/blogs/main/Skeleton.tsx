@@ -1,22 +1,160 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Book, Type, Image as ImageIcon, FileText } from 'lucide-react';
 
-
-
-
-
-export const BlogSkeleton: React.FC = () => (
-    <div className="bg-white border-2 rounded-lg overflow-hidden shadow-lg flex flex-col md:flex-row animate-pulse">
-        <div className="w-full md:w-1/2 p-4 space-y-4">
-            <div className="h-8 bg-gray-300 rounded w-3/4"></div>
-            <div className="space-y-2">
-                <div className="h-4 bg-gray-300 rounded"></div>
-                <div className="h-4 bg-gray-300 rounded w-5/6"></div>
-                <div className="h-4 bg-gray-300 rounded w-4/5"></div>
+export const BlogSkeleton: React.FC = () => {
+    const shimmer = {
+        hidden: { opacity: 0.3 },
+        visible: { 
+            opacity: 0.8,
+            transition: {
+                repeat: Infinity,
+                repeatType: "reverse" as const,
+                duration: 1.5
+            }
+        }
+    };
+    
+    return (
+        <motion.div
+            className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden shadow-lg flex flex-col md:flex-row mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <div className="w-full md:w-1/2 p-6 space-y-5 relative">
+                {/* Title animation */}
+                <div className="flex items-center mb-2">
+                    <motion.div 
+                        className="mr-3 text-red-800"
+                        animate={{ rotate: [0, 10, 0, -10, 0] }}
+                        transition={{ repeat: Infinity, duration: 5 }}
+                    >
+                        <Book size={24} />
+                    </motion.div>
+                    <motion.div 
+                        className="h-8 bg-gradient-to-r from-red-100 to-red-200 rounded-lg w-3/4"
+                        variants={shimmer}
+                        initial="hidden"
+                        animate="visible"
+                    />
+                </div>
+                
+                {/* Content lines */}
+                <div className="space-y-3">
+                    <div className="flex items-center">
+                        <Type size={16} className="text-gray-400 mr-2" />
+                        <motion.div 
+                            className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-full"
+                            variants={shimmer}
+                            initial="hidden"
+                            animate="visible"
+                            transition={{ delay: 0.1 }}
+                        />
+                    </div>
+                    <motion.div 
+                        className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-5/6 ml-6"
+                        variants={shimmer}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ delay: 0.2 }}
+                    />
+                    <motion.div 
+                        className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-4/5 ml-6"
+                        variants={shimmer}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ delay: 0.3 }}
+                    />
+                    <motion.div 
+                        className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-full ml-6"
+                        variants={shimmer}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ delay: 0.4 }}
+                    />
+                </div>
+                
+                {/* City tag */}
+                <div className="flex items-center">
+                    <motion.div 
+                        className="h-6 w-24 bg-gradient-to-r from-red-200 to-red-300 rounded-full"
+                        variants={shimmer}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ delay: 0.5 }}
+                    />
+                </div>
+                
+                {/* Read more button */}
+                <motion.div 
+                    className="h-10 w-32 bg-gradient-to-r from-red-300 to-red-400 rounded-full mt-6"
+                    variants={shimmer}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ delay: 0.6 }}
+                />
             </div>
-        </div>
-        <div className="w-full md:w-1/2 bg-gray-200 flex items-center justify-center">
-            <svg className="w-12 h-12 text-gray-300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" viewBox="0 0 640 512">
-                <path d="M480 80C480 35.82 444.18 0 400 0H240C195.82 0 160 35.82 160 80V128H80C35.82 128 0 163.82 0 208V432C0 476.18 35.82 512 80 512H400C444.18 512 480 476.18 480 432V384H560C604.18 384 640 348.18 640 304V176C640 131.82 604.18 96 560 96H480V80zM320 464C280.38 464 248 431.63 248 392C248 352.38 280.38 320 320 320C359.63 320 392 352.38 392 392C392 431.63 359.63 464 320 464z"/>
-            </svg>
-        </div>
+            
+            <div className="w-full md:w-1/2 relative h-64 md:h-auto overflow-hidden">
+                <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center"
+                    animate={{ 
+                        background: [
+                            "linear-gradient(to bottom right, #fecaca, #fee2e2)",
+                            "linear-gradient(to bottom right, #fee2e2, #fecdd3)",
+                            "linear-gradient(to bottom right, #fecdd3, #fecaca)"
+                        ]
+                    }}
+                    transition={{ 
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        duration: 3
+                    }}
+                >
+                    <motion.div
+                        animate={{ 
+                            scale: [1, 1.05, 1],
+                            opacity: [0.7, 0.8, 0.7]
+                        }}
+                        transition={{ 
+                            repeat: Infinity,
+                            duration: 2
+                        }}
+                        className="text-red-800/30"
+                    >
+                        <ImageIcon size={64} />
+                    </motion.div>
+                </motion.div>
+                
+                {/* Photo upload animation dots */}
+                <div className="absolute bottom-5 left-0 right-0 flex justify-center gap-2">
+                    {[0, 1, 2].map((i) => (
+                        <motion.div
+                            key={i}
+                            className="w-2.5 h-2.5 rounded-full bg-red-800"
+                            animate={{ 
+                                scale: [1, 1.5, 1],
+                                opacity: [0.3, 1, 0.3]
+                            }}
+                            transition={{ 
+                                repeat: Infinity,
+                                duration: 1.5,
+                                delay: i * 0.3
+                            }}
+                        />
+                    ))}
+                </div>
+            </div>
+        </motion.div>
+    );
+};
+
+// For the case when multiple skeletons are needed
+export const BlogSkeletonGroup: React.FC<{count?: number}> = ({count = 3}) => (
+    <div className="space-y-12">
+        {Array(count).fill(null).map((_, index) => (
+            <BlogSkeleton key={index} />
+        ))}
     </div>
 );

@@ -169,7 +169,7 @@ export async function DELETE(req: Request,  { params }: RouteParams) {
         { status: 401 }
       );
     }
-    
+    console.log("Going to delete the hostel ::::::" , hostelId)
     if (!hostelId) {
       return NextResponse.json(
         { error: "Hostel ID is required" },
@@ -177,12 +177,27 @@ export async function DELETE(req: Request,  { params }: RouteParams) {
       );
     }
 
+   
+    const bookingsCount = await prisma.booking.count({
+      where: {
+        hostelId: hostelId
+      }
+    });
+
+    if (bookingsCount > 0) {
+      return NextResponse.json(
+        { error: "Cannot delete hostel because it has associated bookings. Please delete the bookings first." },
+        { status: 400 }
+      );
+    }
 
     const deletedHostel = await prisma.hostel.delete({
       where: {
         id: hostelId
       },
     });
+
+    await updateActiveHostelsCount();
 
     return NextResponse.json({
       message: "Hostel deleted successfully",

@@ -250,8 +250,15 @@ export default function BlogForm({ blogId, initialData }: BlogFormProps) {
                   <FormControl>
                     <FileUpload
                       onChange={(files) => {
+                        // Only update if there's a file and it's different from the current one
                         const singleFile = files && files.length > 0 ? files[0] : null;
-                        field.onChange(singleFile);
+                        // Only update if the file has changed (either added or removed)
+                        const currentFile = field.value;
+                        if ((!currentFile && singleFile) || 
+                            (currentFile && !singleFile) || 
+                            (currentFile?.name !== singleFile?.name)) {
+                          field.onChange(singleFile);
+                        }
                       }}
                     />
                   </FormControl>

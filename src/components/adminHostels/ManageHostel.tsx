@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import axios, { AxiosError, isAxiosError } from "axios";
 
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -40,7 +39,6 @@ import { amenityGroups } from "@/constants/label";
 import { customAmenityTexts } from "@/constants/label";
 import {
   GymIcon,
-  WardenIcon,
   GeneratorIcon,
   GeyserIcon,
   GirlsIcon,
@@ -73,7 +71,6 @@ import {
   Pencil,
   Trash2,
   Building2,
-  MapPin,
   IndianRupee,
   Utensils,
   Shield,
@@ -96,7 +93,7 @@ const amenityIcons: Record<string, React.ReactNode> = {
   indoorGames: <IndoorGamesIcon width={18} height={18} />,
   biweeklycleaning: <CleaningIcon width={18} height={18} />,
   securityGuard: <SecurityGuardIcon width={18} height={18} />,
-  allDayWarden: <Shield   className="h-4 text-primary w-4" />,
+  allDayWarden: <Shield className="h-4 text-primary w-4" />,
   wiFi: <WifiIcon width={18} height={18} />,
   airconditioner: <AirConditionerIcon width={18} height={18} />,
   cooler: <CoolerIcon width={18} height={18} />,
@@ -164,8 +161,6 @@ export default function HostelManagement() {
     setSelectedType(value);
   }, []);
 
-
-
   const handleDelete = useCallback(
     (hostelId: string) => {
       deleteHostel(hostelId, {
@@ -179,14 +174,36 @@ export default function HostelManagement() {
         },
         onError: (error: Error) => {
           let errorMessage = "Failed to delete hostel";
-  
-          if (isAxiosError<{ error: string }>(error)) {
-            errorMessage = error.response?.data?.error || errorMessage;
+          let errorTitle = "Error";
+
+          if (isAxiosError(error)) {
+            // Handle axios error with more specific information
+            if (error.response?.status === 400) {
+
+              errorMessage = error.response?.data?.error || "Invalid request to delete hostel";
+
+
+              if (errorMessage.includes("associated bookings")) {
+                errorTitle = "Cannot Delete Hostel";
+                errorMessage = "This hostel has active bookings. Please delete the bookings first before deleting the hostel.";
+              }
+            } else if (error.response?.status === 401) {
+              errorTitle = "Unauthorized";
+              errorMessage = "You don't have permission to delete this hostel.";
+            } else if (error.response?.status === 404) {
+              errorTitle = "Not Found";
+              errorMessage = "The hostel you're trying to delete doesn't exist.";
+            } else if (!error.response) {
+              errorTitle = "Network Error";
+              errorMessage = "Please check your internet connection and try again.";
+            } else {
+              errorMessage = error.response?.data?.error || errorMessage;
+            }
           }
-  
+
           toast({
             variant: "destructive",
-            title: "Error",
+            title: errorTitle,
             description: errorMessage,
           });
         },
@@ -194,8 +211,6 @@ export default function HostelManagement() {
     },
     [deleteHostel, toast]
   );
-  
-  
 
   const formatPrice = useCallback((price: number) => {
     return new Intl.NumberFormat("en-IN", {
@@ -265,9 +280,8 @@ export default function HostelManagement() {
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
-              className={`transition-transform duration-200 ${
-                isFilterOpen ? "rotate-180" : ""
-              }`}
+              className={`transition-transform duration-200 ${isFilterOpen ? "rotate-180" : ""
+                }`}
             >
               <path d="m6 9 6 6 6-6" />
             </svg>
@@ -663,7 +677,7 @@ export default function HostelManagement() {
               <Button onClick={clearFilters} variant="outline">
                 Clear Filters
               </Button>
-              <Button  onClick={() => router.push("/admin/hostels/addHostels")}>
+              <Button onClick={() => router.push("/admin/hostels/addHostels")}>
                 Add New Hostel
               </Button>
             </div>

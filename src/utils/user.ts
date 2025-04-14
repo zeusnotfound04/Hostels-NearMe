@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { UserRole } from "@prisma/client";
 
 interface User {
   name: string;
@@ -66,4 +65,7 @@ export async function getUserbyEmail(email: User['email']) {
  * @param role User's role
  * @returns boolean indicating if user is an admin
  */
-export const isAdmin = (role: string | undefined): boolean => role === UserRole.ADMIN;
+export const isAdmin = (role: string | undefined): boolean => {
+  // Handle potential undefined UserRole by using a string comparison
+  return role === 'ADMIN';
+};
