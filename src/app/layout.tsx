@@ -8,6 +8,7 @@ import Footer from "@/components/ui/Footer";
 import { SearchNavBar } from "@/components/SearchNavBar";
 import CompareProviderWrapper from "@/components/providers/CompareProvider";
 import { CompareBar } from "@/components/ui/comparebar";
+import  NavigationBar  from "@/components/NavigationBar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,7 +26,7 @@ export default function RootLayout({
         <SessionProviderWrapper>
           <CompareProviderWrapper>
           <ReactQueryProvider>
-            <SearchNavBar/>
+            <NavigationBar/>
             
             <Container>
               {children}

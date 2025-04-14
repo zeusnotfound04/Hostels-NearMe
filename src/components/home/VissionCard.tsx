@@ -3,6 +3,21 @@
 import React, { useEffect } from 'react';
 import { motion, Variants } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import Image from 'next/image';
+
+// Import SVG border images directly from the Vission-Mission folder
+import CenterBorder from '../../../public/vectors/Vission-Mission/CenterBorder.svg';
+import LeftBorder from '../../../public/vectors/Vission-Mission/LeftBorder.svg';
+import LeftBottom from '../../../public/vectors/Vission-Mission/LeftBottom.svg';
+import LeftTop from '../../../public/vectors/Vission-Mission/LeftTop.svg';
+import RightBorder from '../../../public/vectors/Vission-Mission/RightBorder.svg';
+import RightBottom from '../../../public/vectors/Vission-Mission/RightBottom.svg';
+// Note: RightTop is a PNG file
+import RightTopPNG from '../../../public/vectors/Vission-Mission/RightTop.png';
+
+// Import Jagged border SVGs for compatibility
+import ArrowLB from '../../../public/vectors/Vission-Mission/LeftBorder.svg';
+import ArrowRB from '../../../public/vectors/Vission-Mission/RightBorder.svg';
 
 // Define interface for component props
 interface DecorativeBorderProps {
@@ -25,98 +40,81 @@ interface Particle {
 }
 
 const DecorativeBorder: React.FC<DecorativeBorderProps> = ({ animate = false }) => {
-  const lineVariants: Variants = {
-    hidden: { pathLength: 0, opacity: 0 },
-    visible: (i: number) => ({
-      pathLength: 1,
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
+  const borderVariants: Variants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
       opacity: 1,
+      y: 0,
       transition: {
-        pathLength: {
-          duration: 1.5,
-          delay: i * 0.5,
-          ease: "easeInOut"
-        },
-        opacity: {
-          duration: 0.3,
-          delay: i * 0.5
-        }
+        duration: 0.8,
+        ease: "easeOut"
       }
-    })
+    }
   };
 
   return (
-    <svg className="w-full h-3 md:h-4" viewBox="0 0 400 16">
-      <motion.path
-        d="M0 8 H400"
-        stroke="#8B1A1A"
-        strokeWidth="4"
-        custom={0}
-        variants={animate ? lineVariants : undefined}
-        initial={animate ? "hidden" : undefined}
-        animate={animate ? "visible" : undefined}
-        strokeLinecap="round"
-      />
-      <motion.path
-        d="M0 2 H400"
-        stroke="#8B1A1A"
-        strokeWidth="4"
-        custom={1}
-        variants={animate ? lineVariants : undefined}
-        initial={animate ? "hidden" : undefined}
-        animate={animate ? "visible" : undefined}
-        strokeLinecap="round"
-      />
-    </svg>
+    <motion.div 
+      className="w-full h-24 md:h-48 relative flex justify-center items-center"
+      ref={ref}
+      variants={animate ? borderVariants : undefined}
+      initial={animate ? "hidden" : undefined}
+      animate={animate && inView ? "visible" : undefined}
+    >
+      <div className="w-full md:w-full h-full relative">
+        <Image 
+          src={CenterBorder}
+          alt="Decorative border"
+          fill
+          style={{ objectFit: 'contain' }}
+          className="invert-[20%] sepia-[30%] saturate-[2000%] hue-rotate-[320deg]" 
+        />
+      </div>
+    </motion.div>
   );
 };
 
 const SideBorder: React.FC<SideBorderProps> = ({ animate = false, isRight = false }) => {
-  const lineVariants: Variants = {
-    hidden: { pathLength: 0, opacity: 0 },
-    visible: (i: number) => ({
-      pathLength: 1,
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+  
+  const borderVariants: Variants = {
+    hidden: { opacity: 0, x: isRight ? 20 : -20 },
+    visible: {
       opacity: 1,
+      x: 0,
       transition: {
-        pathLength: {
-          duration: 1.5,
-          delay: 0.3 + i * 0.5,
-          ease: "easeInOut"
-        },
-        opacity: {
-          duration: 0.3,
-          delay: 0.3 + i * 0.5
-        }
+        duration: 0.8,
+        ease: "easeOut"
       }
-    })
+    }
   };
 
   return (
-    <div className="absolute top-4 bottom-4 w-2 md:w-4" style={{ [isRight ? 'right' : 'left']: 0 }}>
-      <div className="h-full w-full">
-        <svg className="h-full w-2 md:w-4" viewBox="0 0 16 400" preserveAspectRatio="none">
-          <motion.path
-            d="M8 0 V400"
-            stroke="#8B1A1A"
-            strokeWidth="4"
-            custom={0}
-            variants={animate ? lineVariants : undefined}
-            initial={animate ? "hidden" : undefined}
-            animate={animate ? "visible" : undefined}
-            strokeLinecap="round"
-          />
-          <motion.path
-            d="M2 0 V400"
-            stroke="#8B1A1A"
-            strokeWidth="4"
-            custom={1}
-            variants={animate ? lineVariants : undefined}
-            initial={animate ? "hidden" : undefined}
-            animate={animate ? "visible" : undefined}
-            strokeLinecap="round"
-          />
-        </svg>
+    <motion.div 
+      className="absolute top-4 bottom-4 w-6 md:w-16"
+      style={{ [isRight ? 'right' : 'left']: 0 }}
+      ref={ref}
+      variants={animate ? borderVariants : undefined}
+      initial={animate ? "hidden" : undefined}
+      animate={animate && inView ? "visible" : undefined}
+    >
+      <div className="h-full w-full relative">
+        <Image
+          src={isRight ? RightBorder : LeftBorder}
+          alt={isRight ? "Right decorative border" : "Left decorative border"}
+          fill
+          style={{ objectFit: 'fill' }}
+          className="opacity-100" 
+        />
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -141,24 +139,13 @@ const JaggedBorder: React.FC<SideBorderProps> = ({ animate = false, isRight = fa
       }
     }
   };
-  const variants = {
-    pulse: {
-      scale: [1, 1.03, 1],
-      x: [0, 2, 0],
-      transition: {
-        duration: 1.5,
-        ease: "easeInOut",
-        repeat: Infinity,
-        repeatType: "loop" as const 
-      }
-    }
-  };
-
-
+  
+  // Choose between ArrowLB and ArrowRB based on isRight
+  const arrowSvg = isRight ? ArrowRB : ArrowLB;
 
   return (
     <motion.div
-      className="absolute top-0 bottom-0 w-6 md:w-12"
+      className="absolute top-0 bottom-0 w-12 md:w-24"
       style={{ [isRight ? 'right' : 'left']: 0 }}
       ref={ref}
       variants={animate ? jaggedVariants : undefined}
@@ -166,25 +153,27 @@ const JaggedBorder: React.FC<SideBorderProps> = ({ animate = false, isRight = fa
       animate={animate && inView ? "visible" : undefined}
       whileHover={{ scale: 1.05 }}
     >
-      <motion.svg
-        className="h-full w-6 md:w-12"
-        viewBox="0 0 48 400"
-        preserveAspectRatio="none"
-        variants={variants}
-        animate={inView && animate ? "pulse" : undefined}
+      <motion.div
+        className="h-full w-full relative"
+        animate={inView && animate ? {
+          scale: [1, 1.05, 1],
+          x: [0, 3, 0],
+          transition: {
+            duration: 1.5,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "loop" 
+          }
+        } : undefined}
       >
-        <motion.path
-          d="M24,0 L36,20 L24,40 L36,60 L24,80 L36,100 L24,120 L36,140 L24,160 
-       L36,180 L24,200 L36,220 L24,240 L36,260 L24,280 L36,300 L24,320 
-       L36,340 L24,360 L36,380 L24,400 L12,380 L24,360 L12,340 L24,320 
-       L12,300 L24,280 L12,260 L24,240 L12,220 L24,200 L12,180 L24,160 
-       L12,140 L24,120 L12,100 L24,80 L12,60 L24,40 L12,20 L24,0"
-          fill="#8B1A1A"
+        <Image
+          src={arrowSvg}
+          alt={isRight ? "Right jagged border" : "Left jagged border"}
+          fill
+          style={{ objectFit: 'fill' }}
+          className="opacity-100"
         />
-      </motion.svg>
-
-
-
+      </motion.div>
     </motion.div>
   );
 };
@@ -412,12 +401,12 @@ const MissionVisionCards: React.FC = () => {
       <canvas id="particlesCanvas" className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none" />
 
       {/* Left Jagged Border */}
-      <div className="absolute -left-3 md:-left-6 top-0 bottom-0">
+      <div className="absolute -left-6 md:-left-12 top-0 bottom-0">
         <JaggedBorder animate={containerInView} />
       </div>
 
       {/* Right Jagged Border */}
-      <div className="absolute -right-3 md:-right-6 top-0 bottom-0">
+      <div className="absolute -right-6 md:-right-12 top-0 bottom-0">
         <JaggedBorder animate={containerInView} isRight={true} />
       </div>
 
@@ -427,17 +416,28 @@ const MissionVisionCards: React.FC = () => {
         variants={cardVariants}
         ref={whoWeAreRef}
       >
-        <div className="absolute top-0 left-0 right-0">
-          <DecorativeBorder animate={whoWeAreInView} />
+        {/* Top Left Corner - Only for Who We Are section */}
+        <div
+          className="absolute -top-12  -right-[12rem] -translate-x-full w-24 h-24 md:w-[18rem] md:[18rem]"
+        >
+          <Image 
+            src={LeftTop} 
+            alt="Top left corner decoration" 
+            fill 
+            style={{ objectFit: 'contain' }}
+          />
         </div>
-        <div className="absolute left-0">
-          <SideBorder animate={whoWeAreInView} />
-        </div>
-        <div className="absolute right-0">
-          <SideBorder animate={whoWeAreInView} isRight={true} />
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 rotate-180">
-          <DecorativeBorder animate={whoWeAreInView} />
+        
+        {/* Bottom Left Corner - Only for Who We Are section */}
+        <div
+          className="absolute bottom-0 -right-[12rem] -translate-x-full w-24 h-24 md:w-[18rem] md:[18rem]"
+        >
+          <Image 
+            src={LeftBottom} 
+            alt="Bottom left corner decoration" 
+            fill 
+            style={{ objectFit: 'contain' }}
+          />
         </div>
 
         <motion.h2
@@ -502,7 +502,7 @@ const MissionVisionCards: React.FC = () => {
 
       {/* Vertical Separator - Show as horizontal on mobile */}
       <motion.div
-        className="relative w-full h-4 md:w-4 md:h-auto my-8 md:my-0 z-10"
+        className="relative w-full h-10 md:w-10 md:h-auto my-8 md:my-0 z-10"
         initial={{ opacity: 0, scale: 0.5 }}
         animate={containerInView ? { opacity: 1, scale: 1 } : {}}
         transition={{ duration: 0.8, delay: 0.4 }}
@@ -520,17 +520,28 @@ const MissionVisionCards: React.FC = () => {
         className="relative flex-1 p-6 md:p-12 bg-white bg-opacity-90 rounded-lg shadow-md z-10"
         variants={cardVariants}
       >
-        <div className="absolute top-0 left-0 right-0">
-          <DecorativeBorder animate={missionInView} />
+        {/* Top Right Corner - Only for Our Mission section */}
+        <div
+          className="absolute -top-8 -left-40 translate-x-full w-24 h-24 md:w-[15rem] md:[15rem]"
+        >
+          <Image 
+            src={RightTopPNG} 
+            alt="Top right corner decoration" 
+            fill 
+            style={{ objectFit: 'contain' }}
+          />
         </div>
-        <div className="absolute left-0">
-          <SideBorder animate={missionInView} />
-        </div>
-        <div className="absolute right-0">
-          <SideBorder animate={missionInView} isRight={true} />
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 rotate-180">
-          <DecorativeBorder animate={missionInView} />
+        
+        {/* Bottom Right Corner - Only for Our Vision section */}
+        <div
+          className="absolute -bottom-8 -left-40 translate-x-full w-24 h-24 md:w-[15rem] md:[15rem]"
+        >
+          <Image 
+            src={RightBottom} 
+            alt="Bottom right corner decoration" 
+            fill 
+            style={{ objectFit: 'contain' }}
+          />
         </div>
 
         <motion.div
@@ -607,25 +618,25 @@ const MissionVisionCards: React.FC = () => {
 
         {/* Decorative corner elements that appear on hover */}
         <motion.div
-          className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-red-800"
+          className="absolute top-2 left-2 w-10 h-10 border-t-4 border-l-4 border-red-800"
           initial={{ scale: 0, opacity: 0 }}
           animate={missionInView ? { scale: 1, opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 1.2 }}
         />
         <motion.div
-          className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-red-800"
+          className="absolute top-2 right-2 w-10 h-10 border-t-4 border-r-4 border-red-800"
           initial={{ scale: 0, opacity: 0 }}
           animate={missionInView ? { scale: 1, opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 1.3 }}
         />
         <motion.div
-          className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-red-800"
+          className="absolute bottom-2 left-2 w-10 h-10 border-b-4 border-l-4 border-red-800"
           initial={{ scale: 0, opacity: 0 }}
           animate={missionInView ? { scale: 1, opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 1.4 }}
         />
         <motion.div
-          className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-red-800"
+          className="absolute bottom-2 right-2 w-10 h-10 border-b-4 border-r-4 border-red-800"
           initial={{ scale: 0, opacity: 0 }}
           animate={missionInView ? { scale: 1, opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 1.5 }}
@@ -634,7 +645,7 @@ const MissionVisionCards: React.FC = () => {
 
       {/* Decorative floating elements */}
       <motion.div
-        className="absolute bottom-6 left-1/4 w-6 h-6 rounded-full bg-red-800 opacity-20 hidden md:block"
+        className="absolute bottom-6 left-1/4 w-12 h-12 rounded-full bg-red-800 opacity-30 hidden md:block"
         initial={{ y: 0 }}
         animate={containerInView ? {
           y: [-10, 10, -10],
@@ -642,7 +653,7 @@ const MissionVisionCards: React.FC = () => {
         } : {}}
       />
       <motion.div
-        className="absolute top-8 right-1/3 w-4 h-4 rounded-full bg-red-800 opacity-20 hidden md:block"
+        className="absolute top-8 right-1/3 w-10 h-10 rounded-full bg-red-800 opacity-30 hidden md:block"
         initial={{ y: 0 }}
         animate={containerInView ? {
           y: [-15, 5, -15],
@@ -650,7 +661,7 @@ const MissionVisionCards: React.FC = () => {
         } : {}}
       />
       <motion.div
-        className="absolute top-1/2 left-1/2 w-8 h-8 rounded-full bg-red-800 opacity-10 hidden md:block"
+        className="absolute top-1/2 left-1/2 w-14 h-14 rounded-full bg-red-800 opacity-20 hidden md:block"
         initial={{ y: 0 }}
         animate={containerInView ? {
           y: [5, -15, 5],

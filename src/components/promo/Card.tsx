@@ -215,17 +215,17 @@ const HostelPromoCard = () => {
         
         {/* Header */}
         <motion.div 
-          className="p-3 sm:p-6 md:p-8 lg:p-10 flex justify-between items-center"
+          className="p-2 sm:p-4 md:p-6 lg:p-8 flex justify-between items-center"
           style={{ 
             background: colors.gradient,
-            minHeight: isMobile ? "60px" : "auto"
+            minHeight: isMobile ? "50px" : "auto"
           }}
           initial={{ y: -50, opacity: 0 }}
           animate={isMounted ? { y: 0, opacity: 1 } : { y: -50, opacity: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
           <motion.div
-            className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center"
+            className="text-xl sm:text-xl md:text-2xl font-bold text-white flex items-center"
             initial={{ opacity: 0, x: -20 }}
             animate={isMounted ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
             transition={{ delay: 0.4, duration: 0.6 }}
@@ -235,7 +235,7 @@ const HostelPromoCard = () => {
               delay={150}
               animateBy="words"
               direction="top"
-              className="text-lg sm:text-xl md:text-2xl lg:text-4xl mb-1 sm:mb-2 md:mb-8"
+              className="text-lg sm:text-lg md:text-xl lg:text-2xl mb-1 sm:mb-1 md:mb-4"
             />
           </motion.div>
           
@@ -275,9 +275,7 @@ const HostelPromoCard = () => {
                 variants={filterItemVariants}
                 custom={0}
               >
-                <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center mr-0 sm:mr-16 text-gray-700 font-bold mb-1">
-                  We guarantee
-                </h3>
+                
                 <div className="flex items-center">
                   <motion.div 
                     className="relative"
@@ -314,7 +312,7 @@ const HostelPromoCard = () => {
                       variants={filterItemVariants}
                       custom={1}
                     >
-                      Hostels delivered to you
+                      Hostels delivered to you in
                     </motion.h2>
                   </div>
                 </div>
