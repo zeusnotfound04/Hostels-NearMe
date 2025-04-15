@@ -1,6 +1,7 @@
 import { hasDuplicateBooking } from "@/actions/bookings/checkBooking";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { console } from "inspector";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -22,12 +23,15 @@ const bookingSchema = z.object({
 export async function POST(req:NextRequest) {
 
     try {
+        console.log("POST /api/bookings")
+        console.log("Request Body" , req.body)  
         const session = await getServerSession(authOptions);
         if (!session?.user){
             return NextResponse.json({ error : "Unauthorized"} , { status : 401})
         }
 
         const userId = session.user.id;
+
         console.log("USER ID" , userId)
         const body = await req.json();
 
@@ -36,6 +40,7 @@ export async function POST(req:NextRequest) {
         console.log(validateData)
 
         const isDuplicate = await hasDuplicateBooking(userId, validateData.hostelId);
+
         if (isDuplicate) {
             return NextResponse.json({ 
                 error: "You already have an active booking for this hostel" 
@@ -45,7 +50,10 @@ export async function POST(req:NextRequest) {
             
         const referenceId = `BOOK-${Date.now()}-${Math.random().toString(36).substring(2 , 8).toUpperCase()}`
         
+        console.log("Reference ID  :::" , referenceId)
 
+        console.log("USER ID :::" , userId )
+        console.log("BOOKING DATA  ::: 👉" , validateData )
         const booking = await prisma.booking.create({
             data : {
                 ...validateData,
