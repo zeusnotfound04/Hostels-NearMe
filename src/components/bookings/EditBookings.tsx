@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { 
-  AlertCircle, Save, User, Phone, MapPin, Calendar, Clock, 
+  AlertCircle, Save, User, Phone, MapPin,  Clock, 
   Home, Mail, Shield, IndianRupee, Users, Check, X,
   LucideIcon
 } from "lucide-react";

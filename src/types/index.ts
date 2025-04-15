@@ -109,17 +109,19 @@ export interface blogData{
 
 }
 
-export interface ParentHostelPageProps {
-  params: {
+export type ParentHostelPageProps = {
+  params: Promise<{
     hostelId: string;
-  };
-}
+  }>;
+};
 
-export interface ParentBlogPageProps {
-  params: {
+export type ParentBlogPageProps = {
+  params: Promise<{
     blogId: string;
-  };
-}
+  }>;
+};
+
+
 
 export interface TestingProps {
   params: {
@@ -155,11 +157,12 @@ export interface BlogCardProps{
 
 
 
-export interface BookingDetailsPageProps {
-  params: {
+export type BookingDetailsPageProps = {
+  params: Promise<{
     bookingId: string;
-  };
-}
+  }>;
+};
+
 
 
 export interface BookingDetails {

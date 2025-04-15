@@ -1,12 +1,14 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable  @typescript-eslint/no-unused-vars */
 "use client"
 import { LeftDoodle1, LeftDoodle2, LeftDoodle3, LeftDoodle4, RightDoodle1, RightDoodle2, RightDoodle3, RightDoodle4 } from '@/components/ui/icon';
 import { useBlogSearch } from '@/hooks/useFetchBlogs';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState,  useEffect } from 'react';
 import { Blog } from '@/types';
 import { Search, ChevronLeft, ChevronRight, Book, Building, MapPin, Home, Loader2, Newspaper } from 'lucide-react';
 import useDebounce from '@/hooks/useDebounce';
 import BlogCard from './BlogCard';
-import { BlogSkeleton, BlogSkeletonGroup } from './Skeleton';
+import {  BlogSkeletonGroup } from './Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const container = {

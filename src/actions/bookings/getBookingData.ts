@@ -1,4 +1,3 @@
-
 import {prisma} from "@/lib/prisma";
 import { Booking } from "@/types";
 
@@ -18,6 +17,7 @@ export async function getBookingData(bookingId: string) {
         ...booking,
         createdAt: booking.createdAt.toISOString(), // Convert Date to string
         lastUpdatedAt: booking.updatedAt.toISOString(),
+        updatedAt: booking.updatedAt.toISOString(), // Convert updatedAt Date to string as well
     };
     
 

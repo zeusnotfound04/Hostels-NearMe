@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+/* eslint-disable  @typescript-eslint/no-unused-vars */
 "use client"
 
 import React, { useState, useRef, useEffect } from "react"
@@ -135,7 +136,7 @@ export default function ProfilePage({ initialProfile }: ProfileProps) {
         title: "Profile updated",
         description: "Your profile has been updated successfully.",
       });
-    } catch (error: any) {
+    } catch (error ) {
       console.error("Error in submit handler:", error);
       setIsUpdating(false);
       

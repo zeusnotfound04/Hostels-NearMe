@@ -5,9 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { updateAdminInsights } from "@/actions/adminInsights/insight";
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     bookingId: string;
-  };
+  }>;
 }
 
 export async function GET(req: Request, { params }: RouteParams) {
@@ -21,7 +21,7 @@ export async function GET(req: Request, { params }: RouteParams) {
       );
     }
 
-    const { bookingId } = params;
+    const { bookingId } = await params;
     
     const booking = await prisma.booking.findUnique({
       where: {
@@ -62,7 +62,6 @@ export async function GET(req: Request, { params }: RouteParams) {
   }
 }
 
-
 export async function PATCH(req: NextRequest, { params }: RouteParams) {
   try {
     const session = await getServerSession(authOptions);
@@ -75,12 +74,10 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     }
 
     const userId = session.user.id;
-    const { bookingId } = params;
-
+    const { bookingId } = await params;
 
     const body = await req.json();
     const { status } = body;
-
 
     if (status !== "CANCELLED") {
       return NextResponse.json(
@@ -114,12 +111,10 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
       );
     }
 
-
     const updatedBooking = await prisma.booking.update({
       where: { id: bookingId },
       data: { status },
     });
-
 
     await updateAdminInsights();
 
@@ -155,9 +150,8 @@ export async function DELETE(req: Request, { params }: RouteParams) {
     }
 
     const userId = session.user.id;
-    const { bookingId } = params;
+    const { bookingId } = await params;
 
-    // Find the booking and verify ownership
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
     });
@@ -176,7 +170,6 @@ export async function DELETE(req: Request, { params }: RouteParams) {
       );
     }
 
-    // Only CANCELLED bookings can be deleted by the user
     if (booking.status !== "CANCELLED") {
       return NextResponse.json(
         { error: "Only cancelled bookings can be deleted" },
@@ -184,7 +177,6 @@ export async function DELETE(req: Request, { params }: RouteParams) {
       );
     }
 
-    // Delete the booking
     await prisma.booking.delete({
       where: { id: bookingId },
     });

@@ -1,21 +1,44 @@
-# Base image
-FROM node:18-alpine
+# Use multi-stage builds for efficiency
 
-# Set working directory
+# Build stage
+FROM node:18-alpine AS builder
+
 WORKDIR /app
 
-# Copy package files and install production dependencies
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+# Install dependencies needed for Prisma
+RUN apk add --no-cache libc6-compat
 
-# Copy application files
+COPY package.json package-lock.json ./
+
+RUN npm ci --legacy-peer-deps
+
+COPY prisma ./prisma/
+RUN npx prisma generate
+
 COPY . .
 
-# Build the Next.js application
 RUN npm run build
 
-# Expose application port
+# Production stage
+FROM node:18-alpine AS runner
+
+WORKDIR /app
+
+# Install production dependencies only
+RUN apk add --no-cache libc6-compat
+
+ENV NODE_ENV=production
+
+COPY --from=builder /app/next.config.ts ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/prisma ./prisma
+
+COPY --from=builder /app/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
+
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "start"]
+CMD ["/app/docker-entrypoint.sh"]

@@ -1,6 +1,6 @@
 import { createUserWithAccount, getUserbyEmail } from "@/utils/user";
 import { NextRequest, NextResponse } from "next/server";
-import { hash } from "bcrypt";
+import { hash } from "bcryptjs";
 import { z } from "zod";
 
 

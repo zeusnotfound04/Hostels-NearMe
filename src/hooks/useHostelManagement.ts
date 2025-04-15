@@ -2,17 +2,6 @@ import { useState , useEffect , useCallback , useMemo } from "react";
 import axios from "axios";
 import { FilterState, HostelState, DeleteDialogState, Hostel } from "@/types";
 
-// Define a QueryParams type for better type safety
-interface QueryParams {
-  page: string;
-  limit: string;
-  isAvailable: string;
-  gender?: string;
-  search?: string;
-  city?: string;
-  minPrice?: string;
-  maxPrice?: string;
-}
 
 export default function useHostelManagement () {
     // Consolidated states

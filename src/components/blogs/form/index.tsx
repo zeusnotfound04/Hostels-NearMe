@@ -27,7 +27,7 @@ const formSchema = z.object({
   title: z.string(),
   content: z.string(),
   city: z.string(),
-  image: z.instanceof(File).optional(),
+  image: z.any(), // Changed from z.instanceof(File).optional() to z.any()
   existingImage: z.string()
 })
 

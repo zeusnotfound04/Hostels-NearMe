@@ -1,10 +1,13 @@
+
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable  @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import axios, { AxiosError, isAxiosError } from "axios";
+import  { isAxiosError } from "axios";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

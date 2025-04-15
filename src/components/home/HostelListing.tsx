@@ -9,7 +9,7 @@ import { BuildingIcon, Loader2, Search,  WifiOff } from "lucide-react";
 
 export function HostelListing() {
   const { data, isLoading, error } = useFetchHostels({ page: 1 }, 3);
-  console.log("Fetching of the Hostel :::::::" , data?.hostels)
+  // Remove console.log that was showing in build output
   const hostels = data?.hostels || [];
 
   if (isLoading) return (

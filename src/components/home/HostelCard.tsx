@@ -11,11 +11,7 @@ const springConfig = {
 };
 
 export default function HostelCard({ hostel }: { hostel: Hostel }) {
-  if (!hostel) return null;
-
   const [currentImage, setCurrentImage] = useState(0);
-  const images = hostel.images || [];
-  
   const cardRef = useRef<HTMLDivElement>(null);
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);
@@ -25,19 +21,23 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
   const springScale = useSpring(1, springConfig);
 
   const amenities = useMemo(() => [
-    { label: 'AC & Non AC', show: hostel.airconditioner || hostel.cooler, icon: <AirConditionerIcon width={20} height={20} color="black" /> },
-    { label: 'Veg Only', show: !hostel.isNonVeg, icon: <VegetarianMessIcon width={20} height={20} color="black" /> },
-    { label: 'Attached Washroom', show: hostel.attachedWashroom, icon: <WashroomIcon width={20} height={20} color="black"/> },
-    { label: 'WiFi', show: hostel.wiFi, icon: <WifiIcon width={20} height={20} color="black" /> },
-    { label: 'CCTV', show: hostel.cctv, icon: <CCTVIcon width={20} height={20} color="black" /> },
-    { label: 'Power Backup', show: hostel.inverterBackup || hostel.generator, icon: <ElectricityIcon width={20} height={20} color="black" /> },
-    { label: 'Gym', show: hostel.gym, icon: <GymIcon width={20} height={20} color="black" /> },
-    { label: 'Indoor Games', show: hostel.indoorGames, icon: <IndoorGamesIcon width={20} height={20} color="black"/> },
-    { label: 'Security Guard', show: hostel.securityGuard, icon: <SecurityGuardIcon width={20} height={20} color="black" /> },
-    { label: 'Parking', show: hostel.parking, icon: <ParkingIcon width={20} height={20} color="black" /> },
-    { label: 'Food Included', show: hostel.foodIncluded, icon: <FoodIcon width={20} height={20} /> },
-    { label: 'RO Water', show: hostel.waterByRO, icon: <ROWaterIcon width={20} height={20} color="black" /> }
+    { label: 'AC & Non AC', show: hostel?.airconditioner || hostel?.cooler, icon: <AirConditionerIcon width={20} height={20} color="black" /> },
+    { label: 'Veg Only', show: !hostel?.isNonVeg, icon: <VegetarianMessIcon width={20} height={20} color="black" /> },
+    { label: 'Attached Washroom', show: hostel?.attachedWashroom, icon: <WashroomIcon width={20} height={20} color="black"/> },
+    { label: 'WiFi', show: hostel?.wiFi, icon: <WifiIcon width={20} height={20} color="black" /> },
+    { label: 'CCTV', show: hostel?.cctv, icon: <CCTVIcon width={20} height={20} color="black" /> },
+    { label: 'Power Backup', show: hostel?.inverterBackup || hostel?.generator, icon: <ElectricityIcon width={20} height={20} color="black" /> },
+    { label: 'Gym', show: hostel?.gym, icon: <GymIcon width={20} height={20} color="black" /> },
+    { label: 'Indoor Games', show: hostel?.indoorGames, icon: <IndoorGamesIcon width={20} height={20} color="black"/> },
+    { label: 'Security Guard', show: hostel?.securityGuard, icon: <SecurityGuardIcon width={20} height={20} color="black" /> },
+    { label: 'Parking', show: hostel?.parking, icon: <ParkingIcon width={20} height={20} color="black" /> },
+    { label: 'Food Included', show: hostel?.foodIncluded, icon: <FoodIcon width={20} height={20} /> },
+    { label: 'RO Water', show: hostel?.waterByRO, icon: <ROWaterIcon width={20} height={20} color="black" /> }
   ].filter(amenity => amenity.show), [hostel]);
+
+  if (!hostel) return null;
+  
+  const images = hostel.images || [];
 
   const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;

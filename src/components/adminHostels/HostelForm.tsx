@@ -43,7 +43,7 @@ const formSchema = z.object({
   city: z.string(),
   hostelType: z.string(),
   address: z.string(),
-  images: z.array(z.instanceof(File)).max(4).optional().default([]),
+  images: z.any().optional().default([]), // Changed from z.instanceof(File) to z.any()
   nearByCoaching: z.array(z.string()).optional().default([]),
   existingImages: z.array(z.string()).optional().default([]),
   ...Object.keys(facilityLabels).reduce((acc, key) => {

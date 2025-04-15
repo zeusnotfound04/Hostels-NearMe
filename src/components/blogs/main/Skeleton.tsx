@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Book, Type, Image as ImageIcon, FileText } from 'lucide-react';
+import { Book, Type, Image as ImageIcon } from 'lucide-react';
 
 export const BlogSkeleton: React.FC = () => {
     const shimmer = {

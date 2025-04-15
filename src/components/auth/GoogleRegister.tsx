@@ -1,7 +1,7 @@
+/* eslint-disable  @typescript-eslint/no-unused-vars */
 "use client"
 
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";

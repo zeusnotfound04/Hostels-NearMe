@@ -4,20 +4,16 @@ import { isAdmin } from "@/utils/user";
 import { getServerSession } from "next-auth";
 import { NextResponse, type NextRequest } from "next/server";
 
-
 interface RouteParams {
-    params: {
-      blogId: string;
-    };
-  }
-  
+  params: Promise<{
+    blogId: string;
+  }>;
+}
 
-
-export async function GET(req: Request, { params  }: RouteParams) {
+export async function GET(req: NextRequest, { params }: RouteParams) {
   try {
     const session = await getServerSession(authOptions);
 
-    
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: "Unauthorized access" },
@@ -25,7 +21,7 @@ export async function GET(req: Request, { params  }: RouteParams) {
       );
     }
 
-    const {blogId} = params
+    const { blogId } = await params;
 
     const blog = await prisma.blog.findUnique({
       where: {
@@ -35,16 +31,16 @@ export async function GET(req: Request, { params  }: RouteParams) {
 
     if (!blog) {
       return NextResponse.json(
-        { error: "Hostel not found" },
+        { error: "Blog not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json(blog);
   } catch (error) {
-    console.error("Error fetching hostel:", error);
+    console.error("Error fetching blog:", error);
     return NextResponse.json(
-      { error: "Failed to fetch hostel" },
+      { error: "Failed to fetch blog" },
       { status: 500 }
     );
   }
@@ -54,8 +50,7 @@ export async function GET(req: Request, { params  }: RouteParams) {
 
 
 
-
-export async function PATCH(req: Request, { params }: RouteParams) {
+export async function PATCH(req: NextRequest, { params }: RouteParams) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -65,15 +60,14 @@ export async function PATCH(req: Request, { params }: RouteParams) {
         { status: 401 }
       );
     }
-    
+    const { blogId } = await params;
 
-    if (!params.blogId) {
+    if (!blogId) {
       return NextResponse.json(
         { error: "Blog ID is required" },
         { status: 400 }
       );
     }
-
 
     const body = await req.json();
 
@@ -81,9 +75,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
     
 
     const updatedBlog = await prisma.blog.update({
-      where: {
-        id: params.blogId
-      },
+      where: { id: blogId },
       data: {
         ...(body.title !== undefined && { title: body.title }),
         ...(body.content !== undefined && { content: body.content }),
@@ -91,6 +83,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
         ...(body.image !== undefined && { image: body.image }),
       },
     });
+
 
     // await updateActiveHostelsCount(); 
 
@@ -116,7 +109,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 
 
 
-export async function DELETE(req: Request,  { params }: RouteParams) {
+export async function DELETE(req: NextRequest,  { params }: RouteParams) {
   try {
 
 

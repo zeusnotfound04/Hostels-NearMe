@@ -5,7 +5,6 @@ import "./globals.css";
 import Container from "@/components/ui/Container";
 import { Toaster } from "@/components/ui/toaster";
 import Footer from "@/components/ui/Footer";
-import { SearchNavBar } from "@/components/SearchNavBar";
 import CompareProviderWrapper from "@/components/providers/CompareProvider";
 import { CompareBar } from "@/components/ui/comparebar";
 import  NavigationBar  from "@/components/NavigationBar";

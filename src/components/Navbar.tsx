@@ -21,10 +21,9 @@ import { useProfile } from "@/hooks/useProfile"
 export function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [showMobileSearch, setShowMobileSearch] = useState(false)
-  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const { profile } = useProfile()
 
-  const { data: session, status } = useSession()
+  const {  status } = useSession()
   useEffect(() => {
     if (status === "authenticated") {
       setIsAuthenticated(true)

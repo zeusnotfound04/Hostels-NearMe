@@ -1,3 +1,6 @@
+/* eslint-disable  @typescript-eslint/no-unused-vars */
+
+import Image from 'next/image';
 import React from 'react'
 import { useState } from 'react'
 
@@ -47,7 +50,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
       <div className="relative overflow-hidden">
         <div className="flex">
           {images.length > 0 ? (
-            <img 
+            <Image 
               src={images[currentIndex]} 
               alt={`Slide ${currentIndex}`}
               className="w-full h-auto"

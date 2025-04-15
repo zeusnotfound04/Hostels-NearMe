@@ -1,25 +1,28 @@
-version: '3.1'
+version: "3.8"
 
 services:
-  postgres:
-    image: postgres:latest
-    container_name: postgresDB
+  nextjs:
+    image: zeusnotfound/hostelsnearme:latest
+    container_name: hostels-nearme-nextjs
+    restart: always
     ports:
-      - "5432:5432"
+      - "3000:3000"
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: PASSWORD
-      POSTGRES_DB: hostels-nearmeDB
-    volumes:
-      - ./db-docker:/var/lib/postgresql/data  # Use relative path for better compatibility
-    restart: always
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      NODE_ENV: production
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
 
-  redis:
-    image: redis:latest
-    container_name: redisDB
-    ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes
-    volumes:
-      - ./redis-data:/data
-    restart: always
+networks:
+  app-network:
+    driver: bridge

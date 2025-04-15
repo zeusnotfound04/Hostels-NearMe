@@ -5,11 +5,10 @@ import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/utils/user";
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     bookingId: string;
-  };
+  }>;
 }
-
 
 
 export async function GET(req: Request, { params }: RouteParams) {
@@ -17,20 +16,13 @@ export async function GET(req: Request, { params }: RouteParams) {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized access" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
     }
 
-    const { bookingId } = params;
-
-  
+    const { bookingId } = await params;
 
     const booking = await prisma.booking.findUnique({
-      where: {
-        id: bookingId,
-      },
+      where: { id: bookingId },
       include: {
         hostel: true,
         user: {
@@ -42,23 +34,16 @@ export async function GET(req: Request, { params }: RouteParams) {
       },
     });
 
-    console.log("Booking data in the backend:", booking);
     if (!booking) {
-      return NextResponse.json(
-        { error: "Booking not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
     if (booking.userId !== session.user.id && !isAdmin(session.user.role)) {
-      return NextResponse.json(
-        { error: "Forbidden" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const formattedBooking = {
-      terms : booking.terms,
+      terms: booking.terms,
       bookingId: booking.id,
       status: booking.status,
       createdAt: booking.createdAt.toISOString(),
@@ -79,73 +64,55 @@ export async function GET(req: Request, { params }: RouteParams) {
     return NextResponse.json(formattedBooking, { status: 200 });
   } catch (error) {
     console.error("Error fetching booking:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch booking" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch booking" }, { status: 500 });
   }
 }
 
-export async function PATCH(req: Request, { params  }: RouteParams){
+export async function PATCH(req: Request, { params }: RouteParams) {
+  try {
+    const session = await getServerSession(authOptions);
 
-    try {
-      const session = await getServerSession(authOptions);
-
-      if (!session || !session.user || !session.user.id || !isAdmin(session.user.role)) {
-        return NextResponse.json(
-          { error: "You must be logged in and must be an admin to create a hostel" },
-          { status: 401 }
-        );
-      }
-      
-
-        const {bookingId} = params
-
-        const body = await req.json();
-        const {status} = body
-
-        const updatedBooking = await prisma.booking.update({
-            where : {
-                id : bookingId
-            },
-            data : {
-                status
-            }
-        })
-
-        return NextResponse.json(updatedBooking , { status : 200});
-    } catch (error) {
-        console.error("Error updating booking:", error);
-
-        return NextResponse.json({ error: "Failed to update booking" }, { status: 500 });
+    if (!session?.user?.id || !isAdmin(session.user.role)) {
+      return NextResponse.json(
+        { error: "You must be logged in and must be an admin to update a booking" },
+        { status: 401 }
+      );
     }
+
+    const { bookingId } = await params;
+    const body = await req.json();
+    const { status } = body;
+
+    const updatedBooking = await prisma.booking.update({
+      where: { id: bookingId },
+      data: { status },
+    });
+
+    return NextResponse.json(updatedBooking, { status: 200 });
+  } catch (error) {
+    console.error("Error updating booking:", error);
+    return NextResponse.json({ error: "Failed to update booking" }, { status: 500 });
+  }
 }
 
 
+export async function DELETE(req: Request, { params }: RouteParams) {
+  try {
+    const session = await getServerSession(authOptions);
 
-export async function DELETE(req: Request, { params  }: RouteParams){
-    try {
-        const session = await getServerSession(authOptions);
-
-        if (!session || !session.user || !isAdmin(session.user.role)) {
-            return NextResponse.json(
-                { error: "Unauthorized access" },
-                { status: 401 }
-            );
-        }
-
-        const {bookingId} = params
-
-        const deletedBooking = await prisma.booking.delete({
-            where : {
-                id : bookingId
-            }
-        })
-
-        return NextResponse.json(deletedBooking , { status : 200});
-
-    } catch (error) {
-        console.error("Error deleting booking:", error);
-        return NextResponse.json({ error: "Failed to delete booking" }, { status: 500 });
+    if (!session?.user?.id || !isAdmin(session.user.role)) {
+      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
     }
+
+    const { bookingId } = await params;
+
+    const deletedBooking = await prisma.booking.delete({
+      where: { id: bookingId },
+    });
+
+    return NextResponse.json(deletedBooking, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting booking:", error);
+    return NextResponse.json({ error: "Failed to delete booking" }, { status: 500 });
+  }
 }
