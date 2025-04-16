@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
-import { Send, ChevronDown } from "lucide-react";
+import { Send,  Search,  Hand } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -19,7 +19,9 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
+  DialogTitle,
 } from "@/components/ui/dialog";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SearchParams {
   search: string;
@@ -51,6 +53,8 @@ function HostelSearchBar({
   const [currentText, setCurrentText] = useState(0);
   const [nextText, setNextText] = useState(1);
   const [animationStage, setAnimationStage] = useState<"idle" | "exit" | "enter">("idle");
+  const [pulseHighlight, setPulseHighlight] = useState(false);
+  const [showClickIcon, setShowClickIcon] = useState(true);
 
   const placeholderTexts = [
     "Enter your destination",
@@ -79,6 +83,22 @@ function HostelSearchBar({
 
     return () => clearInterval(interval);
   }, [AnimatePlaceholder, currentText]);
+
+  useEffect(() => {
+    const pulseInterval = setInterval(() => {
+      setPulseHighlight((prev) => !prev);
+    }, 2000);
+
+    return () => clearInterval(pulseInterval);
+  }, []);
+
+  useEffect(() => {
+    const clickIconInterval = setInterval(() => {
+      setShowClickIcon((prev) => !prev);
+    }, 2500);
+
+    return () => clearInterval(clickIconInterval);
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchParams((prev) => ({ ...prev, search: e.target.value }));
@@ -131,34 +151,34 @@ function HostelSearchBar({
               value={searchParams.search}
               onChange={handleInputChange}
             />
-         {!searchParams.search && AnimatePlaceholder && (
-  <div className="absolute left-2 top-0 h-full w-full flex items-center pointer-events-none">
-    <div className="h-[1.5em] relative overflow-hidden w-full">
-      {animationStage !== "enter" && (
-        <span
-          className={`absolute text-gray-400 left-0 transition-all duration-500 ease-in-out ${
-            animationStage === "idle"
-              ? "translate-y-0 opacity-100"
-              : "-translate-y-[150%] opacity-0"
-          }`}
-        >
-          {placeholderTexts[currentText]}
-        </span>
-      )}
-      {animationStage !== "idle" && (
-        <span
-          className={`absolute text-gray-400 left-0 transition-all duration-500 ease-in-out ${
-            animationStage === "enter"
-              ? "translate-y-0 opacity-100"
-              : "translate-y-[150%] opacity-0"
-          }`}
-        >
-          {placeholderTexts[nextText]}
-        </span>
-      )}
-    </div>
-  </div>
-)}
+            {!searchParams.search && AnimatePlaceholder && (
+              <div className="absolute left-2 top-0 h-full w-full flex items-center pointer-events-none">
+                <div className="h-[1.5em] relative overflow-hidden w-full">
+                  {animationStage !== "enter" && (
+                    <span
+                      className={`absolute text-gray-400 left-0 transition-all duration-500 ease-in-out ${
+                        animationStage === "idle"
+                          ? "translate-y-0 opacity-100"
+                          : "-translate-y-[150%] opacity-0"
+                      }`}
+                    >
+                      {placeholderTexts[currentText]}
+                    </span>
+                  )}
+                  {animationStage !== "idle" && (
+                    <span
+                      className={`absolute text-gray-400 left-0 transition-all duration-500 ease-in-out ${
+                        animationStage === "enter"
+                          ? "translate-y-0 opacity-100"
+                          : "translate-y-[150%] opacity-0"
+                      }`}
+                    >
+                      {placeholderTexts[nextText]}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -211,32 +231,164 @@ function HostelSearchBar({
       <div className="md:hidden w-full">
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <div className="w-full bg-white rounded-full px-4 py-3 flex items-center justify-between shadow-sm shadow-red-300 hover:shadow-md hover:shadow-red-400/30 transition-shadow duration-300">
-              <div className="flex items-center space-x-2">
-                <LocationIcon width={24} height={24} className="text-red-500" />
-                <span className="text-gray-500 relative h-6 overflow-hidden">
-                  {searchParams.search || (
-                    <div className="h-6 relative overflow-hidden w-full">
-                      <span
-                        className={`absolute text-gray-400 left-0 transition-all duration-600 ease-in-out ${getCurrentTextClass()}`}
+            <motion.div 
+              whileTap={{ scale: 0.95 }}
+              initial={{ boxShadow: "0 1px 3px rgba(220, 38, 38, 0.2)" }}
+              whileHover={{ 
+                boxShadow: "0 4px 12px rgba(220, 38, 38, 0.4)",
+                y: -2
+              }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 400, 
+                damping: 15 
+              }}
+              className="w-full bg-white rounded-full px-3 py-2.5 flex items-center justify-between shadow-sm hover:shadow-md transition-all duration-300 border border-red-100"
+            >
+              <div className="flex items-center space-x-2 relative">
+                <motion.div
+                  className="relative"
+                  animate={{ 
+                    scale: [1, 1.15, 1],
+                  }}
+                  transition={{ 
+                    duration: 1.5,
+                    repeat: Infinity,
+                    repeatType: "reverse" 
+                  }}
+                >
+                  <LocationIcon width={22} height={22} className="text-red-500" />
+                  
+                  {/* Ripple effect around the location icon */}
+                  <motion.div
+                    className="absolute inset-0 rounded-full bg-red-500/20"
+                    initial={{ scale: 1, opacity: 0 }}
+                    animate={{ 
+                      scale: [1, 1.8, 1.8], 
+                      opacity: [0, 0.6, 0] 
+                    }}
+                    transition={{ 
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatDelay: 1
+                    }}
+                  />
+                </motion.div>
+                
+                <div className="relative">
+                  <motion.span 
+                    className={`text-gray-600 font-medium transition-colors duration-300 ${pulseHighlight ? 'text-red-500' : ''}`}
+                    animate={{ 
+                      y: pulseHighlight ? [-1, 1, -1] : 0,
+                    }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <span className="font-semibold">Tap here</span> to find your <span className="font-semibold">best hostel</span>
+                  </motion.span>
+                  
+                  <AnimatePresence mode="wait">
+                    {pulseHighlight && (
+                      <motion.div 
+                        className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-red-500 to-red-300"
+                        initial={{ width: "0%", left: "50%" }}
+                        animate={{ width: "100%", left: "0%" }}
+                        exit={{ width: "0%", left: "50%" }}
+                        transition={{ duration: 0.5 }}
+                      />
+                    )}
+                  </AnimatePresence>
+                </div>
+                
+                {/* Click/tap icon animation */}
+                <AnimatePresence mode="wait">
+                  {showClickIcon && (
+                    <motion.div
+                      className="absolute -right-6 -top-5"
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <motion.div
+                        animate={{ y: [0, -5, 0], rotate: [-5, 5, -5] }}
+                        transition={{ 
+                          duration: 0.8, 
+                          repeat: Infinity, 
+                          repeatType: "reverse" 
+                        }}
                       >
-                        {placeholderTexts[currentText]}
-                      </span>
-                      <span
-                        className={`absolute text-gray-400 left-0 transition-all duration-600 ease-in-out ${getNextTextClass()}`}
-                      >
-                        {placeholderTexts[nextText]}
-                      </span>
-                    </div>
+                        <Hand className="h-5 w-5 text-red-500" />
+                      </motion.div>
+                    </motion.div>
                   )}
-                </span>
+                </AnimatePresence>
               </div>
-              <ChevronDown className="text-red-500" />
-            </div>
+              
+              <motion.div
+                className="relative"
+                animate={{ 
+                  rotate: [0, -10, 0, 10, 0],
+                }}
+                transition={{ 
+                  duration: 2.5,
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  ease: "easeInOut"
+                }}
+              >
+                <Search className="text-red-500 w-4 h-4" />
+              </motion.div>
+            </motion.div>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] rounded-2xl shadow-lg shadow-red-400/30">
-            <div className="space-y-4 px-2 py-4">
-              {/* Continue your mobile dialog content here */}
+          <DialogContent className="sm:max-w-[425px] rounded-2xl shadow-lg shadow-red-400/30 p-4">
+            <DialogTitle className="text-lg">Search Hostels</DialogTitle>
+            <div className="space-y-3 px-2 py-3">
+              <div className="flex items-center border rounded-full px-3 py-1.5">
+                <LocationIcon width={20} height={20} />
+                <input
+                  type="text"
+                  placeholder="Enter your destination"
+                  className="w-full outline-none text-gray-700 text-sm pl-2"
+                  value={searchParams.search}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div className="flex items-center border rounded-full px-3 py-1.5">
+                <HostelIcon className="w-5 h-5" />
+                <Select value={searchParams.hostelType} onValueChange={handleHostelTypeChange}>
+                  <SelectTrigger className="w-full border-none shadow-none focus:ring-0 text-sm">
+                    <SelectValue placeholder="Select hostel type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="SINGLE">SINGLE</SelectItem>
+                    <SelectItem value="SHARED">SHARED</SelectItem>
+                    <SelectItem value="DORMITORY">DORMITORY</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center border rounded-full px-3 py-1.5">
+                <BoysIcon className="w-5 h-5" />
+                <Select value={searchParams.gender} onValueChange={handleGenderChange}>
+                  <SelectTrigger className="w-full border-none shadow-none focus:ring-0 text-sm">
+                    <SelectValue placeholder="Select hostel gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="BOYS">Boys Hostel</SelectItem>
+                    <SelectItem value="GIRLS">Girls Hostel</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <button 
+                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 
+                text-white font-medium px-4 py-2 rounded-full flex items-center justify-center text-sm"
+                onClick={handleSearch}
+              >
+                Let's go
+                <Send className="ml-2 w-4 h-4" />
+              </button>
             </div>
           </DialogContent>
         </Dialog>

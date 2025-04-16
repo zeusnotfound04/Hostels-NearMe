@@ -59,7 +59,7 @@ const DecorativeBorder: React.FC<DecorativeBorderProps> = ({ animate = false }) 
 
   return (
     <motion.div 
-      className="w-full h-24 md:h-48 relative flex justify-center items-center"
+      className="w-full h-24 md:h-48 relative flex justify-center items-center hidden sm:flex"
       ref={ref}
       variants={animate ? borderVariants : undefined}
       initial={animate ? "hidden" : undefined}
@@ -401,12 +401,12 @@ const MissionVisionCards: React.FC = () => {
       <canvas id="particlesCanvas" className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none" />
 
       {/* Left Jagged Border */}
-      <div className="absolute -left-6 md:-left-12 top-0 bottom-0">
+      <div className="absolute -left-6 md:-left-12 top-0 bottom-0 hidden sm:block">
         <JaggedBorder animate={containerInView} />
       </div>
 
       {/* Right Jagged Border */}
-      <div className="absolute -right-6 md:-right-12 top-0 bottom-0">
+      <div className="absolute -right-6 md:-right-12 top-0 bottom-0 hidden sm:block">
         <JaggedBorder animate={containerInView} isRight={true} />
       </div>
 
@@ -418,7 +418,7 @@ const MissionVisionCards: React.FC = () => {
       >
         {/* Top Left Corner - Only for Who We Are section */}
         <div
-          className="absolute -top-12  -right-[12rem] -translate-x-full w-24 h-24 md:w-[18rem] md:[18rem]"
+          className="absolute -top-12 -right-[12rem] -translate-x-full w-24 h-24 md:w-[18rem] md:[18rem] hidden sm:block"
         >
           <Image 
             src={LeftTop} 
@@ -430,7 +430,7 @@ const MissionVisionCards: React.FC = () => {
         
         {/* Bottom Left Corner - Only for Who We Are section */}
         <div
-          className="absolute bottom-0 -right-[12rem] -translate-x-full w-24 h-24 md:w-[18rem] md:[18rem]"
+          className="absolute bottom-0 -right-[12rem] -translate-x-full w-24 h-24 md:w-[18rem] md:[18rem] hidden sm:block"
         >
           <Image 
             src={LeftBottom} 
@@ -522,7 +522,7 @@ const MissionVisionCards: React.FC = () => {
       >
         {/* Top Right Corner - Only for Our Mission section */}
         <div
-          className="absolute -top-8 -left-40 translate-x-full w-24 h-24 md:w-[15rem] md:[15rem]"
+          className="absolute -top-8 -left-40 translate-x-full w-24 h-24 md:w-[15rem] md:[15rem] hidden sm:block"
         >
           <Image 
             src={RightTopPNG} 
@@ -534,7 +534,7 @@ const MissionVisionCards: React.FC = () => {
         
         {/* Bottom Right Corner - Only for Our Vision section */}
         <div
-          className="absolute -bottom-8 -left-40 translate-x-full w-24 h-24 md:w-[15rem] md:[15rem]"
+          className="absolute -bottom-8 -left-40 translate-x-full w-24 h-24 md:w-[15rem] md:[15rem] hidden sm:block"
         >
           <Image 
             src={RightBottom} 

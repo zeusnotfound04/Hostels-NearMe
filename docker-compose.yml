@@ -1,46 +1,33 @@
-version: "3.8"
-
 services:
   nextjs:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: zeusnotfound/hostelsnearme
     container_name: hostels-nearme-nextjs
     restart: always
     ports:
       - "3000:3000"
     env_file:
       - .env
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - NODE_ENV=production
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000/api/health",
+        ]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 40s
-
-  redis:
-    image: redis:alpine
-    container_name: hostels-nearme-redis
-    restart: always
-    volumes:
-      - ./redis-data:/data
-    command: redis-server --appendonly yes
-    networks:
-      - app-network
-    ports:
-      - "6379:6379"
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+          cpus: "1.8"
 
 networks:
   app-network:

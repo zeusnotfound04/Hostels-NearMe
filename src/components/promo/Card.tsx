@@ -49,10 +49,10 @@ const HostelPromoCard = () => {
       setIsTablet(width >= 640 && width < 1024);
       
       if (width < 640) {
-        // Mobile dimensions
+        // Improved mobile dimensions with better ratio
         setCardDimensions({
-          width: Math.min(width * 0.6, 260),
-          height: Math.min(width * 0.4, 160)
+          width: Math.min(width * 0.75, 240),
+          height: Math.min(width * 0.55, 180)
         });
       } else if (width < 1024) {
         // Tablet dimensions
@@ -261,7 +261,7 @@ const HostelPromoCard = () => {
         </motion.div>
         
         {/* Main Content */}
-        <div className="p-3 sm:p-4 md:p-6 lg:p-10 flex flex-col md:flex-row h-full">
+        <div className="p-2 sm:p-4 md:p-6 lg:p-10 flex flex-col md:flex-row h-full">
           {/* Left Column - Now contains merged content */}
           <div className="w-full md:w-1/2 pr-0 md:pr-4 lg:pr-8">
             <motion.div
@@ -271,7 +271,7 @@ const HostelPromoCard = () => {
               className="h-full flex flex-col justify-center"
             >
               <motion.div 
-                className="mb-2 sm:mb-4 md:mb-6"
+                className="mb-2 sm:mb-3 md:mb-6"
                 variants={filterItemVariants}
                 custom={0}
               >
@@ -282,12 +282,12 @@ const HostelPromoCard = () => {
                     variants={circleVariants}
                   >
                     <div 
-                      className="p-2 sm:p-3 md:p-4 rounded-full relative z-10"
+                      className="p-1.5 sm:p-2.5 md:p-4 rounded-full relative z-10"
                       style={{ backgroundColor: `${colors.primary}15` }}
                     >
                       <Clock 
-                        size={isMobile ? 18 : isTablet ? 24 : 30}
-                        className="w-[18px] h-[18px] sm:w-[24px] sm:h-[24px] md:w-[30px] md:h-[30px]"
+                        size={isMobile ? 16 : isTablet ? 20 : 30}
+                        className="w-[16px] h-[16px] sm:w-[20px] sm:h-[20px] md:w-[30px] md:h-[30px]"
                         color={colors.primary} 
                         strokeWidth={2}
                       />
@@ -306,9 +306,9 @@ const HostelPromoCard = () => {
                       }}
                     />
                   </motion.div>
-                  <div className="ml-2 sm:ml-4 md:ml-6">
+                  <div className="ml-2 sm:ml-3 md:ml-6">
                     <motion.h2 
-                      className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold"
+                      className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold"
                       variants={filterItemVariants}
                       custom={1}
                     >
@@ -323,7 +323,7 @@ const HostelPromoCard = () => {
                 variants={numberVariants}
               >
                 <motion.span 
-                  className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black"
+                  className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-black"
                   style={{ color: colors.primary }}
                   animate={isMounted ? {
                     scale: [1, 1.05, 1],
@@ -410,17 +410,20 @@ const HostelPromoCard = () => {
              
           {/* Right Column - Hostel Image */}
           <div className="w-full md:w-1/2 mt-4 md:mt-0 flex flex-col items-center justify-center">
-            <div className="w-full flex justify-center">
-              <Stack
-                randomRotation={isMounted}
-                sensitivity={180}
-                sendToBackOnClick={false}
-                cardDimensions={cardDimensions}
-                cardsData={images}
-              />
+            <div className="w-full flex justify-center relative">
+              {/* Mobile-friendly height adjustment for image container */}
+              <div className="h-[190px] sm:h-[250px] md:h-[350px] lg:h-[400px] w-full flex items-center justify-center">
+                <Stack
+                  randomRotation={isMounted}
+                  sensitivity={180}
+                  sendToBackOnClick={false}
+                  cardDimensions={cardDimensions}
+                  cardsData={images}
+                />
+              </div>
             </div>
-            {/* Add your text below the stack images */}
-            <h1 className="mt-2 sm:mt-4 text-base sm:text-xl md:text-2xl text-gray-700 font-extrabold text-center">
+            {/* Add your text below the stack images with improved spacing */}
+            <h1 className="mt-2 sm:mt-4 text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 font-extrabold text-center px-2">
               Find your ideal hostel
             </h1>
           </div>
