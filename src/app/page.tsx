@@ -8,6 +8,7 @@ import { Testimonials } from "@/components/home/Testimonials";
 import { HostelListing } from "@/components/home/HostelListing";
 import HomeText from "@/components/home/HomeText";
 import PromoCard from "@/components/promo";
+import MovingCards from "@/components/about/MovingCard";
 
 
 
@@ -31,6 +32,7 @@ export default function Home() {
         <StepBooking />
         <PromoCard/>
         <Testimonials />
+        <MovingCards Headline="Backed By" />
         <MissionVisionCards />
       </div>
     </main>

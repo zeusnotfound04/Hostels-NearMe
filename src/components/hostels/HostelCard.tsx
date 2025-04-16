@@ -118,9 +118,9 @@ export const HostelCard = ({ hostel }: { hostel: Hostel }) => {
             )}
           </div>
 
-          <div className="flex-1 p-4 md:p-5 relative">
-            <div className="absolute top-4 right-4 flex items-center gap-2">
-              <Badge className="bg-[#902920] text-white rounded-full px-4 py-1.5 flex items-center gap-1 shadow-sm">
+          <div className="flex-1 p-3 sm:p-4 md:p-5 relative">
+            <div className="absolute top-3 right-3 flex items-center gap-2">
+              <Badge className="bg-[#902920] text-white rounded-full px-3 py-1 flex items-center gap-1 shadow-sm">
                 {hostel.gender === "BOYS" ? 
                   <MaleIcon className="w-3.5 h-3.5" /> : 
                   <FemaleIcon className="w-3.5 h-3.5" />
@@ -148,41 +148,46 @@ export const HostelCard = ({ hostel }: { hostel: Hostel }) => {
               </DropdownMenu>
             </div>
 
-            <h2 className="font-bold text-xl md:text-2xl text-black mb-2 pr-20">{hostel.name}</h2>
+            <h2 className="font-bold text-lg md:text-xl text-black mb-2 pr-20">{hostel.name}</h2>
 
             <div className="flex items-center mb-2">
               <LocationIcon className="w-4 h-4 mr-1.5 flex-shrink-0 text-gray-600" />
-              <span className="font-normal text-sm text-gray-700">{hostel.city}, {hostel.state}</span>
+              <span className="font-normal text-xs md:text-sm text-gray-700 line-clamp-1">{hostel.city}, {hostel.state}</span>
             </div>
 
-            <div className="flex items-center mb-3">
+            <div className="flex items-center mb-2">
               <div className="w-2.5 h-2.5 bg-green-500 rounded-full mr-1.5 animate-pulse"></div>
               <span className="font-medium text-xs text-green-600">Available</span>
             </div>
 
-            <div className="flex flex-wrap gap-1.5 mb-5 mt-3">
+            <div className="flex flex-wrap gap-1.5 mb-4">
               {amenities.length > 0 ? (
-                amenities.map((amenity, index) => (
-                  <Badge key={index} className="bg-gray-100 text-gray-800 rounded-full border border-[#902920] px-2 py-1 text-xs flex items-center gap-1 hover:bg-gray-200 transition-colors">
+                amenities.slice(0, 5).map((amenity, index) => (
+                  <Badge key={index} className="bg-gray-100 text-gray-800 rounded-full border border-[#902920]/40 px-2 py-0.5 text-[10px] sm:text-xs flex items-center gap-1 hover:bg-gray-200 transition-colors">
                     <span className="flex-shrink-0">{amenity.icon}</span>
-                    <span className="whitespace-nowrap">{amenity.label}</span>
+                    <span className="whitespace-nowrap truncate max-w-[80px] sm:max-w-none">{amenity.label}</span>
                   </Badge>
                 )) 
               ) : (
-                <p className="text-gray-500 text-sm italic">No amenities listed</p>
+                <p className="text-gray-500 text-xs italic">No amenities listed</p>
+              )}
+              {amenities.length > 5 && (
+                <Badge className="bg-gray-100 text-gray-800 rounded-full border border-[#902920]/40 px-2 py-0.5 text-[10px] sm:text-xs">
+                  +{amenities.length - 5} more
+                </Badge>
               )}
             </div>
 
             <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100">
               <div>
-                <p className="font-bold text-xl md:text-2xl text-black">₹{hostel.price}/-</p>
-                <p className="font-light text-xs text-gray-600">Starting From</p>
+                <p className="font-bold text-lg md:text-xl text-black">₹{hostel.price.toLocaleString()}/-</p>
+                <p className="font-light text-[10px] sm:text-xs text-gray-600">Starting From</p>
               </div>
               <Button 
-                className="bg-[#f10000] hover:bg-[#d10000] text-white rounded-md h-10 px-4 shadow-sm transition-colors"
+                className="bg-[#f10000] hover:bg-[#d10000] text-white rounded-md h-8 sm:h-10 px-3 sm:px-4 shadow-sm transition-colors"
                 onClick={() => router.push(`/hostels/${hostel.id}`)}
               >
-                <span className="font-bold text-sm">Book Now</span>
+                <span className="font-bold text-xs sm:text-sm">Book Now</span>
               </Button>
             </div>
           </div>

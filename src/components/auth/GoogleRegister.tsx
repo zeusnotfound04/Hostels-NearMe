@@ -106,7 +106,7 @@ export default function GoogleRegister() {
       }
     };
       return (
-        <div className="h-screen w-screen overflow-hidden flex items-center justify-center bg-gray-100 dark:bg-gray-900 fixed inset-0">
+        <div className="min-h-[calc(100vh-300px)] py-16 flex items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="max-w-md w-full mx-4 md:mx-auto p-6 md:p-8 rounded-md shadow-lg bg-white dark:bg-black">
         <h2 className="heading font-bold text-xl text-neutral-800 dark:text-neutral-200">
           Welcome to Hostelsnearme

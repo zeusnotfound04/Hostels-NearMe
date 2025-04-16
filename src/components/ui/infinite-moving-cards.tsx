@@ -5,23 +5,25 @@ import { cn } from "@/utils/utils";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
-export const InfiniteMovingCards = ({
-  items,
+export const 
+InfiniteMovingCards = ({
+  images,
   direction = "left",
   speed = "fast",
   pauseOnHover = true,
   className,
+  imageClassName,
+  cardClassName,
+  imageSize = "medium",
 }: {
-  items: {
-    quote: string;
-    name: string;
-    title: string;
-    image?: string; // Optional image URL
-  }[];
+  images: string[]; // Array of image URLs
   direction?: "left" | "right";
   speed?: "fast" | "normal" | "slow";
   pauseOnHover?: boolean;
   className?: string;
+  imageClassName?: string;
+  cardClassName?: string;
+  imageSize?: "small" | "medium" | "large";
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const scrollerRef = React.useRef<HTMLUListElement>(null);
@@ -30,6 +32,7 @@ export const InfiniteMovingCards = ({
     addAnimation();
   }, [addAnimation]);
   const [start, setStart] = useState(false);
+  
   function addAnimation() {
     if (containerRef.current && scrollerRef.current) {
       const scrollerContent = Array.from(scrollerRef.current.children);
@@ -46,6 +49,7 @@ export const InfiniteMovingCards = ({
       setStart(true);
     }
   }
+  
   const getDirection = () => {
     if (containerRef.current) {
       if (direction === "left") {
@@ -61,6 +65,7 @@ export const InfiniteMovingCards = ({
       }
     }
   };
+  
   const getSpeed = () => {
     if (containerRef.current) {
       if (speed === "fast") {
@@ -68,10 +73,31 @@ export const InfiniteMovingCards = ({
       } else if (speed === "normal") {
         containerRef.current.style.setProperty("--animation-duration", "40s");
       } else {
-        containerRef.current.style.setProperty("--animation-duration", "80s");
+        containerRef.current.style.setProperty("--animation-duration", "120s"); 
       }
     }
   };
+
+  // Get card width based on image size
+  const getCardWidth = () => {
+    switch (imageSize) {
+      case "small": return "w-[180px]";
+      case "large": return "w-[320px]";
+      case "medium":
+      default: return "w-[250px]";
+    }
+  };
+
+  // Get aspect ratio based on image size
+  const getAspectRatio = () => {
+    switch (imageSize) {
+      case "small": return "aspect-square";
+      case "large": return "aspect-[16/10]";
+      case "medium":
+      default: return "aspect-[4/3]";
+    }
+  };
+  
   return (
     <div
       ref={containerRef}
@@ -88,44 +114,27 @@ export const InfiniteMovingCards = ({
           pauseOnHover && "hover:[animation-play-state:paused]",
         )}
       >
-        {items.map((item) => (
+        {images.map((imageUrl, index) => (
           <li
-            className="relative w-[350px] max-w-full shrink-0 rounded-2xl border border-b-0 border-zinc-200 bg-[linear-gradient(180deg,#fafafa,#f5f5f5)] px-8 py-6 md:w-[450px] dark:border-zinc-700 dark:bg-[linear-gradient(180deg,#27272a,#18181b)]"
-            key={item.name}
+            className={cn(
+              "relative shrink-0 overflow-hidden rounded-xl shadow-md",
+              getCardWidth(),
+              cardClassName
+            )}
+            key={`image-${index}`}
           >
-            <blockquote>
-              <div
-                aria-hidden="true"
-                className="user-select-none pointer-events-none absolute -top-0.5 -left-0.5 -z-1 h-[calc(100%_+_4px)] w-[calc(100%_+_4px)]"
-              ></div>
-              
-              {item.image && (
-                <div className="mb-4 flex justify-center">
-                  <div className="relative h-28 w-28 overflow-hidden rounded-full">
-                    <Image 
-                      src={item.image} 
-                      alt={`${item.name} image`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-              )}
-              
-              <span className="relative z-20 text-sm leading-[1.6] font-normal text-neutral-800 dark:text-gray-100">
-                {item.quote}
-              </span>
-              <div className="relative z-20 mt-6 flex flex-row items-center">
-                <span className="flex flex-col gap-1">
-                  <span className="text-sm leading-[1.6] font-normal text-neutral-500 dark:text-gray-400">
-                    {item.name}
-                  </span>
-                  <span className="text-sm leading-[1.6] font-normal text-neutral-500 dark:text-gray-400">
-                    {item.title}
-                  </span>
-                </span>
-              </div>
-            </blockquote>
+            <div className={cn("relative w-full overflow-hidden", getAspectRatio())}>
+              <Image 
+                src={imageUrl} 
+                alt={`Image ${index + 1}`}
+                fill
+                sizes="(max-width: 768px) 180px, (max-width: 1200px) 250px, 320px"
+                className={cn(
+                  "object-contain",
+                  imageClassName
+                )}
+              />
+            </div>
           </li>
         ))}
       </ul>

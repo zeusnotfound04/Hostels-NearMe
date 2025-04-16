@@ -197,7 +197,6 @@ export default function HostelListing() {
     url.searchParams.set("maxPrice", filters.priceRange[1].toString());
     
     if (filters.sort) {
-      // Parse the combined sort parameter
       const [sortBy, sortOrder] = filters.sort.split('_');
       url.searchParams.set("sortBy", sortBy);
       url.searchParams.set("sortOrder", sortOrder);
@@ -206,10 +205,9 @@ export default function HostelListing() {
       url.searchParams.delete("sortOrder");
     }
     
-    // Close dialog before navigation
+    
     handleCloseDialog();
     
-    // Navigate to the new URL
     router.push(url.pathname + url.search);
   };
 
@@ -312,16 +310,16 @@ export default function HostelListing() {
   return (
     <div className="px-4 mt-2 md:px-6 max-w-6xl mx-auto">
       
-      <div className="flex gap-2 mb-6 justify-center overflow-x-auto">
+      <div className="flex gap-2 mb-6 justify-start overflow-x-auto pb-2 px-1 -mx-1 scrollbar-thin scrollbar-thumb-gray-300 no-scrollbar">
         {filterOptions.map((filter) => (
           <Button
             key={filter.id}
             variant="outline"
-            className="min-w-[120px] h-10 sm:h-8 bg-[#cecece] rounded-full border border-[#902920] flex items-center gap-1 px-4 sm:px-3 text-sm transition duration-150 ease-in-out hover:bg-[#d3d3d3]"
+            className="min-w-[120px] h-10 flex-shrink-0 bg-[#cecece] rounded-full border border-[#902920] flex items-center gap-1 px-4 text-sm transition duration-150 ease-in-out hover:bg-[#d3d3d3] shadow-sm"
             onClick={() => handleOpenDialog(filter.id)}
           >
             <span className="mr-1">{filter.icon}</span>
-            <span className="font-normal text-black text-xs md:text-sm">{filter.name}</span>
+            <span className="font-normal text-black text-xs md:text-sm whitespace-nowrap">{filter.name}</span>
             <ChevronDownIcon className="w-3 h-3 ml-1" />
           </Button>
         ))}

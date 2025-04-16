@@ -53,7 +53,7 @@ export function SearchNavBar() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 p-1 border border-gray-200 shadow-lg rounded-xl">
         <DropdownMenuItem asChild className="rounded-lg py-2 px-4 hover:bg-gray-50">
-          <Link href="/bookings" className="flex items-center gap-2">
+          <Link href="/my-bookings" className="flex items-center gap-2">
             <span className="text-red-600">●</span>
             <span>My Bookings</span>
           </Link>
@@ -82,7 +82,7 @@ export function SearchNavBar() {
   const mobileMenuContent = isAuthenticated ? (
     <>
       <DropdownMenuItem asChild className="rounded-lg py-3 px-4 hover:bg-gray-50">
-        <Link href="/bookings" className="flex items-center gap-2">
+        <Link href="/my-bookings" className="flex items-center gap-2">
           <span className="text-red-600">●</span>
           <span>My Bookings</span>
         </Link>

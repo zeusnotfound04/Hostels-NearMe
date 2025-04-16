@@ -72,7 +72,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="h-screen w-full grid place-items-center bg-white dark:bg-gray-900 overflow-hidden">
+    <div className="min-h-[calc(100vh-300px)] py-16 flex items-center justify-center bg-white dark:bg-gray-900">
       <div className="w-full max-w-md mx-auto px-4">
         <div className="bg-white dark:bg-black rounded-2xl p-8 shadow-input">
           <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">

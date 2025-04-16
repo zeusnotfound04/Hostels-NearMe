@@ -411,8 +411,8 @@ const HostelPromoCard = () => {
           {/* Right Column - Hostel Image */}
           <div className="w-full md:w-1/2 mt-4 md:mt-0 flex flex-col items-center justify-center">
             <div className="w-full flex justify-center relative">
-              {/* Mobile-friendly height adjustment for image container */}
-              <div className="h-[190px] sm:h-[250px] md:h-[350px] lg:h-[400px] w-full flex items-center justify-center">
+              {/* Mobile-friendly width and height adjustment for image container */}
+              <div className="h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] w-full max-w-[95%] sm:max-w-[85%] md:max-w-full mx-auto flex items-center justify-center">
                 <Stack
                   randomRotation={isMounted}
                   sensitivity={180}

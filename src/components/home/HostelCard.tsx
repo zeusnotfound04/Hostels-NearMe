@@ -69,7 +69,7 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
   return (
     <motion.div
       ref={cardRef}
-      className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-full bg-white rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl [perspective:1200px]"
+      className="flex-shrink-0 w-full md:w-full bg-white rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl [perspective:1200px]"
       onMouseMove={handleMouse}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -80,13 +80,13 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
         transformStyle: "preserve-3d"
       }}
     >
-      <div className="relative h-48 sm:h-60 w-full">
+      <div className="relative aspect-[4/3] w-full">
         {images.length > 0 ? (
           <Image
             src={images[currentImage]}
             alt={`${hostel.name} - Image ${currentImage + 1}`}
             fill
-            sizes="(max-width: 768px) 280px, (max-width: 1024px) 320px, 100%"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             priority={currentImage === 0}
             className="object-cover transition-opacity duration-300"
           />
@@ -129,38 +129,43 @@ export default function HostelCard({ hostel }: { hostel: Hostel }) {
         )}
       </div>
       
-      <div className="p-4 sm:p-6">
-        <h3 className="text-lg sm:text-xl font-bold mb-1 text-gray-800 line-clamp-1">{hostel.name}</h3>
+      <div className="p-3 sm:p-4 md:p-5">
+        <h3 className="text-base sm:text-lg font-bold mb-1 text-gray-800 line-clamp-1">{hostel.name}</h3>
       
-        <div className="flex items-start text-gray-700 mb-3 sm:mb-4">
-          <LocationIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 text-red-500 flex-shrink-0 mt-0.5" />
+        <div className="flex items-start text-gray-700 mb-2 sm:mb-3">
+          <LocationIcon className="w-4 h-4 mr-1.5 text-red-500 flex-shrink-0 mt-0.5" />
           <span className="text-xs sm:text-sm line-clamp-2">{`${hostel.address}, ${hostel.city}, ${hostel.state}`}</span>
         </div> 
         
         {amenities.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
-            {amenities.map((amenity, index) => (
+          <div className="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-4">
+            {amenities.slice(0, 4).map((amenity, index) => (
               <div 
                 key={index}
-                className="flex items-center bg-gray-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium text-gray-700 border border-[#902920] transition-colors"
+                className="flex items-center bg-gray-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium text-gray-700 border border-[#902920]/60 transition-colors"
               >
-                <span className="text-blue-500 mr-1 sm:mr-1.5">{amenity.icon}</span>
-                {amenity.label}
+                <span className="text-blue-500 mr-1">{amenity.icon}</span>
+                <span className="truncate max-w-[80px] sm:max-w-none">{amenity.label}</span>
               </div>
             ))}
+            {amenities.length > 4 && (
+              <div className="flex items-center bg-gray-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium text-gray-700 border border-[#902920]/60">
+                +{amenities.length - 4} more
+              </div>
+            )}
           </div>
         )}
         
-        <div className="flex items-center justify-between mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100">
+        <div className="flex items-center justify-between mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-100">
           <div>
-            <span className="text-xl sm:text-2xl font-bold text-gray-900">₹{hostel.price.toLocaleString()}</span>
-            <span className="text-gray-600 text-xs sm:text-sm ml-1">/month</span>
+            <span className="text-lg sm:text-xl font-bold text-gray-900">₹{hostel.price.toLocaleString()}</span>
+            <span className="text-gray-600 text-xs ml-1">/month</span>
             <br />
-            <span className="text-gray-600 text-xs sm:text-sm">Starting from</span>
+            <span className="text-gray-600 text-xs">Starting from</span>
           </div>
           <a
             href={`/hostels/${hostel.id}`}
-            className="bg-[#F10000] text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-bold hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-sm hover:shadow-md focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+            className="bg-[#F10000] text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-bold hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-sm hover:shadow-md focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
           >
             Book Now
           </a>
