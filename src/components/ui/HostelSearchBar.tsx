@@ -194,8 +194,8 @@ function HostelSearchBar({
               </SelectTrigger>
               <SelectContent className="border border-red-100">
                 <SelectItem value="SINGLE" className="hover:bg-red-50">SINGLE</SelectItem>
-                <SelectItem value="SHARED" className="hover:bg-red-50">SHARED</SelectItem>
-                <SelectItem value="DORMITORY" className="hover:bg-red-50">DORMITORY</SelectItem>
+                <SelectItem value="SHARED" className="hover:bg-red-50">DOUBLE</SelectItem>
+                <SelectItem value="DORMITORY" className="hover:bg-red-50">TRIPLE</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -364,8 +364,8 @@ function HostelSearchBar({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="SINGLE">SINGLE</SelectItem>
-                    <SelectItem value="SHARED">SHARED</SelectItem>
-                    <SelectItem value="DORMITORY">DORMITORY</SelectItem>
+                    <SelectItem value="SHARED">DOUBLE</SelectItem>
+                    <SelectItem value="DORMITORY">TRIPLE</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
