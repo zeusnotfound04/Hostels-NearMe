@@ -245,3 +245,34 @@ model Blog{
 
    @@index([city]) 
 }
+
+// State and City models for location management
+model State {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cities    City[]
+}
+
+model City {
+  id        String   @id @default(uuid())
+  name      String
+  stateId   String
+  state     State    @relation(fields: [stateId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([name, stateId])
+}
+
+// Coaching model for managing coaching centers
+model Coaching {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  value       String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

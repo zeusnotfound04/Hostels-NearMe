@@ -2,7 +2,7 @@
 
 
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileUpload } from "@/components/ui/acefileupload";
@@ -15,18 +15,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger, } from "@/components/ui/popover";
 import { Save, Check, ChevronsUpDown, PencilIcon } from "lucide-react";
-import { cities } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { BlogFormProps } from "@/types";
+import { useLocations } from "@/hooks/useLocations";
 
 
 const formSchema = z.object({
   title: z.string(),
   content: z.string(),
   city: z.string(),
+  stateId: z.string(), // Added stateId field
   image: z.any(), // Changed from z.instanceof(File).optional() to z.any()
   existingImage: z.string()
 })
@@ -39,6 +40,20 @@ export default function BlogForm({ blogId, initialData }: BlogFormProps) {
   const isEditMode = !!blogId;
   const [loading, setLoading] = useState<boolean>(false);
   const { toast } = useToast();
+  
+  // Get dynamic locations from the API
+  const { states: dbStates, cities: dbCities, loading: locationsLoading, error: locationsError } = useLocations();
+  const [selectedStateId, setSelectedStateId] = useState<string>("");
+  const [citiesForSelectedState, setCitiesForSelectedState] = useState<{ label: string; value: string }[]>([]);
+  
+  // Effect to update cities based on selected state
+  useEffect(() => {
+    if (selectedStateId && dbCities[selectedStateId]) {
+      setCitiesForSelectedState(dbCities[selectedStateId]);
+    } else {
+      setCitiesForSelectedState([]);
+    }
+  }, [selectedStateId, dbCities]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,6 +61,7 @@ export default function BlogForm({ blogId, initialData }: BlogFormProps) {
       title: initialData?.title || '',
       content: initialData?.content || '',
       city: initialData?.city || '',
+      stateId: '', // Initialize stateId
       image: undefined,
       existingImage: initialData?.image || "",
     },
@@ -78,10 +94,15 @@ export default function BlogForm({ blogId, initialData }: BlogFormProps) {
 
         imageUrl = uploadResponse.data.fileUrls[0];
       }
+      
+      // Find the city name from the city ID
+      const selectedCity = citiesForSelectedState.find(city => city.value === values.city);
+      const cityName = selectedCity?.label || '';
+      
       const blogData = {
         title: values.title,
         content: values.content,
-        city: values.city,
+        city: cityName, // Use the city name
         image: imageUrl
       };
 
@@ -178,6 +199,69 @@ export default function BlogForm({ blogId, initialData }: BlogFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 space-x-4">
               <FormField
                 control={form.control}
+                name="stateId"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>State</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              "w-[200px] justify-between",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value
+                              ? dbStates.find((state) => state.value === field.value)
+                                ?.label
+                              : "Select state"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Search state..." />
+                          <CommandList>
+                            <CommandEmpty>No state found.</CommandEmpty>
+                            <CommandGroup>
+                              {dbStates.map((state) => (
+                                <CommandItem
+                                  value={state.label}
+                                  key={state.value}
+                                  onSelect={() => {
+                                    form.setValue("stateId", state.value);
+                                    setSelectedStateId(state.value);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      state.value === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {state.label}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormDescription>
+                      Select the state as per the blog's actual location.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="city"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
@@ -194,20 +278,20 @@ export default function BlogForm({ blogId, initialData }: BlogFormProps) {
                             )}
                           >
                             {field.value
-                              ? cities.find((city) => city.value === field.value)
+                              ? citiesForSelectedState.find((city) => city.value === field.value)
                                 ?.label
-                              : "Select language"}
+                              : "Select city"}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent className="w-[200px] p-0">
                         <Command>
-                          <CommandInput placeholder="Search language..." />
+                          <CommandInput placeholder="Search city..." />
                           <CommandList>
-                            <CommandEmpty>No language found.</CommandEmpty>
+                            <CommandEmpty>No city found.</CommandEmpty>
                             <CommandGroup>
-                              {cities.map((city) => (
+                              {citiesForSelectedState.map((city) => (
                                 <CommandItem
                                   value={city.label}
                                   key={city.value}
@@ -238,7 +322,6 @@ export default function BlogForm({ blogId, initialData }: BlogFormProps) {
                   </FormItem>
                 )}
               />
-
             </div>
 
             <FormField
@@ -249,6 +332,7 @@ export default function BlogForm({ blogId, initialData }: BlogFormProps) {
                   <FormLabel>Upload Images</FormLabel>
                   <FormControl>
                     <FileUpload
+
                       onChange={(files) => {
                         // Only update if there's a file and it's different from the current one
                         const singleFile = files && files.length > 0 ? files[0] : null;
@@ -265,7 +349,7 @@ export default function BlogForm({ blogId, initialData }: BlogFormProps) {
                   <FormDescription>
                     {isEditMode
                       ? "Leave empty to keep existing images, or upload new ones to replace them."
-                      : "You can upload up to 4 images. Supported formats: PNG."}
+                      : "You can upload up to 1 image. Supported formats: PNG."}
                   </FormDescription>
                   <div className="mt-2">
                     <p className="text-sm text-muted-foreground">

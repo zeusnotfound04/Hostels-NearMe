@@ -4,7 +4,7 @@ import { BookingStatus , Gender } from "@/constants";
 export const bookingSchema = z.object({
   id: z.string().uuid(),
   userId: z.string(),
-  username: z.string().nullable(),
+  username: z.string().optional().nullable(), // Make username optional
   hostelName: z.string(),
   hostelId: z.string(),
   status: z.nativeEnum(BookingStatus),

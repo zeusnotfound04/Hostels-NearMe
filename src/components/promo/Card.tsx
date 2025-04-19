@@ -308,7 +308,7 @@ const HostelPromoCard = () => {
                   </motion.div>
                   <div className="ml-2 sm:ml-3 md:ml-6">
                     <motion.h2 
-                      className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold"
+                      className="text-sm sm:text-2xl md:text-2xl lg:text-2xl xl:text-3xl font-bold"
                       variants={filterItemVariants}
                       custom={1}
                     >

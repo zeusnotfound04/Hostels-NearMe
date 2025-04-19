@@ -13,10 +13,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import {Popover,PopoverContent,PopoverTrigger,} from "@/components/ui/popover";
-import { Save,  Check, ChevronsUpDown, PencilIcon } from "lucide-react";
+import { Save,  Check, ChevronsUpDown, PencilIcon, Loader2 } from "lucide-react";
 import { facilityLabels , houseRulesLabels } from "@/constants/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { cities , hostelGenders , states , sharingtypes, Coaching } from "@/constants";
+import { hostelGenders , sharingtypes } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -24,7 +24,8 @@ import { useSession } from "next-auth/react";
 import { HostelFormProps } from "@/types";
 import { MultiSelect } from "@/components/ui/multi-select";
 import AdminLoadingScreen from "../loading/AdminLoader";
-
+import { useLocations } from "@/hooks/useLocations";
+import { useCoachings } from "@/hooks/useCoachings";
 
 type AdditionalFormFields = {
   [key: string]: boolean;
@@ -64,7 +65,21 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
   const isEditMode = !!hostelId;
   const [loading, setLoading] = useState<boolean>(false);
   const { toast } = useToast();
+  
+  // Get dynamic locations from the API
+  const { states: dbStates, cities: dbCities, loading: locationsLoading, citiesLoading, setCityLoadingState } = useLocations();
+  const { coachings, loading: coachingsLoading } = useCoachings();
+  const [selectedStateId, setSelectedStateId] = useState<string>("");
+  const [citiesForSelectedState, setCitiesForSelectedState] = useState<{ label: string; value: string }[]>([]);
 
+  // Effect to update cities based on selected state
+  useEffect(() => {
+    if (selectedStateId && dbCities[selectedStateId]) {
+      setCitiesForSelectedState(dbCities[selectedStateId]);
+    } else {
+      setCitiesForSelectedState([]);
+    }
+  }, [selectedStateId, dbCities]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -291,7 +306,7 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
                   <FormLabel>Add the Near by Coaching</FormLabel>
                   <FormControl>
                     <MultiSelect
-                      options={Coaching}
+                      options={coachings}
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       placeholder="Select options"
@@ -408,28 +423,39 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
                                           "w-[200px] justify-between",
                                           !field.value && "text-muted-foreground"
                                         )}
+                                        disabled={locationsLoading}
                                       >
-                                        {field.value
-                                          ? states.find(
-                                              (state) => state.value === field.value
-                                            )?.label
-                                          : "Select language"}
+                                        {locationsLoading ? (
+                                          <div className="flex items-center justify-between w-full">
+                                            <span className="text-muted-foreground">Loading states...</span>
+                                            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                                          </div>
+                                        ) : field.value ? (
+                                          dbStates.find(
+                                            (state) => state.value === field.value
+                                          )?.label || "Select state"
+                                        ) : (
+                                          "Select state"
+                                        )}
                                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                       </Button>
                                     </FormControl>
                                   </PopoverTrigger>
                                   <PopoverContent className="w-[200px] p-0">
                                     <Command>
-                                      <CommandInput placeholder="Search language..." />
+                                      <CommandInput placeholder="Search state..." />
                                       <CommandList>
-                                        <CommandEmpty>No language found.</CommandEmpty>
+                                        <CommandEmpty>No state found.</CommandEmpty>
                                         <CommandGroup>
-                                          {states.map((state) => (
+                                          {dbStates.map((state) => (
                                             <CommandItem
                                               value={state.label}
                                               key={state.value}
                                               onSelect={() => {
                                                 form.setValue("state", state.value);
+                                                setSelectedStateId(state.value);
+                                                // Clear city when state changes
+                                                form.setValue("city", "");
                                               }}
                                             >
                                               <Check
@@ -474,22 +500,31 @@ export default function HostelForm({hostelId  , initialData  }: HostelFormProps)
                                         "w-[200px] justify-between",
                                         !field.value && "text-muted-foreground"
                                       )}
+                                      disabled={!selectedStateId || citiesLoading}
                                     >
-                                      {field.value
-                                        ? cities.find((city) => city.value === field.value)
-                                            ?.label
-                                        : "Select language"}
+                                      {citiesLoading && selectedStateId ? (
+                                        <div className="flex items-center justify-between w-full">
+                                          <span className="text-muted-foreground">Loading cities...</span>
+                                          <Loader2 className="h-4 w-4 animate-spin text-primary" /> 
+                                        </div>
+                                      ) : field.value ? (
+                                        citiesForSelectedState.find(
+                                          (city) => city.value === field.value
+                                        )?.label || "Select city"
+                                      ) : (
+                                        "Select city"
+                                      )}
                                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                   </FormControl>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-[200px] p-0">
                                   <Command>
-                                    <CommandInput placeholder="Search language..." />
+                                    <CommandInput placeholder="Search city..." />
                                     <CommandList>
-                                      <CommandEmpty>No language found.</CommandEmpty>
+                                      <CommandEmpty>No city found.</CommandEmpty>
                                       <CommandGroup>
-                                        {cities.map((city) => (
+                                        {citiesForSelectedState.map((city) => (
                                           <CommandItem
                                             value={city.label}
                                             key={city.value}

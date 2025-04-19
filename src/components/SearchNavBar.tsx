@@ -20,8 +20,8 @@ import { useProfile } from "@/hooks/useProfile"
 
 export function SearchNavBar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-
   const [showMobileSearch, setShowMobileSearch] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const { profile } = useProfile()
 
   const { status } = useSession()
@@ -94,7 +94,7 @@ export function SearchNavBar() {
         </Link>
       </DropdownMenuItem>
       <DropdownMenuSeparator className="my-1" />
-      <DropdownMenuItem className="rounded-lg py-3 px-4 hover:bg-gray-50 text-red-500 font-medium">Logout</DropdownMenuItem>
+      <DropdownMenuItem className="rounded-lg py-3 px-4 hover:bg-gray-50 text-red-500 font-medium" onClick={()=> signOut()}>Logout</DropdownMenuItem>
     </>
   ) : (
     <>
@@ -153,10 +153,14 @@ export function SearchNavBar() {
             {authButtons}
           </div>
 
-          <DropdownMenu>
+          <DropdownMenu onOpenChange={setMenuOpen}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200">
-                <Menu className="h-5 w-5 text-gray-700" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className={`md:hidden h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-300 ${menuOpen ? 'scale-90 bg-gray-200' : ''}`}
+              >
+                <Menu className={`h-5 w-5 text-gray-700 transition-transform duration-300 ${menuOpen ? 'rotate-90' : ''}`} />
                 <span className="sr-only">Open menu</span>
               </Button>
             </DropdownMenuTrigger>

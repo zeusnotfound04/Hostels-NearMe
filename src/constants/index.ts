@@ -91,7 +91,6 @@ export const genderOptions= ["MALE" , "FEMALE"]
       {
         value: "PW",
         label: "Physics Wallah",
-
       },
       {
         value: "akash",
@@ -104,5 +103,5 @@ export const genderOptions= ["MALE" , "FEMALE"]
       {
         value: "impact",
         label: "Impact",
-      },
+      }
     ];    

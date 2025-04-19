@@ -20,6 +20,8 @@ WORKDIR /app
 
 RUN apk add --no-cache openssl
 
+RUN npm install -g pm2
+
 COPY --from=builder /app/.next/standalone ./.next/standalone
 COPY --from=builder /app/public ./.next/standalone/public
 COPY --from=builder /app/.next/static ./.next/standalone/.next/static
@@ -33,4 +35,4 @@ WORKDIR /app/.next/standalone
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["pm2-runtime", "server.js", "-i", "max"]

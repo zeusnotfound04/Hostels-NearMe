@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from "react";
-import { Send,  Search,  Hand } from "lucide-react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { Send, Search, Hand, MapPin, Check } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -24,11 +24,23 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCitySuggestions, CitySuggestion } from "@/hooks/useCitySuggestions";
+import { 
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList
+} from "@/components/ui/command";
+import { createPortal } from "react-dom";
 
+// Define more specific types for the search parameters
 interface SearchParams {
   search: string;
   hostelType: "SINGLE" | "SHARED" | "DORMITORY";
   gender: "BOYS" | "GIRLS";
+  city?: string;
+  state?: string;
 }
 
 interface HostelSearchBarProps {
@@ -37,6 +49,14 @@ interface HostelSearchBarProps {
   buttonStyle?: string;
   AnimatePlaceholder?: boolean;
 }
+
+// Add type for animation stages
+type AnimationStage = "idle" | "exit" | "enter";
+
+// Constants with appropriate types
+const PLACEHOLDER_ROTATION_INTERVAL = 3000;
+const PULSE_HIGHLIGHT_INTERVAL = 2000;
+const CLICK_ICON_INTERVAL = 2500;
 
 function HostelSearchBar({
   className = "",
@@ -51,94 +71,193 @@ function HostelSearchBar({
     gender: "BOYS",
   });
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentText, setCurrentText] = useState(0);
-  const [nextText, setNextText] = useState(1);
-  const [animationStage, setAnimationStage] = useState<"idle" | "exit" | "enter">("idle");
-  const [pulseHighlight, setPulseHighlight] = useState(false);
-  const [showClickIcon, setShowClickIcon] = useState(true);
-
-  const placeholderTexts = [
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [currentText, setCurrentText] = useState<number>(0);
+  const [nextText, setNextText] = useState<number>(1);
+  const [animationStage, setAnimationStage] = useState<AnimationStage>("idle");
+  const [pulseHighlight, setPulseHighlight] = useState<boolean>(false);
+  const [showClickIcon, setShowClickIcon] = useState<boolean>(true);
+  
+  const [citySearchQuery, setCitySearchQuery] = useState<string>("");
+  const [cityInputFocused, setCityInputFocused] = useState<boolean>(false);
+  const [selectedCitySuggestion, setSelectedCitySuggestion] = useState<CitySuggestion | null>(null);
+  const cityInputRef = useRef<HTMLInputElement>(null);
+  
+  const [inputRect, setInputRect] = useState<DOMRect | null>(null);
+  
+  // Memoize placeholder texts to avoid recreating the array on each render
+  const placeholderTexts = useMemo<string[]>(() => [
     "Enter your destination",
     "Search Hostel by Nearby Coaching",
     "Search by Hostel Type",
     "Search by Gender",
-  ];
-
+  ], []);
+  
+  const { 
+    suggestions: citySuggestions, 
+    isLoading: isCitySuggestionsLoading,
+  } = useCitySuggestions({ 
+    enabled: Boolean(cityInputFocused && citySearchQuery && citySearchQuery.length > 1),
+    searchQuery: citySearchQuery,
+    debounceMs: 300
+  });
+  
+  // Handle placeholder text rotation with cleanup
   useEffect(() => {
     if (!AnimatePlaceholder) return;
 
-    const interval = setInterval(() => {
+    const handleTextRotation = () => {
       setAnimationStage("exit");
 
-      setTimeout(() => {
+      const exitTimer = setTimeout(() => {
         const updatedNextText = (currentText + 1) % placeholderTexts.length;
         setNextText(updatedNextText);
         setAnimationStage("enter");
 
-        setTimeout(() => {
+        const enterTimer = setTimeout(() => {
           setCurrentText(updatedNextText);
           setAnimationStage("idle");
         }, 600);
+        
+        return () => clearTimeout(enterTimer);
       }, 600);
-    }, 3000);
+      
+      return () => clearTimeout(exitTimer);
+    };
 
-    return () => clearInterval(interval);
-  }, [AnimatePlaceholder, currentText]);
+    const intervalId = setInterval(handleTextRotation, PLACEHOLDER_ROTATION_INTERVAL);
+    return () => clearInterval(intervalId);
+  }, [AnimatePlaceholder, currentText, placeholderTexts]);
 
   useEffect(() => {
-    const pulseInterval = setInterval(() => {
+    const intervalId = setInterval(() => {
       setPulseHighlight((prev) => !prev);
-    }, 2000);
-
-    return () => clearInterval(pulseInterval);
+    }, PULSE_HIGHLIGHT_INTERVAL);
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
-    const clickIconInterval = setInterval(() => {
+    const intervalId = setInterval(() => {
       setShowClickIcon((prev) => !prev);
-    }, 2500);
-
-    return () => clearInterval(clickIconInterval);
+    }, CLICK_ICON_INTERVAL);
+    return () => clearInterval(intervalId);
   }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchParams((prev) => ({ ...prev, search: e.target.value }));
-  };
-
-  const handleHostelTypeChange = (value: SearchParams["hostelType"]) => {
+  
+  const updateInputPosition = useCallback(() => {
+    if (cityInputRef.current) {
+      setInputRect(cityInputRef.current.getBoundingClientRect());
+    }
+  }, []);
+  
+  useEffect(() => {
+    if (!cityInputFocused) return;
+    
+    updateInputPosition();
+    
+    window.addEventListener('resize', updateInputPosition);
+    window.addEventListener('scroll', updateInputPosition);
+    
+    return () => {
+      window.removeEventListener('resize', updateInputPosition);
+      window.removeEventListener('scroll', updateInputPosition);
+    };
+  }, [cityInputFocused, updateInputPosition]);
+  
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchParams((prev) => ({ ...prev, search: value }));
+    setCitySearchQuery(value);
+    
+    if (selectedCitySuggestion && value !== selectedCitySuggestion.formattedName) {
+      setSelectedCitySuggestion(null);
+    }
+  }, [selectedCitySuggestion]);
+  
+  const handleHostelTypeChange = useCallback((value: SearchParams["hostelType"]) => {
     setSearchParams((prev) => ({ ...prev, hostelType: value }));
-  };
-
-  const handleGenderChange = (value: SearchParams["gender"]) => {
+  }, []);
+  
+  const handleGenderChange = useCallback((value: SearchParams["gender"]) => {
     setSearchParams((prev) => ({ ...prev, gender: value }));
-  };
-
-  const handleSearch = () => {
+  }, []);
+  
+  const handleCitySuggestionSelect = useCallback((suggestion: CitySuggestion) => {
+    setSearchParams(prev => ({
+      ...prev,
+      search: suggestion.formattedName,
+      city: suggestion.name,
+      state: suggestion.state
+    }));
+    
+    setSelectedCitySuggestion(suggestion);
+    setCitySearchQuery(suggestion.formattedName);
+    setCityInputFocused(false);
+    
+    if (cityInputRef.current) {
+      cityInputRef.current.blur();
+    }
+  }, []);
+  
+  const handleSearch = useCallback(() => {
     const params = new URLSearchParams();
-
+    
     if (searchParams.search) {
       params.append("search", searchParams.search);
     }
-
+    
+    if (searchParams.city) {
+      params.append("city", searchParams.city);
+    }
+    
+    if (searchParams.state) {
+      params.append("state", searchParams.state);
+    }
+    
     params.append("hostelType", searchParams.hostelType);
     params.append("gender", searchParams.gender);
-
+    
     router.push(`/hostels?${params.toString()}`);
     setIsDialogOpen(false);
-  };
-
-  const getCurrentTextClass = () => {
-    if (animationStage === "idle") return "translate-y-0 opacity-100";
-    if (animationStage === "exit") return "-translate-y-[150%] opacity-0";
-    return "hidden";
-  };
-
-  const getNextTextClass = () => {
-    if (animationStage === "enter") return "translate-y-0 opacity-100";
-    return "translate-y-[150%] opacity-0";
-  };
-
+  }, [router, searchParams]);
+  
+  // Define type for dropdown style object
+  interface SuggestionDropdownStyle {
+    top?: string;
+    left?: string;
+    width?: string;
+    maxHeight?: string;
+  }
+  
+  const suggestionDropdownStyle = useMemo<SuggestionDropdownStyle>(() => {
+    if (!inputRect) return {};
+    
+    return {
+      top: `${inputRect.bottom + window.scrollY + 5}px`,
+      left: `${inputRect.left + window.scrollX}px`,
+      width: `${inputRect.width}px`,
+      maxHeight: '300px'
+    };
+  }, [inputRect]);
+  
+  const suggestionsItems = useMemo(() => {
+    return citySuggestions.slice(0, 5).map((suggestion: CitySuggestion) => (
+      <CommandItem
+        key={suggestion.id}
+        onSelect={() => handleCitySuggestionSelect(suggestion)}
+        className="flex items-center gap-2 cursor-pointer hover:bg-red-50 py-1.5 rounded-md"
+      >
+        <MapPin className="h-3 w-3 text-red-500 flex-shrink-0" />
+        <span className="truncate text-sm">{suggestion.formattedName}</span>
+        {selectedCitySuggestion?.id === suggestion.id && (
+          <Check className="h-3 w-3 text-green-500 ml-auto flex-shrink-0" />
+        )}
+      </CommandItem>
+    ));
+  }, [citySuggestions, handleCitySuggestionSelect, selectedCitySuggestion]);
+  
+  // Only render dropdown if we have data to show and input is focused
+  const showSuggestions = cityInputFocused && searchParams.search && citySuggestions.length > 0;
+  
   return (
     <div className={`w-full ${className}`}>
       {/* Desktop View */}
@@ -147,12 +266,39 @@ function HostelSearchBar({
           <LocationIcon width={24} height={24} className="sm:w-[35px] sm:h-[35px] text-red-500 group-hover:text-red-600 transition-colors" />
           <div className="relative w-full">
             <input
+              ref={cityInputRef}
               type="text"
               placeholder={AnimatePlaceholder ? "" : "Enter your destination"}
               className="w-full outline-none text-gray-700 text-base sm:text-lg pl-2 focus:ring-1 focus:ring-red-300"
               value={searchParams.search}
               onChange={handleInputChange}
+              onFocus={() => setCityInputFocused(true)}
+              onBlur={() => {
+                // Short delay to allow click to register before hiding suggestions
+                setTimeout(() => setCityInputFocused(false), 150);
+              }}
             />
+            
+            {/* Show city suggestions when input is focused and we have suggestions */}
+            {showSuggestions && (
+              createPortal(
+                <div 
+                  className="fixed rounded-lg border border-red-200 shadow-lg z-[9999] bg-white overflow-hidden" 
+                  style={suggestionDropdownStyle}
+                >
+                  <Command>
+                    <CommandList className="p-1 overflow-y-auto max-h-[300px]">
+                      <CommandEmpty>No cities found</CommandEmpty>
+                      <CommandGroup>
+                        {suggestionsItems}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </div>,
+                document.body
+              )
+            )}
+            
             {!searchParams.search && AnimatePlaceholder && (
               <div className="absolute left-2 top-0 h-full w-full flex items-center pointer-events-none">
                 <div className="h-[1.5em] relative overflow-hidden w-full">
@@ -193,9 +339,9 @@ function HostelSearchBar({
                 <SelectValue placeholder="Select hostel type" />
               </SelectTrigger>
               <SelectContent className="border border-red-100">
-                <SelectItem value="SINGLE" className="hover:bg-red-50">SINGLE</SelectItem>
-                <SelectItem value="SHARED" className="hover:bg-red-50">DOUBLE</SelectItem>
-                <SelectItem value="DORMITORY" className="hover:bg-red-50">TRIPLE</SelectItem>
+                <SelectItem value="SINGLE" className="hover:bg-red-50">Single</SelectItem>
+                <SelectItem value="SHARED" className="hover:bg-red-50">Double</SelectItem>
+                <SelectItem value="DORMITORY" className="hover:bg-red-50">Triple</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -347,13 +493,34 @@ function HostelSearchBar({
             <div className="space-y-3 px-2 py-3">
               <div className="flex items-center border rounded-full px-3 py-1.5">
                 <LocationIcon width={20} height={20} />
-                <input
-                  type="text"
-                  placeholder="Enter your destination"
-                  className="w-full outline-none text-gray-700 text-sm pl-2"
-                  value={searchParams.search}
-                  onChange={handleInputChange}
-                />
+                <div className="w-full relative">
+                  <input
+                    type="text"
+                    placeholder="Enter your destination"
+                    className="w-full outline-none text-gray-700 text-sm pl-2"
+                    value={searchParams.search}
+                    onChange={handleInputChange}
+                    onFocus={() => setCityInputFocused(true)}
+                    onBlur={() => {
+                      // Short delay to allow click to register before hiding suggestions
+                      setTimeout(() => setCityInputFocused(false), 150);
+                    }}
+                  />
+                  
+                  {/* City suggestions dropdown for mobile */}
+                  {showSuggestions && (
+                    <div className="absolute top-full left-0 w-full mt-1 z-50">
+                      <Command className="rounded-lg border shadow-md">
+                        <CommandList className="max-h-[200px] overflow-y-auto">
+                          <CommandEmpty>No cities found</CommandEmpty>
+                          <CommandGroup>
+                            {suggestionsItems}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center border rounded-full px-3 py-1.5">
@@ -363,9 +530,9 @@ function HostelSearchBar({
                     <SelectValue placeholder="Select hostel type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="SINGLE">SINGLE</SelectItem>
-                    <SelectItem value="SHARED">DOUBLE</SelectItem>
-                    <SelectItem value="DORMITORY">TRIPLE</SelectItem>
+                    <SelectItem value="SINGLE">Single</SelectItem>
+                    <SelectItem value="SHARED">Double</SelectItem>
+                    <SelectItem value="DORMITORY">Triple</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -399,4 +566,4 @@ function HostelSearchBar({
   );
 }
 
-export default HostelSearchBar;
+export default React.memo(HostelSearchBar);
